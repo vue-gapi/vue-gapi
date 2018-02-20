@@ -45,7 +45,9 @@ gapi.load('client:auth2', () => {
 ```
 At this point the user can sign in to the app via a Google account. The app is then able to work on the user's spreadsheet data.
 On the software aspect we have a first request that returns a callback. Inside that callback there is another request that returns a promise. After resolving the promise our gapi client is ready.
+
 Working inside the `spreadsheetReady` method would lead to more nested code. Yet we still want to know when the gapi client is ready before we try using the spreadsheet API or the Auth2 one.
+
 **Wrapping the instantiation logic around a promise**
 The solution is simple: wrap the code above in a promise and `resolve` it by passing **gapi** instance itself.
 
@@ -191,9 +193,37 @@ export default {
 ```
 
 ## Development process
+While developing the plugin I placed the code in the project itself. The project structure is as below.
+
+    src
+    ├── components
+    ├── plugins
+    │   ├── EventHub
+    │   ├── ORM
+    │   └── VueGAPI
+    │       ├── gapi.js
+    │       └── index.js
+    └── ...
+
+The ORM folder contains the code for consuming the APIs when the gapi client is ready. This business logic is also a plugin but separated from the utility. When VueGAPI was stable I decided to make it available on NPM. This way I can reuse it in future projects and so can you.
 
 ## Publishing the plugin
+To make the publishing simple I looked for a vue-cli template. Most of them were about packaging components into a plugin. Also, they were all using Webpack but I wanted to use Rollup instead as it outputs less boiler code.
+
+I managed to find one from [psova](https://github.com/posva), the [Vue Plugin Template](https://github.com/posva/vue-plugin-template). After some cleanup I pushed my code to NPM within minutes!
+Thanks to psova.
 
 ## Next steps
+As from there, here are the next steps:
+ - responding to feedback & enhancing the code and this post
+ - working on the authentication features
+ - write another post on extending from VueGAPI
 
+
+## Feedback & Contribution
+Feedback is most appreciated!
+
+To contribute feel free to create a PR on the repo: [VueGAPI](https://github.com/CedricPoilly/vue-gapi).
+
+Happy coding!
 

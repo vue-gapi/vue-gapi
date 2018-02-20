@@ -1,6 +1,6 @@
 /*!
- * vue-gapi v0.0.1
- * (c) 2018 Cedrik1712
+ * vue-gapi v0.0.2
+ * (c) 2018 CedricPoilly
  * Released under the MIT License.
  */
 
@@ -46,7 +46,6 @@ GoogleAuthService.prototype.logout = function logout (event) {
 };
 
 GoogleAuthService.prototype.setSession = function setSession (response) {
-  console.log(response);
   var profile = this.authInstance.currentUser.get().getBasicProfile();
   var authResult = response.Zi;
   // Set the time that the access token will expire at
@@ -92,7 +91,6 @@ var VueGAPI = {
 
     var resolveAuth2Client = function (resolve, reject) {
       if (!gapi.auth) {
-        Vue.initialisationInProgress = true;
 
         gapi.load('client:auth2', function () {
           Vue.gapiLoadClientPromise = gapi.client.init(clientConfig)
@@ -111,7 +109,6 @@ var VueGAPI = {
       return new Promise(function (resolve, reject) {
         if (Vue.gapiLoadClientPromise &&
             Vue.gapiLoadClientPromise.status === 0) { // promise is being executed
-          console.log('promise is being executed, resolving promise itself');
           resolve(Vue.gapiLoadClientPromise);
         } else {
           resolveAuth2Client(resolve, reject);
@@ -144,7 +141,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.0.1';
+var version = '0.0.2';
 
 exports['default'] = plugin;
 exports.version = version;
