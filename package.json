@@ -1,6 +1,6 @@
 {
   "name": "vue-gapi",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Google API client wrapper for Vue",
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
   "homepage": "https://github.com/CedricPoilly/vue-gapi",
