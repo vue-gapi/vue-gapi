@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "Google API client wrapper for Vue",
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
+  "homepage": "https://github.com/CedricPoilly/vue-gapi",
   "main": "dist/vue-gapi.common.js",
   "module": "dist/vue-gapi.esm.js",
   "browser": "dist/vue-gapi.js",
