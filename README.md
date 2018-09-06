@@ -55,5 +55,61 @@ export default {
 
 
 ```
+## Login
 
+This will shortcut the login process
+```html
+<script>
+export default {
+  name: 'login-shortcut',
 
+  methods: {
+    login () {
+      this.$login()
+    }
+  }
+
+}
+
+</script>
+```
+
+## Logout
+
+This will shortcut the logout process
+```html
+<script>
+export default {
+  name: 'logout-shortcut',
+
+  methods: {
+    logout () {
+      this.$logout()
+    }
+  }
+
+}
+
+</script>
+```
+
+## isAuthenticated
+
+This will shortcut and check if your user is authenticated will return a boolen
+```html
+<script>
+export default {
+  name: 'login-shortcut-check',
+
+  methods: {
+    login () {
+      if (this.$isAuthenticated() !== true) {
+        this.$login()
+      }
+    }
+  }
+
+}
+
+</script>
+```
