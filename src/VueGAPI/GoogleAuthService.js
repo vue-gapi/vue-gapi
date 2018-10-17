@@ -12,7 +12,6 @@ export default class GoogleAuthService {
   }
 
   // NOTE: handle expiresAt method, this is private
-  // Set the time that the access token will expire at
   _expiresAt = (authResult) => {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
   }
@@ -23,14 +22,13 @@ export default class GoogleAuthService {
   }
 
   refreshToken (event) {
-  console.log('REFRESHED TOKEN')
-  const GoogleUser = this.authInstance.currentUser.get()
-  GoogleUser.reloadAuthResponse()
-    .then((authResult) => {
-      localStorage.setItem('access_token', authResult.access_token)
-      localStorage.setItem('id_token', authResult.id_token)
-      localStorage.setItem('expires_at', this._expiresAt(authResult))
-    })
+    const GoogleUser = this.authInstance.currentUser.get()
+    GoogleUser.reloadAuthResponse()
+      .then((authResult) => {
+        localStorage.setItem('access_token', authResult.access_token)
+        localStorage.setItem('id_token', authResult.id_token)
+        localStorage.setItem('expires_at', this._expiresAt(authResult))
+      })
   }
 
   logout (event) {

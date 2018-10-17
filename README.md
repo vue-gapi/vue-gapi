@@ -124,8 +124,13 @@ This will shortcut getting a refresh token from Google, this should be placed in
   name: 'App'
 
   created () {
-  // NOTE: this throws errors when the user is signed out....
-  window.setInterval(this.$refreshToken(), 2.7e+6)
+  try {
+    // NOTE: 45min refresh policy is what google recommends
+    window.setInterval(this.$refreshToken(), 2.7e+6)
+  } catch (e) {
+    console.error(e)
+  }
+
 }
 </script>
 ```

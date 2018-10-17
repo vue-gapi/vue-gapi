@@ -5,7 +5,7 @@ const googleAuthService = new GoogleAuthService()
 const { login, logout, isAuthenticated, getUserData, refreshToken } = googleAuthService
 
 export default {
-  install: function(Vue, clientConfig) {
+  install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null
 
     const resolveAuth2Client = (resolve, reject) => {
