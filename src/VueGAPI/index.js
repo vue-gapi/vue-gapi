@@ -2,7 +2,7 @@ import { gapiPromise } from './gapi'
 import GoogleAuthService from './GoogleAuthService'
 
 const googleAuthService = new GoogleAuthService()
-const { login, logout, isAuthenticated, getUserData, refreshToken } = googleAuthService
+const { login, logout, isAuthenticated, getUserData, refreshToken, isSignedIn } = googleAuthService
 
 export default {
   install: function (Vue, clientConfig) {
@@ -58,6 +58,8 @@ export default {
     }
 
     Vue.prototype.$isAuthenticated = isAuthenticated
+
+    Vue.prototype.$isSignedIn = isSignedIn
 
     Vue.prototype.$getUserData = getUserData
   }

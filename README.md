@@ -116,6 +116,25 @@ export default {
 </script>
 ```
 
+## isSignedIn
+
+This will shortcut and check if your user is authenticated will return a boolen from google. and can be used inside v-if views.
+```html
+<script>
+export default {
+  name: 'is-signed-in',
+
+  computed: {
+    isSignedIn () {
+      return this.$isSignedIn()
+    }
+  }
+
+}
+
+</script>
+```
+
 ## refreshToken
 
 This will shortcut getting a refresh token from Google, this should be placed in your App.vue on the created page and run on a timer of 45min

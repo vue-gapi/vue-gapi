@@ -9,6 +9,7 @@ export default class GoogleAuthService {
     this.setSession = this.setSession.bind(this)
     this.logout = this.logout.bind(this)
     this.isAuthenticated = this.isAuthenticated.bind(this)
+    this.isSignedIn = this.isSignedIn.bind(this)
   }
 
   // NOTE: handle expiresAt method, this is private
@@ -58,6 +59,11 @@ export default class GoogleAuthService {
   isAuthenticated () {
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'))
     return new Date().getTime() < expiresAt
+  }
+
+  isSignedIn () {
+    const GoogleUser = this.authInstance.currentUser.get()
+    return GoogleUser.isSignedIn.get()
   }
 
   getUserData () {
