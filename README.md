@@ -34,6 +34,8 @@ Vue.use(VueGAPI, apiConfig)
 ```
 
 Exposes the `$getGapiClient` on the Vue instance that returns a promise containing the initialised instance of the Google API client.
+See full list of options for apiConfig object (here)[https://developers.google.com/identity/sign-in/web/reference] under gapi.auth2.SignInOptions
+
 ```html
 <script>
 
@@ -55,5 +57,80 @@ export default {
 
 
 ```
+## Login
 
+This will shortcut the login process
+```html
+<script>
+export default {
+  name: 'login-shortcut',
 
+  methods: {
+    login () {
+      this.$login()
+    }
+  }
+
+}
+
+</script>
+```
+
+## Logout
+
+This will shortcut the logout process
+```html
+<script>
+export default {
+  name: 'logout-shortcut',
+
+  methods: {
+    logout () {
+      this.$logout()
+    }
+  }
+
+}
+
+</script>
+```
+
+## isAuthenticated
+
+This will shortcut and check if your user is authenticated will return a boolen
+```html
+<script>
+export default {
+  name: 'login-shortcut-check',
+
+  methods: {
+    login () {
+      if (this.$isAuthenticated() !== true) {
+        this.$login()
+      }
+    }
+  }
+
+}
+
+</script>
+```
+
+## refreshToken
+
+This will shortcut getting a refresh token from Google, this should be placed in your App.vue on the created page and run on a timer of 45min
+```html
+<script>
+  name: 'App'
+
+  created () {
+  try {
+    // NOTE: 45min refresh policy is what google recommends
+    window.setInterval(this.$refreshToken(), 2.7e+6)
+  } catch (e) {
+    console.error(e)
+  }
+
+}
+</script>
+```
