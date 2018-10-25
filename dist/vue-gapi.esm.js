@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.0.8
+ * vue-gapi v0.0.9
  * (c) 2018 CedricPoilly
  * Released under the MIT License.
  */
@@ -184,6 +184,6 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.0.8';
+var version = '0.0.9';
 
 export { version };export default plugin;

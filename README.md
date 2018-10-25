@@ -13,24 +13,26 @@ yarn add vue-gapi
 ```
 
 ## Usage
+
 To connect to your app and load the APIs you need
+
 ```js
-import Vue from 'vue'
+import Vue from "vue";
 
 // import the plugin
-import VueGAPI from 'vue-gapi'
+import VueGAPI from "vue-gapi";
 
 // create the 'options' object
 const apiConfig = {
-  apiKey: '<YOUR_API_KEY>',
-  clientId: '<YOUR_CLIENT_ID>.apps.googleusercontent.com',
-  discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-  scope: 'https://www.googleapis.com/auth/spreadsheets'
+  apiKey: "<YOUR_API_KEY>",
+  clientId: "<YOUR_CLIENT_ID>.apps.googleusercontent.com",
+  discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
+  scope: "https://www.googleapis.com/auth/spreadsheets"
   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
-}
+};
 
 // Use the plugin and pass along the configuration
-Vue.use(VueGAPI, apiConfig)
+Vue.use(VueGAPI, apiConfig);
 ```
 
 Exposes the `$getGapiClient` on the Vue instance that returns a promise containing the initialised instance of the Google API client.
@@ -54,12 +56,12 @@ export default {
 
 }
 </script>
-
-
 ```
+
 ## Login
 
 This will shortcut the login process
+
 ```html
 <script>
 export default {
@@ -79,6 +81,7 @@ export default {
 ## Logout
 
 This will shortcut the logout process
+
 ```html
 <script>
 export default {
@@ -98,6 +101,7 @@ export default {
 ## isAuthenticated
 
 This will shortcut and check if your user is authenticated will return a boolen
+
 ```html
 <script>
 export default {
@@ -119,6 +123,7 @@ export default {
 ## refreshToken
 
 This will shortcut getting a refresh token from Google, this should be placed in your App.vue on the created page and run on a timer of 45min
+
 ```html
 <script>
   name: 'App'
