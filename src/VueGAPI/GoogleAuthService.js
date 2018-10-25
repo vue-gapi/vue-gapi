@@ -12,8 +12,35 @@ export default class GoogleAuthService {
   }
 
   // NOTE: handle expiresAt method, this is private
-  _expiresAt = (authResult) => {
+  _expiresAt (authResult) {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
+  }
+
+  _setStorage (authResult, profile = null) {
+    localStorage.setItem('gapi.access_token', authResult.access_token)
+    localStorage.setItem('gapi.id_token', authResult.id_token)
+    localStorage.setItem('gapi.expires_at', this._expiresAt(authResult))
+
+    if (profile) {
+      localStorage.setItem('gapi.id', profile.getId())
+      localStorage.setItem('gapi.full_name', profile.getName())
+      localStorage.setItem('gapi.first_name', profile.getGivenName())
+      localStorage.setItem('gapi.last_name', profile.getFamilyName())
+      localStorage.setItem('gapi.image_url', profile.getImageUrl())
+      localStorage.setItem('gapi.email', profile.getEmail())
+    }
+  }
+
+  _clearStorage () {
+    localStorage.removeItem('gapi.access_token')
+    localStorage.removeItem('gapi.id_token')
+    localStorage.removeItem('gapi.expires_at')
+    localStorage.removeItem('gapi.id')
+    localStorage.removeItem('gapi.full_name')
+    localStorage.removeItem('gapi.first_name')
+    localStorage.removeItem('gapi.last_name')
+    localStorage.removeItem('gapi.image_url')
+    localStorage.removeItem('gapi.email')
   }
 
   login (event) {
@@ -25,15 +52,13 @@ export default class GoogleAuthService {
     const GoogleUser = this.authInstance.currentUser.get()
     GoogleUser.reloadAuthResponse()
       .then((authResult) => {
-        localStorage.setItem('access_token', authResult.access_token)
-        localStorage.setItem('id_token', authResult.id_token)
-        localStorage.setItem('expires_at', this._expiresAt(authResult))
+        this._setStorage(authResult)
       })
   }
 
   logout (event) {
     this.authInstance.signOut(response => console.log(response))
-    localStorage.clear()
+    this._clearStorage()
     this.authenticated = false
   }
 
@@ -41,30 +66,20 @@ export default class GoogleAuthService {
     const profile = this.authInstance.currentUser.get().getBasicProfile()
     const authResult = response.Zi
 
-    localStorage.setItem('access_token', authResult.access_token)
-    localStorage.setItem('id_token', authResult.id_token)
-    localStorage.setItem('expires_at', this._expiresAt(authResult))
-
+    this._setStorage(authResult, profile)
     this.authenticated = true
-
-    localStorage.setItem('id', profile.getId())
-    localStorage.setItem('full_name', profile.getName())
-    localStorage.setItem('first_name', profile.getGivenName())
-    localStorage.setItem('last_name', profile.getFamilyName())
-    localStorage.setItem('image_url', profile.getImageUrl())
-    localStorage.setItem('email', profile.getEmail())
   }
 
   isAuthenticated () {
-    const expiresAt = JSON.parse(localStorage.getItem('expires_at'))
+    const expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'))
     return new Date().getTime() < expiresAt
   }
 
   getUserData () {
     return {
-      firstName: localStorage.getItem('first_name'),
-      lastName: localStorage.getItem('last_name'),
-      email: localStorage.getItem('email')
+      firstName: localStorage.getItem('gapi.first_name'),
+      lastName: localStorage.getItem('gapi.last_name'),
+      email: localStorage.getItem('gapi.email')
     }
   }
 }

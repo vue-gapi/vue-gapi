@@ -9,7 +9,7 @@ We accept contributions via Pull Requests on [Github](https://github.com//vue-ga
 
 - **Keep the same style** - eslint will automatically be ran before committing
 
-- **Tip** to pass lint tests easier use the `npm run lint:fix` command
+- **Tip** to pass lint tests easier use the `npm run lint:js:fix` command
 
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
