@@ -44,11 +44,13 @@ export default class GoogleAuthService {
   }
 
   login (event) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
     return this.authInstance.signIn()
       .then(this.setSession)
   }
 
   refreshToken (event) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
     GoogleUser.reloadAuthResponse()
       .then((authResult) => {
@@ -57,6 +59,7 @@ export default class GoogleAuthService {
   }
 
   logout (event) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
     this.authInstance.signOut(response => console.log(response))
     this._clearStorage()
     this.authenticated = false
@@ -65,7 +68,6 @@ export default class GoogleAuthService {
   setSession (response) {
     const profile = this.authInstance.currentUser.get().getBasicProfile()
     const authResult = response.Zi
-
     this._setStorage(authResult, profile)
     this.authenticated = true
   }
