@@ -6,7 +6,6 @@ export default class GoogleAuthService {
 
     this.login = this.login.bind(this)
     this.refreshToken = this.refreshToken.bind(this)
-    this.setSession = this.setSession.bind(this)
     this.logout = this.logout.bind(this)
     this.isAuthenticated = this.isAuthenticated.bind(this)
   }
