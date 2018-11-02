@@ -11,7 +11,6 @@ export default class GoogleAuthService {
     this.isAuthenticated = this.isAuthenticated.bind(this)
   }
 
-  // NOTE: handle expiresAt method, this is private
   _expiresAt (authResult) {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
   }
@@ -43,10 +42,17 @@ export default class GoogleAuthService {
     localStorage.removeItem('gapi.email')
   }
 
+  _setSession (response) {
+    const profile = this.authInstance.currentUser.get().getBasicProfile()
+    const authResult = response.Zi
+    this._setStorage(authResult, profile)
+    this.authenticated = true
+  }
+
   login (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
     return this.authInstance.signIn()
-      .then(this.setSession)
+      .then(this._setSession.bind(this))
   }
 
   refreshToken (event) {
@@ -63,13 +69,6 @@ export default class GoogleAuthService {
     this.authInstance.signOut(response => console.log(response))
     this._clearStorage()
     this.authenticated = false
-  }
-
-  setSession (response) {
-    const profile = this.authInstance.currentUser.get().getBasicProfile()
-    const authResult = response.Zi
-    this._setStorage(authResult, profile)
-    this.authenticated = true
   }
 
   isAuthenticated () {
