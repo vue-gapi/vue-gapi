@@ -12,6 +12,10 @@ or
 yarn add vue-gapi
 ```
 
+## Example
+
+Please refer to [this repository](https://github.com/nidkil/vue-gapi-example) for a complete working example. It also contains instructions how to register the application with Google API. 
+
 ## Usage
 
 To connect to your app and load the APIs you need
@@ -131,10 +135,31 @@ This will shortcut getting a refresh token from Google, this should be placed in
   created () {
   try {
     // NOTE: 45min refresh policy is what google recommends
-    window.setInterval(this.$refreshToken(), 2.7e+6)
+    window.setInterval(this.$refreshToken(), 1000 * 60 * 45)
   } catch (e) {
     console.error(e)
   }
+
+}
+</script>
+```
+
+## grantOfflineAccess
+
+This will retrieve an offline access token. This offline access token can be used server side to access the users data.
+
+```html
+<script>
+  name: 'App'
+
+  methods: {
+      getOfflineAccessCode () {
+        this.$grantOfflineAccess()
+          .then(() => {
+            const offlineAccessCode = this.$getOfflineAccessCode();
+            // Send the offline access token to the backend server
+          }
+      }
 
 }
 </script>
