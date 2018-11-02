@@ -2,7 +2,9 @@ import { gapiPromise } from './gapi'
 import GoogleAuthService from './GoogleAuthService'
 
 const googleAuthService = new GoogleAuthService()
-const { login, logout, isAuthenticated, getUserData, refreshToken } = googleAuthService
+const {
+  grantOfflineAccess, getOfflineAccessCode, login, logout, isAuthenticated, getUserData, refreshToken
+} = googleAuthService
 
 export default {
   install: function (Vue, clientConfig) {
@@ -50,6 +52,12 @@ export default {
           resolveAuth2Client(resolve, reject)
         }
       })
+    }
+
+    Vue.prototype.$getOfflineAccessCode = getOfflineAccessCode
+
+    Vue.prototype.$grantOfflineAccess = () => {
+      return Vue.prototype.$getGapiClient().then(grantOfflineAccess)
     }
 
     Vue.prototype.$login = () => {
