@@ -40,40 +40,51 @@ export default {
       })
     }
 
-    Vue.prototype.$getGapiClient = () => {
-      return new Promise((resolve, reject) => {
-        if (
-          Vue.gapiLoadClientPromise &&
-          Vue.gapiLoadClientPromise.status === 0
-        ) {
-          // promise is being executed
-          resolve(Vue.gapiLoadClientPromise)
-        } else {
-          resolveAuth2Client(resolve, reject)
-        }
-      })
+    Vue.prototype.$gapi = {
+      getGapiClient: () => {
+        return new Promise((resolve, reject) => {
+          if (
+            Vue.gapiLoadClientPromise &&
+            Vue.gapiLoadClientPromise.status === 0
+          ) {
+            // promise is being executed
+            resolve(Vue.gapiLoadClientPromise)
+          } else {
+            resolveAuth2Client(resolve, reject)
+          }
+        })
+      },
+      getOfflineAccessCode,
+      grantOfflineAccess: () => {
+        return Vue.prototype.$getGapiClient().then(grantOfflineAccess)
+      },
+      login: () => {
+        return Vue.prototype.$getGapiClient().then(login)
+      },
+      refreshToken: () => {
+        return Vue.prototype.$getGapiClient().then(refreshToken)
+      },
+      logout: () => {
+        return Vue.prototype.$getGapiClient().then(logout)
+      },
+      isAuthenticated,
+      getUserData
     }
 
-    Vue.prototype.$getOfflineAccessCode = getOfflineAccessCode
+    Vue.prototype.$getGapiClient = Vue.prototype.$gapi.getGapiClient
 
-    Vue.prototype.$grantOfflineAccess = () => {
-      return Vue.prototype.$getGapiClient().then(grantOfflineAccess)
-    }
+    Vue.prototype.$getOfflineAccessCode = Vue.prototype.$gapi.getOfflineAccessCode
 
-    Vue.prototype.$login = () => {
-      return Vue.prototype.$getGapiClient().then(login)
-    }
+    Vue.prototype.$grantOfflineAccess = Vue.prototype.$gapi.grantOfflineAccess
 
-    Vue.prototype.$refreshToken = () => {
-      return Vue.prototype.$getGapiClient().then(refreshToken)
-    }
+    Vue.prototype.$login = Vue.prototype.$gapi.login
 
-    Vue.prototype.$logout = () => {
-      return Vue.prototype.$getGapiClient().then(logout)
-    }
+    Vue.prototype.$refreshToken = Vue.prototype.$gapi.refreshToken
 
-    Vue.prototype.$isAuthenticated = isAuthenticated
+    Vue.prototype.$logout = Vue.prototype.$gapi.logout
 
-    Vue.prototype.$getUserData = getUserData
+    Vue.prototype.$isAuthenticated = Vue.prototype.$gapi.isAuthenticated
+
+    Vue.prototype.$getUserData = Vue.prototype.$gapi.getUserData
   }
 }
