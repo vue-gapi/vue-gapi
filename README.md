@@ -1,4 +1,3 @@
-
 # VueGapi (vue-gapi)
   
 [![npm](https://img.shields.io/npm/v/vue-gapi.svg)](https://www.npmjs.com/package/vue-gapi) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)  ![license](https://img.shields.io/badge/license-MIT-green.svg) 
