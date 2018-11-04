@@ -1,3 +1,5 @@
+import { storageKey } from './methods/storageKey.js'
+
 export default class GoogleAuthService {
 
   constructor () {
@@ -18,30 +20,22 @@ export default class GoogleAuthService {
   }
 
   _setStorage (authResult, profile = null) {
-    localStorage.setItem('gapi.access_token', authResult.access_token)
-    localStorage.setItem('gapi.id_token', authResult.id_token)
+    const storageKeys = storageKey(authResult, profile)
+    storageKeys.forEach((value) => {
+      if (profile) {
+        const setValue = value.authKey ? value.authKey : value.profileKey
+        localStorage.setItem(`gapi.${value.name}`, setValue)
+      }
+    })
+    // NOTE: this needs to be bound and moved into the storageKey
     localStorage.setItem('gapi.expires_at', this._expiresAt(authResult))
-
-    if (profile) {
-      localStorage.setItem('gapi.id', profile.getId())
-      localStorage.setItem('gapi.full_name', profile.getName())
-      localStorage.setItem('gapi.first_name', profile.getGivenName())
-      localStorage.setItem('gapi.last_name', profile.getFamilyName())
-      localStorage.setItem('gapi.image_url', profile.getImageUrl())
-      localStorage.setItem('gapi.email', profile.getEmail())
-    }
   }
 
   _clearStorage () {
-    localStorage.removeItem('gapi.access_token')
-    localStorage.removeItem('gapi.id_token')
-    localStorage.removeItem('gapi.expires_at')
-    localStorage.removeItem('gapi.id')
-    localStorage.removeItem('gapi.full_name')
-    localStorage.removeItem('gapi.first_name')
-    localStorage.removeItem('gapi.last_name')
-    localStorage.removeItem('gapi.image_url')
-    localStorage.removeItem('gapi.email')
+    const storageKeys = storageKey()
+    storageKeys.forEach((value) => {
+      localStorage.removeItem(`gapi.${value.name}`)
+    })
   }
 
   login (event) {
