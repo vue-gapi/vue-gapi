@@ -87,7 +87,7 @@ export default {
       this.$gapi.getGapiClient()
         .then(gapi => {
           gapi.request({
-            'path': 'https://sheets.googleapis.com/v4/spreadsheets/spreadsheetId,
+            'path': 'https://sheets.googleapis.com/v4/spreadsheets/spreadsheetId',
           })
         }
         .catch(err => {
