@@ -84,24 +84,6 @@ export default {
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
-    Vue.prototype.$getOfflineAccessCode = () => {
-      console.warn('This Vue instance method is deprecated and will be removed in a future release. Please use $gapi.getOfflineAccessCode instead.')
-      return Vue.prototype.$gapi.getOfflineAccessCode
-    }
-
-    /**
-     * @deprecated since version 0.0.10.
-     * Will be removed in version 1.0.
-     */
-    Vue.prototype.$grantOfflineAccess = () => {
-      console.warn('This Vue instance method is deprecated and will be removed in a future release. Please use $gapi.grantOfflineAccess instead.')
-      return Vue.prototype.$gapi.grantOfflineAccess
-    }
-
-    /**
-     * @deprecated since version 0.0.10.
-     * Will be removed in version 1.0.
-     */
     Vue.prototype.$login = () => {
       console.warn('This Vue instance method is deprecated and will be removed in a future release. Please use $gapi.login instead.')
       return Vue.prototype.$gapi.login
