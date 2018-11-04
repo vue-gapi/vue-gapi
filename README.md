@@ -42,7 +42,7 @@ const apiConfig = {
 Vue.use(VueGAPI, apiConfig);  
 ```  
 
-You can specify multiple Dicovery Documents (`dicoveryDocs`) and scopes (`scope`) by separating them with a comma. For a complete list of the gapi configurations options see the `gapi.auth2.SignInOptions` section of the [Google documentation](https://developers.google.com/identity/sign-in/web/reference).
+You can specify multiple Dicovery Documents (`dicoveryDocs`) by separating them with a comma and scopes (`scope`) by separating them with a space. For a complete list of the gapi configurations options see the `gapi.auth2.SignInOptions` section of the [Google documentation](https://developers.google.com/identity/sign-in/web/reference).
 
 ##### Access plugin
 The plugin exposes `$gapi` on the Vue instance as entry point to the plugin methods and variables.
