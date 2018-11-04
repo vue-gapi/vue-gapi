@@ -56,16 +56,16 @@ export default {
       },
       getOfflineAccessCode,
       grantOfflineAccess: () => {
-        return this.getGapiClient().then(grantOfflineAccess)
+        return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
       },
       login: () => {
-        return this.getGapiClient().then(login)
+        return Vue.prototype.$gapi.getGapiClient().then(login)
       },
       refreshToken: () => {
-        return this.getGapiClient().then(refreshToken)
+        return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
       logout: () => {
-        return this.getGapiClient().then(logout)
+        return Vue.prototype.$gapi.getGapiClient().then(logout)
       },
       isAuthenticated,
       getUserData
