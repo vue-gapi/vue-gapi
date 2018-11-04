@@ -76,7 +76,7 @@ export default {
 
 ##### Using the $gapi.getGapiClient.request
 
-A more general way to make requests is to use `$gapi.getGApiCLient.request`. Your application does not have to load the Discovery Document as in the first option, but it must still set the API Key, Client ID and scope for the required APIs. While you need to manually fill in REST parameters with this option, it saves one network request and reduces application size.
+A more general way to make requests is to use `$gapi.getGapiClient.request`. Your application does not have to load the Discovery Document as in the first option, but it must still set the API Key, Client ID and scope for the required APIs. While you need to manually fill in REST parameters with this option, it saves one network request and reduces application size.
 
 ```html
 <script>

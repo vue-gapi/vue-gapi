@@ -56,16 +56,16 @@ export default {
       },
       getOfflineAccessCode,
       grantOfflineAccess: () => {
-        return this.$getGapiClient().then(grantOfflineAccess)
+        return this.getGapiClient().then(grantOfflineAccess)
       },
       login: () => {
-        return this.$getGapiClient().then(login)
+        return this.getGapiClient().then(login)
       },
       refreshToken: () => {
-        return this.$getGapiClient().then(refreshToken)
+        return this.getGapiClient().then(refreshToken)
       },
       logout: () => {
-        return this.$getGapiClient().then(logout)
+        return this.getGapiClient().then(logout)
       },
       isAuthenticated,
       getUserData
