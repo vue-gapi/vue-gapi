@@ -91,7 +91,6 @@ export default class GoogleAuthService {
   }
 
   /**
-   *
    * Login method takes in the gapi event and sets the settions
    *
    * @name login
@@ -113,7 +112,6 @@ export default class GoogleAuthService {
   }
 
   /**
-   *
    * refreshToken method takes in the gapi event and allows calling of a refreshtoken
    *
    * @name refreshToken
@@ -140,7 +138,6 @@ export default class GoogleAuthService {
   }
 
   /**
-   *
    * Logout the google user and clear all access and localStroage
    *
    * @name logout
@@ -162,7 +159,6 @@ export default class GoogleAuthService {
   }
 
   /**
-   *
    * Set the session of the gapi user
    *
    * @name setSession
@@ -201,7 +197,6 @@ export default class GoogleAuthService {
   }
 
   /**
-   *
    * Will determine if the login token is valid using google methods
    *
    * @name isSignedIn
@@ -218,7 +213,6 @@ export default class GoogleAuthService {
   }
 
   /**
-   *
    * Gets the user data from local storage
    *
    * @name getUserData
