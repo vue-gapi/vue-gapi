@@ -1,10 +1,13 @@
 /**
+ * Array of objects that will contain the storage key items
+ * This will be used to set and remove anything from localStroage
+ * 
  * @name storageKey
  *
  * @since 0.0.10
  *
- * @param { object } authResult
- * @param { object } profile
+ * @param { object } authResult   the gapi authResult
+ * @param { object } profile      the profile of the google user
  *
  * @returns array of objects that will be used with localStorage to set and remove key value pairs
  *

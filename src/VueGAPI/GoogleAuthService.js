@@ -18,7 +18,19 @@ export default class GoogleAuthService {
   _expiresAt (authResult) {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
   }
-
+  /**
+   * Sets all items of the user profile in loaclStorage
+   * See storageKeys method for array of objects
+   * 
+   * @name _setStorage
+   * 
+   * @access Private
+   * 
+   * @param { object } authResult
+   * @param { object } profile
+   * 
+   * @fires localStorage.setItem
+   */
   _setStorage (authResult, profile = null) {
     const storageKeys = storageKey(authResult, profile)
     storageKeys.forEach((value) => {
@@ -36,6 +48,8 @@ export default class GoogleAuthService {
     storageKeys.forEach((value) => {
       localStorage.removeItem(`gapi.${value.name}`)
     })
+    // Needs to be placed into the storageKeys array after binding issue resolved.
+    localStorage.removeItem('gapi.expires_at')
   }
 
   login (event) {
