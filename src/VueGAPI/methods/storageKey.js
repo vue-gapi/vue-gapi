@@ -1,7 +1,7 @@
 /**
  * Array of objects that will contain the storage key items
  * This will be used to set and remove anything from localStroage
- * 
+ *
  * @name storageKey
  *
  * @since 0.0.10
