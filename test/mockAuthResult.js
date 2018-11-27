@@ -1,6 +1,8 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 
 /**
+ * Will hold the mock auth result from google
+ *
  * @name mockAuthResult
  *
  * @param { number } expires_in
