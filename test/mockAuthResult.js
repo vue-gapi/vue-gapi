@@ -17,11 +17,11 @@ export const mockAuthResult = {
   // eslint-disable-next-line
   expires_in: 123456,
   // eslint-disable-next-line
-  access_token: '',
+  access_token: 'holder',
   // eslint-disable-next-line
-  id_token: '',
+  id_token: 'holder',
   // eslint-disable-next-line
-  scope: '',
+  scope: 'holder',
   // eslint-disable-next-line
   first_issued_at: 1,
   // eslint-disable-next-line
