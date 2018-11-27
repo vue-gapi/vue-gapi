@@ -2,7 +2,6 @@
 import { mockAuthResult } from './mockAuthResult'
 
 it('matches if the actual obejct does not change', () => {
-  
   expect(mockAuthResult).toEqual(
     expect.objectContaining({
         // eslint-disable-next-line
