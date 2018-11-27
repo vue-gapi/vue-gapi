@@ -1,20 +1,17 @@
 /* eslint-env node, jest */
 // https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse
 import AuthService from '../src/VueGAPI/GoogleAuthService'
-// import { mockAuthService } from './mockAuthResult'
-jest.mock('../src/VueGAPI/GoogleAuthService')
+import { mockAuthResult } from './mockAuthResult'
 
-beforeEach(() => {
-  // Clear all instances and calls to constructor and all methods:
-  AuthService.mockClear()
-})
-
-it('Can be mounted', () => {
-  // eslint-disable-next-line
+it('Ensure we have class', () => {
   const newService = new AuthService()
-  expect(AuthService).toHaveBeenCalledTimes(1)
+  expect(newService).toBeInstanceOf(AuthService)
 })
 
-it('Should not be mounted', () => {
-  expect(AuthService).not.toHaveBeenCalled()
+it('_expiresAt returns string of numbers only', () => {
+  const newService = new AuthService()
+  const res = newService._expiresAt(mockAuthResult)
+  expect(res).toEqual(
+    expect.stringMatching(/^[0-9]*$/)
+  )
 })
