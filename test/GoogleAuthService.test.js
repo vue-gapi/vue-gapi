@@ -5,7 +5,12 @@ jest.mock('../src/VueGAPI/GoogleAuthService')
 
 /*
 const mockAuthResult = {
-  expires_in: 123456
+  expires_in: 123456,
+  access_token: '',
+  id_token: '',
+  scope: '',
+  first_issued_at: 1,
+  expires_at: 1
 }
 */
 
