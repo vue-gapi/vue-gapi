@@ -1,18 +1,8 @@
 /* eslint-env node, jest */
 // https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse
 import AuthService from '../src/VueGAPI/GoogleAuthService'
+// import { mockAuthService } from './mockAuthResult'
 jest.mock('../src/VueGAPI/GoogleAuthService')
-
-/*
-const mockAuthResult = {
-  expires_in: 123456,
-  access_token: '',
-  id_token: '',
-  scope: '',
-  first_issued_at: 1,
-  expires_at: 1
-}
-*/
 
 beforeEach(() => {
   // Clear all instances and calls to constructor and all methods:
