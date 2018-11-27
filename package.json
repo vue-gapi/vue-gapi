@@ -23,6 +23,7 @@
     "lint:staged": "lint-staged",
     "pretest": "yon run lint",
     "test": "cross-env BABEL_ENV=test karma start test/karma.conf.js --single-run",
+    "testing": "jest",
     "dev": "webpack-dashboard -- webpack-dev-server --config build/webpack.config.dev.js --open",
     "dev:coverage": "cross-env BABEL_ENV=test karma start test/karma.conf.js",
     "prepublish": "yon run build"
@@ -60,6 +61,7 @@
     "eslint-plugin-vue": "^2.0.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "html-webpack-plugin": "^2.28.0",
+    "jest": "^23.6.0",
     "karma": "^1.7.0",
     "karma-chai-dom": "^1.1.0",
     "karma-chrome-launcher": "^2.1.0",

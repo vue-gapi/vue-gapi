@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.0.10
+ * vue-gapi v0.1.0
  * (c) 2018 CedricPoilly
  * Released under the MIT License.
  */
@@ -31,12 +31,46 @@ var GoogleAuthService = function GoogleAuthService () {
   this.setSession = this.setSession.bind(this);
   this.logout = this.logout.bind(this);
   this.isAuthenticated = this.isAuthenticated.bind(this);
+  this.isSignedIn = this.isSignedIn.bind(this);
 };
 
-// NOTE: handle expiresAt method, this is private
+/**
+ * Private method that takes in an authResult and returns when the authResult expires
+ *
+ * @name _expiresAt
+ *
+ * @since 0.0.10
+ *
+ * @access Private
+ *
+ * @param { object } authResult
+ * authResult object from google
+ *
+ * @returns
+ * a string of when the google auth token expires
+ */
+
 GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
   return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
 };
+
+/**
+ *Private method that takes in an authResult and a user Profile setting the values in locaStroage
+ *
+ * @name _setStorage
+ *
+ * @since 0.0.10
+ *
+ * @access Private
+ *
+ * @param { object } authResult
+ *authResult object from google
+ * @param { object } profile
+ *Default is null and if not passed it will be null this is the google user profile object
+ *
+ * @fires localStorage.setItem
+ *
+ */
 
 GoogleAuthService.prototype._setStorage = function _setStorage (authResult, profile) {
     if ( profile === void 0 ) profile = null;
@@ -55,6 +89,19 @@ GoogleAuthService.prototype._setStorage = function _setStorage (authResult, prof
   }
 };
 
+/**
+ *Private method used to remove all gapi named spaced item from localStorage
+ *
+ * @name _clearStorage
+ *
+ * @since 0.0.10
+ *
+ * @access Private
+ *
+ * @fires localStorage.removeItem
+ *
+ */
+
 GoogleAuthService.prototype._clearStorage = function _clearStorage () {
   localStorage.removeItem('gapi.access_token');
   localStorage.removeItem('gapi.id_token');
@@ -67,10 +114,44 @@ GoogleAuthService.prototype._clearStorage = function _clearStorage () {
   localStorage.removeItem('gapi.email');
 };
 
+/**
+ * Login method takes in the gapi event and sets the settions
+ *
+ * @name login
+ *
+ * @since 0.0.10
+ *
+ * @see setSession
+ *
+ * @param { object } event
+ *This might not be needed and in the future could be removed
+ *
+ * @fires this.setSession
+ *
+ */
+
 GoogleAuthService.prototype.login = function login (event) {
   return this.authInstance.signIn()
     .then(this.setSession)
 };
+
+/**
+ * refreshToken method takes in the gapi event and allows calling of a refreshtoken
+ *
+ * @name refreshToken
+ *
+ * @since 0.0.10
+ *
+ * @see _setStorage
+ *Private method that takes in the authResult object
+ * @see setSession
+ *Repies on an authInstance to be set by the setSession
+ * @param { object } event
+ *NOTE: This might not be needed and could be removed in the future.
+ *
+ * @fires _setStorage
+ *
+ */
 
 GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
     var this$1 = this;
@@ -82,11 +163,40 @@ GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
     });
 };
 
+/**
+ * Logout the google user and clear all access and localStroage
+ *
+ * @name logout
+ *
+ * @since 0.0.10
+ *
+ * @param { object } event
+ *
+ * @fires _clearStorage
+ * @fires authInstance.signOut
+ * @fires authenticated = false
+ *
+ */
+
 GoogleAuthService.prototype.logout = function logout (event) {
   this.authInstance.signOut(function (response) { return console.log(response); });
   this._clearStorage();
   this.authenticated = false;
 };
+
+/**
+ * Set the session of the gapi user
+ *
+ * @name setSession
+ *
+ * @since 0.0.10
+ *
+ * @param { object } response
+ *
+ * @fires _setStorage
+ * @fires authenticated = true
+ *
+ */
 
 GoogleAuthService.prototype.setSession = function setSession (response) {
   var profile = this.authInstance.currentUser.get().getBasicProfile();
@@ -96,10 +206,47 @@ GoogleAuthService.prototype.setSession = function setSession (response) {
   this.authenticated = true;
 };
 
+/**
+ * Will determine if the login token is valid using localStorage
+ *
+ * @name isAuthenticated
+ *
+ * @since 0.0.10
+ *
+ * @return Boolean
+ *
+ */
+
 GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
   var expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'));
   return new Date().getTime() < expiresAt
 };
+
+/**
+ * Will determine if the login token is valid using google methods
+ *
+ * @name isSignedIn
+ *
+ * @since 0.0.10
+ *
+ * @return Boolean
+ *
+ */
+
+GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
+  var GoogleUser = this.authInstance.currentUser.get();
+  return GoogleUser.isSignedIn.get()
+};
+
+/**
+ * Gets the user data from local storage
+ *
+ * @name getUserData
+ *
+ * @since 0.0.10
+ *
+ * @return object with user data from localStorage
+ */
 
 GoogleAuthService.prototype.getUserData = function getUserData () {
   return {
@@ -115,6 +262,7 @@ var logout = googleAuthService.logout;
 var isAuthenticated = googleAuthService.isAuthenticated;
 var getUserData = googleAuthService.getUserData;
 var refreshToken = googleAuthService.refreshToken;
+var isSignedIn = googleAuthService.isSignedIn;
 
 var VueGAPI = {
   install: function (Vue, clientConfig) {
@@ -171,6 +319,8 @@ var VueGAPI = {
 
     Vue.prototype.$isAuthenticated = isAuthenticated;
 
+    Vue.prototype.$isSignedIn = isSignedIn;
+
     Vue.prototype.$getUserData = getUserData;
   }
 };
@@ -184,6 +334,6 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.0.10';
+var version = '0.1.0';
 
 export { version };export default plugin;
