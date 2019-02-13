@@ -40,6 +40,14 @@ it('_setStorage localstorage is namespaced expires_at', () => {
   )
 })
 
+it('_setStorage ensure no profile set returns no profile features', () => {
+  const newService = new AuthService()
+  newService._setStorage(mockAuthResult)
+  expect(localStorage.getItem('gapi.id')).toEqual(
+    null
+  )
+})
+
 it('_setStorage localstorage is namespaced profile id', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
