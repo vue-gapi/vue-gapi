@@ -12,7 +12,7 @@ export default {
       gapiPromise.then(_ => {
         const gapi = window.gapi
         if (!gapi) {
-          console.error('Failed to load GAPI!')
+          console.error('Failed to load gapi!')
           return
         }
         if (!gapi.auth) {
@@ -23,6 +23,13 @@ export default {
                 console.info('gapi client initialised.')
                 googleAuthService.authInstance = gapi.auth2.getAuthInstance()
                 resolve(gapi)
+              })
+              .catch(err => {
+                if (err.error) {
+                  const error = err.error
+                  console.error(
+                    'Failed to initialize gapi: %s (status=%s, code=%s)', error.message, error.status, error.code, err)
+                }
               })
           })
         } else {
