@@ -36,7 +36,7 @@ Vue.use(VueGAPI, apiConfig);
 ```
 
 Exposes the `$getGapiClient` on the Vue instance that returns a promise containing the initialised instance of the Google API client.
-See full list of options for apiConfig object (here)[https://developers.google.com/identity/sign-in/web/reference] under gapi.auth2.SignInOptions
+See full list of options for apiConfig object [here](https://developers.google.com/identity/sign-in/web/reference) under gapi.auth2.SignInOptions
 
 ```html
 <script>
