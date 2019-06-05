@@ -43,7 +43,7 @@ export default {
         if (
           Vue.gapiLoadClientPromise &&
           Vue.gapiLoadClientPromise.status === 0
-        ) {
+        ) { // MAU DEBUGGARE PER SICUREZZA
           // promise is being executed
           resolve(Vue.gapiLoadClientPromise)
         } else {
@@ -52,16 +52,28 @@ export default {
       })
     }
 
-    Vue.prototype.$login = () => {
-      return Vue.prototype.$getGapiClient().then(login)
+    Vue.prototype.$login = (res) => {
+      Vue.prototype.$getGapiClient()
+        .then(() => {
+          login()
+            .then(() => {
+              res()
+            })
+        })
     }
 
     Vue.prototype.$refreshToken = () => {
       return Vue.prototype.$getGapiClient().then(refreshToken)
     }
 
-    Vue.prototype.$logout = () => {
-      return Vue.prototype.$getGapiClient().then(logout)
+    Vue.prototype.$logout = (res) => {
+      Vue.prototype.$getGapiClient()
+        .then(() => {
+          logout()
+            .then(() => {
+              res()
+            })
+        })
     }
 
     Vue.prototype.$isAuthenticated = isAuthenticated

@@ -91,7 +91,7 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Login method takes in the gapi event and sets the settions
+   * Login method takes in the gapi event and sets the sessions
    *
    * @name login
    *
@@ -108,8 +108,14 @@ export default class GoogleAuthService {
 
   login (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    return this.authInstance.signIn()
-      .then(this.setSession)
+    const this$1 = this
+    return new Promise((res, rej) => {
+      this$1.authInstance.signIn()
+        .then(function () {
+          this$1.setSession
+          res()
+        })
+    })
   }
 
   /**
@@ -132,10 +138,11 @@ export default class GoogleAuthService {
 
   refreshToken (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
+    var this$1 = this
     const GoogleUser = this.authInstance.currentUser.get()
     GoogleUser.reloadAuthResponse()
       .then((authResult) => {
-        this._setStorage(authResult)
+        this$1._setStorage(authResult)
       })
   }
 
@@ -156,9 +163,15 @@ export default class GoogleAuthService {
 
   logout (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    this.authInstance.signOut(response => console.log(response))
-    this._clearStorage()
-    this.authenticated = false
+    const this$1 = this
+    return new Promise((res, rej) => {
+      this$1.authInstance.signOut()
+        .then(function () {
+          this$1._clearStorage()
+          this$1.authenticated = false
+          res()
+        })
+    })
   }
 
   /**
@@ -211,7 +224,7 @@ export default class GoogleAuthService {
 
   isSignedIn () {
     const GoogleUser = this.authInstance.currentUser.get()
-    return GoogleUser.isSignedIn.get()
+    return GoogleUser.isSignedIn()
   }
 
   /**
