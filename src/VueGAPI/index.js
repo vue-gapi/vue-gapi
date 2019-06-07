@@ -56,9 +56,9 @@ export default {
       Vue.prototype.$getGapiClient()
         .then(() => {
           login()
-            .then(() => {
-              res()
-            })
+          .then(() => {
+            res()
+          })
         })
     }
 

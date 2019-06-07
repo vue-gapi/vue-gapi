@@ -132,10 +132,10 @@ GoogleAuthService.prototype._clearStorage = function _clearStorage () {
 
 GoogleAuthService.prototype.login = function login (event) {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
-  var this$1=this;
-  return new Promise ( function (res,rej) {
+  var this$1 = this;
+  return new Promise(function (res, rej) {
     this$1.authInstance.signIn()
-      .then( function () {
+      .then(function () {
         this$1.setSession;
         res();
       });
@@ -187,10 +187,10 @@ GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
 
 GoogleAuthService.prototype.logout = function logout (event) {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
-  var this$1=this;
-  return new Promise ( function (res,rej) {
+  var this$1 = this;
+  return new Promise(function (res, rej) {
     this$1.authInstance.signOut()
-      .then( function () {
+      .then(function () {
         this$1._clearStorage();
         this$1.authenticated = false;
         res();
@@ -325,9 +325,9 @@ var VueGAPI = {
       })
     };
 
-    Vue.prototype.$login = function () {
+    Vue.prototype.$login = function (res) {
       Vue.prototype.$getGapiClient()
-        .then( function () {
+        .then(function () {
           login()
             .then(function () {
               res();
@@ -339,11 +339,11 @@ var VueGAPI = {
       return Vue.prototype.$getGapiClient().then(refreshToken)
     };
 
-    Vue.prototype.$logout = function () {
+    Vue.prototype.$logout = function (res) {
       Vue.prototype.$getGapiClient()
-        .then( function () {
+        .then(function () {
           logout()
-            .then( function () {
+            .then(function () {
               res();
             });
         });
