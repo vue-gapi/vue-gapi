@@ -101,7 +101,7 @@ export default class GoogleAuthService {
     const GoogleUser = this.authInstance.currentUser.get()
     return GoogleUser.isSignedIn()
   }
-  
+
   getUserData () {
     return {
       id: localStorage.getItem('gapi.id'),
