@@ -1,7 +1,7 @@
-import VueGAPI from './VueGAPI'
+import VueGapi from './VueGapi'
 
 function plugin (Vue, clientConfig) {
-  Vue.use(VueGAPI, clientConfig)
+  Vue.use(VueGapi, clientConfig)
 }
 
 // Install by default if using the script tag

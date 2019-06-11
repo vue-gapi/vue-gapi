@@ -1,5 +1,5 @@
 /* eslint-env node, jest */
-import AuthService from '../src/VueGAPI/GoogleAuthService'
+import AuthService from '../src/VueGapi/GoogleAuthService'
 import { mockAuthResult } from './mockAuthResult'
 import LocalStorage from './mockLocalStorage'
 import { mockProfile } from './mockProfile'

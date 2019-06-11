@@ -156,7 +156,7 @@ var getUserData = googleAuthService.getUserData;
 var refreshToken = googleAuthService.refreshToken;
 var isSignedIn = googleAuthService.isSignedIn;
 
-var VueGAPI = {
+var VueGapi = {
   install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null;
 
@@ -290,7 +290,7 @@ var VueGAPI = {
 };
 
 function plugin (Vue, clientConfig) {
-  Vue.use(VueGAPI, clientConfig);
+  Vue.use(VueGapi, clientConfig);
 }
 
 // Install by default if using the script tag
