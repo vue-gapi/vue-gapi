@@ -56,8 +56,11 @@ export default {
       grantOfflineAccess: () => {
         return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
       },
-      login: () => {
-        return Vue.prototype.$gapi.getGapiClient().then(login)
+      login: (res) => {
+        return Vue.prototype.$gapi.getGapiClient()
+                  .then(() =>{
+                    login().then(()=>{res()})
+                  })
       },
       refreshToken: () => {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
