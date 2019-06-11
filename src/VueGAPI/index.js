@@ -58,8 +58,8 @@ export default {
       },
       login: (res) => {
         return Vue.prototype.$gapi.getGapiClient()
-                  .then(() =>{
-                    login().then(()=>{res()})
+                  .then(() => {
+                    login().then(() => { res() })
                   })
       },
       refreshToken: () => {
