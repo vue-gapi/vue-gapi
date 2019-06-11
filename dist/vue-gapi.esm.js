@@ -96,8 +96,14 @@ GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess (ev
 
 GoogleAuthService.prototype.login = function login (event) {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
-  return this.authInstance.signIn()
-    .then(this._setSession.bind(this))
+  var this$1 = this;
+  return new Promise(function (res, rej) {
+    this$1.authInstance.signIn()
+      .then(function () {
+        this$1.setSession;
+        res();
+      });
+  })
 };
 
 GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
@@ -113,9 +119,15 @@ GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
 
 GoogleAuthService.prototype.logout = function logout (event) {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
-  this.authInstance.signOut(function (response) { return console.log(response); });
-  this._clearStorage();
-  this.authenticated = false;
+  var this$1 = this;
+  return new Promise(function (res, rej) {
+    this$1.authInstance.signOut()
+      .then(function () {
+        this$1._clearStorage();
+        this$1.authenticated = false;
+        res();
+      });
+  })
 };
 
 GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
@@ -204,8 +216,11 @@ var VueGapi = {
       grantOfflineAccess: function () {
         return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
       },
-      login: function () {
-        return Vue.prototype.$gapi.getGapiClient().then(login)
+      login: function (res) {
+        return Vue.prototype.$gapi.getGapiClient()
+                  .then(function () {
+                    login().then(function () { res(); });
+                  })
       },
       refreshToken: function () {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
