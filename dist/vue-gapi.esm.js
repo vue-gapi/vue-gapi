@@ -34,6 +34,7 @@ var GoogleAuthService = function GoogleAuthService () {
   this.logout = this.logout.bind(this);
   this.isAuthenticated = this.isAuthenticated.bind(this);
   this.isSignedIn = this.isSignedIn.bind(this);
+  this.listenUserSignIn = this.listenUserSignIn.bind(this);
 };
 
 GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
@@ -136,8 +137,13 @@ GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
 };
 
 GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
+  if (!this.authInstance) { throw new Error('gapi not initialized') }
   var GoogleUser = this.authInstance.currentUser.get();
   return GoogleUser.isSignedIn()
+};
+
+GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callback) {
+  this.authInstance.isSignedIn.listen(callback);
 };
 
 GoogleAuthService.prototype.getUserData = function getUserData () {
@@ -163,6 +169,7 @@ var isAuthenticated = googleAuthService.isAuthenticated;
 var getUserData = googleAuthService.getUserData;
 var refreshToken = googleAuthService.refreshToken;
 var isSignedIn = googleAuthService.isSignedIn;
+var listenUserSignIn = googleAuthService.listenUserSignIn;
 
 var VueGapi = {
   install: function (Vue, clientConfig) {
@@ -182,6 +189,7 @@ var VueGapi = {
               .then(function () {
                 console.info('gapi client initialised.');
                 googleAuthService.authInstance = gapi.auth2.getAuthInstance();
+                Vue.gapiLoadClientPromise.status = 0;
                 resolve(gapi);
               })
               .catch(function (err) {
@@ -225,12 +233,28 @@ var VueGapi = {
       refreshToken: function () {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
-      logout: function () {
-        return Vue.prototype.$gapi.getGapiClient().then(logout)
+      logout: function (res) {
+        return Vue.prototype.$gapi.getGapiClient()
+                  .then(function () {
+                    logout().then(function (){ res(); });
+                  })
+      },
+      listenUserSignIn: function (callback) {
+        return Vue.prototype.$gapi.getGapiClient()
+                  .then(function () {
+                    listenUserSignIn(callback);
+                  })
+      },
+
+      isSignedIn: function () {
+        return Vue.prototype.$gapi.getGapiClient().then(isSignedIn)
       },
       isAuthenticated: isAuthenticated,
-      isSignedIn: isSignedIn,
       getUserData: getUserData
+    };
+
+    Vue.prototype.isGapiLoaded = function () {
+      return (Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0)
     };
 
     var deprectedMsg = function (oldInstanceMethod, newInstanceMethod) { return ("The " + oldInstanceMethod + " Vue instance method is deprecated and will be removed in a future release. Please use " + newInstanceMethod + " instead."); };

@@ -12,6 +12,7 @@ export default class GoogleAuthService {
     this.logout = this.logout.bind(this)
     this.isAuthenticated = this.isAuthenticated.bind(this)
     this.isSignedIn = this.isSignedIn.bind(this)
+    this.listenUserSignIn = this.listenUserSignIn.bind(this)
   }
 
   _expiresAt (authResult) {
@@ -110,8 +111,13 @@ export default class GoogleAuthService {
   }
 
   isSignedIn () {
+    if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
     return GoogleUser.isSignedIn()
+  }
+
+  listenUserSignIn (callback) {
+    this.authInstance.isSignedIn.listen(callback)
   }
 
   getUserData () {

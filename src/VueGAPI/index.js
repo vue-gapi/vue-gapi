@@ -2,7 +2,7 @@ import { gapiPromise } from './gapi'
 import GoogleAuthService from './GoogleAuthService'
 
 const googleAuthService = new GoogleAuthService()
-const { grantOfflineAccess, getOfflineAccessCode, login, logout, isAuthenticated, getUserData, refreshToken, isSignedIn } = googleAuthService
+const { grantOfflineAccess, getOfflineAccessCode, login, logout, isAuthenticated, getUserData, refreshToken, isSignedIn, listenUserSignIn } = googleAuthService
 
 export default {
   install: function (Vue, clientConfig) {
@@ -22,6 +22,7 @@ export default {
               .then(() => {
                 console.info('gapi client initialised.')
                 googleAuthService.authInstance = gapi.auth2.getAuthInstance()
+                Vue.gapiLoadClientPromise.status = 0
                 resolve(gapi)
               })
               .catch(err => {
@@ -65,12 +66,28 @@ export default {
       refreshToken: () => {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
-      logout: () => {
-        return Vue.prototype.$gapi.getGapiClient().then(logout)
+      logout: (res) => {
+        return Vue.prototype.$gapi.getGapiClient()
+                  .then(() =>{
+                    logout().then(()=>{ res() })
+                  })             
+      },
+      listenUserSignIn: (callback) => {
+        return Vue.prototype.$gapi.getGapiClient()
+                  .then(() =>{
+                    listenUserSignIn(callback)
+                  })
+      },
+
+      isSignedIn: () => {
+        return Vue.prototype.$gapi.getGapiClient().then(isSignedIn)
       },
       isAuthenticated,
-      isSignedIn,
       getUserData
+    }
+
+    Vue.prototype.isGapiLoaded = () => {
+      return (Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0)
     }
 
     const deprectedMsg = (oldInstanceMethod, newInstanceMethod) =>

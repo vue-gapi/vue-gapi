@@ -5,7 +5,7 @@
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
   "main": "dist/vue-gapi.common.js",
   "module": "dist/vue-gapi.esm.js",
-  "browser": "dist/vue-gapi.js",
+  "browser": "dist/vue-gapi.common.js",
   "unpkg": "dist/vue-gapi.js",
   "style": "dist/vue-gapi.css",
   "files": [
