@@ -100,8 +100,8 @@ GoogleAuthService.prototype.login = function login (event) {
   var this$1 = this;
   return new Promise(function (res, rej) {
     this$1.authInstance.signIn()
-      .then(function () {
-        this$1.setSession;
+      .then(function (response) {
+        this$1._setSession(response);
         res();
       });
   })
@@ -143,7 +143,14 @@ GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
 };
 
 GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callback) {
+  if (!this.authInstance) { throw new Error('gapi not initialized') }
   this.authInstance.isSignedIn.listen(callback);
+  if (this.authInstance.currentUser.get().isSignedIn()){
+    return this.getUserData()
+  }
+  else{
+    return false
+  }
 };
 
 GoogleAuthService.prototype.getUserData = function getUserData () {
@@ -176,7 +183,7 @@ var VueGapi = {
     Vue.gapiLoadClientPromise = null;
 
     var resolveAuth2Client = function (resolve, reject) {
-      gapiPromise.then(function (_) {
+      gapiPromise.then( function (_) {
         var gapi = window.gapi;
         if (!gapi) {
           console.error('Failed to load gapi!');
@@ -236,13 +243,13 @@ var VueGapi = {
       logout: function (res) {
         return Vue.prototype.$gapi.getGapiClient()
                   .then(function () {
-                    logout().then(function (){ res(); });
+                    logout().then(function () { res(); });
                   })
       },
       listenUserSignIn: function (callback) {
         return Vue.prototype.$gapi.getGapiClient()
                   .then(function () {
-                    listenUserSignIn(callback);
+                    return listenUserSignIn(callback)
                   })
       },
 

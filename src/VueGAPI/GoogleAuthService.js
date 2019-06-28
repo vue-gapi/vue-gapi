@@ -76,8 +76,8 @@ export default class GoogleAuthService {
     const this$1 = this
     return new Promise((res, rej) => {
       this$1.authInstance.signIn()
-        .then(function () {
-          this$1.setSession
+        .then(function (response) {
+          this$1._setSession(response)
           res()
         })
     })
@@ -117,7 +117,14 @@ export default class GoogleAuthService {
   }
 
   listenUserSignIn (callback) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
     this.authInstance.isSignedIn.listen(callback)
+    if (this.authInstance.currentUser.get().isSignedIn()){
+      return this.getUserData()
+    }
+    else{
+      return false
+    }
   }
 
   getUserData () {

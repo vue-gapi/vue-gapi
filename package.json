@@ -58,6 +58,7 @@
     "css-loader": "^0.28.11",
     "eslint": "^3.19.0",
     "eslint-config-vue": "^2.0.0",
+    "eslint-plugin-html": "^6.0.0",
     "eslint-plugin-vue": "^2.0.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "html-webpack-plugin": "^2.28.0",
@@ -75,6 +76,8 @@
     "mkdirp": "^0.5.1",
     "mocha": "^3.3.0",
     "mocha-css": "^1.0.1",
+    "parse": "^2.1.0",
+    "parse5": "^2.1.0",
     "postcss": "^6.0.23",
     "postcss-cssnext": "^2.10.0",
     "pre-commit": "^1.2.0",
@@ -135,8 +138,5 @@
     "type": "git",
     "url": "git+https://github.com/CedricPoilly/vue-gapi.git"
   },
-  "license": {
-    "type": "MIT",
-    "url": "http://www.opensource.org/licenses/mit-license.php"
-  }
+  "license": "UNLICENSED"
 }

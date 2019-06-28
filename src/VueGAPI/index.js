@@ -9,7 +9,7 @@ export default {
     Vue.gapiLoadClientPromise = null
 
     const resolveAuth2Client = (resolve, reject) => {
-      gapiPromise.then(_ => {
+      gapiPromise.then( _ => {
         const gapi = window.gapi
         if (!gapi) {
           console.error('Failed to load gapi!')
@@ -68,14 +68,14 @@ export default {
       },
       logout: (res) => {
         return Vue.prototype.$gapi.getGapiClient()
-                  .then(() =>{
-                    logout().then(()=>{ res() })
-                  })             
+                  .then(() => {
+                    logout().then(() => { res() })
+                  })
       },
       listenUserSignIn: (callback) => {
         return Vue.prototype.$gapi.getGapiClient()
-                  .then(() =>{
-                    listenUserSignIn(callback)
+                  .then(() => {
+                    return listenUserSignIn(callback)
                   })
       },
 
