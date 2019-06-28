@@ -9,7 +9,7 @@ export default {
     Vue.gapiLoadClientPromise = null
 
     const resolveAuth2Client = (resolve, reject) => {
-      gapiPromise.then( _ => {
+      gapiPromise.then(_ => {
         const gapi = window.gapi
         if (!gapi) {
           console.error('Failed to load gapi!')

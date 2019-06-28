@@ -119,10 +119,9 @@ export default class GoogleAuthService {
   listenUserSignIn (callback) {
     if (!this.authInstance) throw new Error('gapi not initialized')
     this.authInstance.isSignedIn.listen(callback)
-    if (this.authInstance.currentUser.get().isSignedIn()){
+    if (this.authInstance.currentUser.get().isSignedIn()) {
       return this.getUserData()
-    }
-    else{
+    } else {
       return false
     }
   }
