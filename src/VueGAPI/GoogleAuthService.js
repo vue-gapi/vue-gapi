@@ -15,10 +15,42 @@ export default class GoogleAuthService {
     this.listenUserSignIn = this.listenUserSignIn.bind(this)
   }
 
+/**
+   * Private method that takes in an authResult and returns the authResult expiration time
+   *
+   * @name _expiresAt
+   *
+   * @since 0.0.10
+   *
+   * @access Private
+   *
+   * @param { object } authResult
+   *   authResult object from google
+   *
+   * @returns
+   *   a string of when the google auth token expires
+   */
   _expiresAt (authResult) {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
   }
 
+    /**
+   *  Private method that takes in an authResult and a user Profile setting the values in locaStorage
+   *
+   * @name _setStorage
+   *
+   * @since 0.0.10
+   *
+   * @access Private
+   *
+   * @param { object } authResult
+   *  authResult object from google
+   * @param { object } profile
+   *  Default is null and if not passed it will be null this is the google user profile object
+   *
+   * @fires localStorage.setItem
+   *
+   */
   _setStorage (authResult, profile = null) {
     localStorage.setItem('gapi.access_token', authResult.access_token)
     localStorage.setItem('gapi.id_token', authResult.id_token)
@@ -34,6 +66,18 @@ export default class GoogleAuthService {
     }
   }
 
+  /**
+   *  Private method used to remove all gapi named spaced item from localStorage
+   *
+   * @name _clearStorage
+   *
+   * @since 0.0.10
+   *
+   * @access Private
+   *
+   * @fires localStorage.removeItem
+   *
+   */  
   _clearStorage () {
     localStorage.removeItem('gapi.access_token')
     localStorage.removeItem('gapi.id_token')
@@ -105,11 +149,31 @@ export default class GoogleAuthService {
     })
   }
 
+  /**
+   * Will determine if the login token is valid using localStorage
+   *
+   * @name isAuthenticated
+   *
+   * @since 0.0.10
+   *
+   * @return Boolean
+   *
+   */  
   isAuthenticated () {
     const expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'))
     return new Date().getTime() < expiresAt
   }
 
+  /**
+   * Will determine if the login token is valid using google methods
+   *
+   * @name isSignedIn
+   *
+   * @since 0.0.10
+   *
+   * @return Boolean
+   *
+   */  
   isSignedIn () {
     if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
@@ -126,6 +190,15 @@ export default class GoogleAuthService {
     }
   }
 
+  /**
+   * Gets the user data from local storage
+   *
+   * @name getUserData
+   *
+   * @since 0.0.10
+   *
+   * @return object with user data from localStorage
+   */  
   getUserData () {
     return {
       id: localStorage.getItem('gapi.id'),
