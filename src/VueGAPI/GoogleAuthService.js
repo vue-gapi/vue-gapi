@@ -77,7 +77,7 @@ export default class GoogleAuthService {
    *
    * @fires localStorage.removeItem
    *
-   */  
+   */
   _clearStorage () {
     localStorage.removeItem('gapi.access_token')
     localStorage.removeItem('gapi.id_token')
@@ -158,7 +158,7 @@ export default class GoogleAuthService {
    *
    * @return Boolean
    *
-   */  
+   */
   isAuthenticated () {
     const expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'))
     return new Date().getTime() < expiresAt
@@ -173,13 +173,26 @@ export default class GoogleAuthService {
    *
    * @return Boolean
    *
-   */  
+   */
   isSignedIn () {
     if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
     return GoogleUser.isSignedIn()
   }
 
+  /**
+   * Accept the callback to be notified when the authentication status changes. 
+   * Will also determine if the login token is valid using google methods and return UserData or false
+   *
+   * @name listenUserSignIn
+   *
+   * @since 0.0.10
+   * 
+   * @param { function } Callback
+   *   the callback function to be notified of an authentication status change
+   * @return Boolean. False if NOT authenticated, UserData if authenticated
+   *
+   */
   listenUserSignIn (callback) {
     if (!this.authInstance) throw new Error('gapi not initialized')
     this.authInstance.isSignedIn.listen(callback)
@@ -198,7 +211,7 @@ export default class GoogleAuthService {
    * @since 0.0.10
    *
    * @return object with user data from localStorage
-   */  
+   */
   getUserData () {
     return {
       id: localStorage.getItem('gapi.id'),
