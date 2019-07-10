@@ -1,6 +1,6 @@
 /* eslint-env node, jest */
 // https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse
-import AuthService from '../src/VueGAPI/GoogleAuthService'
+import AuthService from '../src/VueGapi/GoogleAuthService'
 import { mockAuthResult } from './mockAuthResult'
 
 it('Ensure we have class', () => {

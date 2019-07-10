@@ -4,16 +4,19 @@ export default class GoogleAuthService {
     this.authenticated = this.isAuthenticated()
     this.authInstance = null
 
+    this.offlineAccessCode = null
+    this.getOfflineAccessCode = this.getOfflineAccessCode.bind(this)
+    this.grantOfflineAccess = this.grantOfflineAccess.bind(this)
     this.login = this.login.bind(this)
     this.refreshToken = this.refreshToken.bind(this)
-    this.setSession = this.setSession.bind(this)
     this.logout = this.logout.bind(this)
     this.isAuthenticated = this.isAuthenticated.bind(this)
     this.isSignedIn = this.isSignedIn.bind(this)
+    this.listenUserSignIn = this.listenUserSignIn.bind(this)
   }
 
-  /**
-   * Private method that takes in an authResult and returns when the authResult expires
+/**
+   * Private method that takes in an authResult and returns the authResult expiration time
    *
    * @name _expiresAt
    *
@@ -27,13 +30,12 @@ export default class GoogleAuthService {
    * @returns
    *   a string of when the google auth token expires
    */
-
   _expiresAt (authResult) {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
   }
 
-  /**
-   *  Private method that takes in an authResult and a user Profile setting the values in locaStroage
+    /**
+   *  Private method that takes in an authResult and a user Profile setting the values in locaStorage
    *
    * @name _setStorage
    *
@@ -49,7 +51,6 @@ export default class GoogleAuthService {
    * @fires localStorage.setItem
    *
    */
-
   _setStorage (authResult, profile = null) {
     localStorage.setItem('gapi.access_token', authResult.access_token)
     localStorage.setItem('gapi.id_token', authResult.id_token)
@@ -77,7 +78,6 @@ export default class GoogleAuthService {
    * @fires localStorage.removeItem
    *
    */
-
   _clearStorage () {
     localStorage.removeItem('gapi.access_token')
     localStorage.removeItem('gapi.id_token')
@@ -90,45 +90,42 @@ export default class GoogleAuthService {
     localStorage.removeItem('gapi.email')
   }
 
-  /**
-   * Login method takes in the gapi event and sets the settions
-   *
-   * @name login
-   *
-   * @since 0.0.10
-   *
-   * @see setSession
-   *
-   * @param { object } event
-   *  This might not be needed and in the future could be removed
-   *
-   * @fires this.setSession
-   *
-   */
+  _setOfflineAccessCode (authResult) {
+    if (authResult.code) {
+      this.offlineAccessCode = authResult.code
+    } else {
+      throw new Error('Offline access code missing from result', authResult)
+    }
+  }
+
+  _setSession (response) {
+    const profile = this.authInstance.currentUser.get().getBasicProfile()
+    const authResult = response.Zi
+    this._setStorage(authResult, profile)
+    this.authenticated = true
+  }
+
+  getOfflineAccessCode () {
+    return this.offlineAccessCode
+  }
+
+  grantOfflineAccess (event) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    return this.authInstance.grantOfflineAccess()
+      .then(this._setOfflineAccessCode.bind(this))
+  }
 
   login (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    return this.authInstance.signIn()
-      .then(this.setSession)
+    const this$1 = this
+    return new Promise((res, rej) => {
+      this$1.authInstance.signIn()
+        .then(function (response) {
+          this$1._setSession(response)
+          res()
+        })
+    })
   }
-
-  /**
-   * refreshToken method takes in the gapi event and allows calling of a refreshtoken
-   *
-   * @name refreshToken
-   *
-   * @since 0.0.10
-   *
-   * @see _setStorage
-   *  Private method that takes in the authResult object
-   * @see setSession
-   *  Repies on an authInstance to be set by the setSession
-   * @param { object } event
-   *  NOTE: This might not be needed and could be removed in the future.
-   *
-   * @fires _setStorage
-   *
-   */
 
   refreshToken (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
@@ -139,47 +136,17 @@ export default class GoogleAuthService {
       })
   }
 
-  /**
-   * Logout the google user and clear all access and localStroage
-   *
-   * @name logout
-   *
-   * @since 0.0.10
-   *
-   * @param { object } event
-   *
-   * @fires _clearStorage
-   * @fires authInstance.signOut
-   * @fires authenticated = false
-   *
-   */
-
   logout (event) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    this.authInstance.signOut(response => console.log(response))
-    this._clearStorage()
-    this.authenticated = false
-  }
-
-  /**
-   * Set the session of the gapi user
-   *
-   * @name setSession
-   *
-   * @since 0.0.10
-   *
-   * @param { object } response
-   *
-   * @fires _setStorage
-   * @fires authenticated = true
-   *
-   */
-
-  setSession (response) {
-    const profile = this.authInstance.currentUser.get().getBasicProfile()
-    const authResult = response.Zi
-    this._setStorage(authResult, profile)
-    this.authenticated = true
+    const this$1 = this
+    return new Promise((res, rej) => {
+      this$1.authInstance.signOut()
+        .then(function () {
+          this$1._clearStorage()
+          this$1.authenticated = false
+          res()
+        })
+    })
   }
 
   /**
@@ -192,7 +159,6 @@ export default class GoogleAuthService {
    * @return Boolean
    *
    */
-
   isAuthenticated () {
     const expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'))
     return new Date().getTime() < expiresAt
@@ -208,10 +174,33 @@ export default class GoogleAuthService {
    * @return Boolean
    *
    */
-
   isSignedIn () {
+    if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
-    return GoogleUser.isSignedIn.get()
+    return GoogleUser.isSignedIn()
+  }
+
+  /**
+   * Accept the callback to be notified when the authentication status changes.
+   * Will also determine if the login token is valid using google methods and return UserData or false
+   *
+   * @name listenUserSignIn
+   *
+   * @since 0.0.10
+   *
+   * @param { function } Callback
+   *   the callback function to be notified of an authentication status change
+   * @return Boolean. False if NOT authenticated, UserData if authenticated
+   *
+   */
+  listenUserSignIn (callback) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    this.authInstance.isSignedIn.listen(callback)
+    if (this.authInstance.currentUser.get().isSignedIn()) {
+      return this.getUserData()
+    } else {
+      return false
+    }
   }
 
   /**
@@ -223,7 +212,6 @@ export default class GoogleAuthService {
    *
    * @return object with user data from localStorage
    */
-
   getUserData () {
     return {
       id: localStorage.getItem('gapi.id'),
