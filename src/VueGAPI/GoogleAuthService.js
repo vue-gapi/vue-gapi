@@ -181,13 +181,13 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Accept the callback to be notified when the authentication status changes. 
+   * Accept the callback to be notified when the authentication status changes.
    * Will also determine if the login token is valid using google methods and return UserData or false
    *
    * @name listenUserSignIn
    *
    * @since 0.0.10
-   * 
+   *
    * @param { function } Callback
    *   the callback function to be notified of an authentication status change
    * @return Boolean. False if NOT authenticated, UserData if authenticated

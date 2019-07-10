@@ -43,10 +43,42 @@ var GoogleAuthService = function GoogleAuthService () {
   this.listenUserSignIn = this.listenUserSignIn.bind(this);
 };
 
+/**
+ * Private method that takes in an authResult and returns the authResult expiration time
+ *
+ * @name _expiresAt
+ *
+ * @since 0.0.10
+ *
+ * @access Private
+ *
+ * @param { object } authResult
+ * authResult object from google
+ *
+ * @returns
+ * a string of when the google auth token expires
+ */
 GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
   return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
 };
 
+  /**
+ *Private method that takes in an authResult and a user Profile setting the values in locaStorage
+ *
+ * @name _setStorage
+ *
+ * @since 0.0.10
+ *
+ * @access Private
+ *
+ * @param { object } authResult
+ *authResult object from google
+ * @param { object } profile
+ *Default is null and if not passed it will be null this is the google user profile object
+ *
+ * @fires localStorage.setItem
+ *
+ */
 GoogleAuthService.prototype._setStorage = function _setStorage (authResult, profile) {
     if ( profile === void 0 ) profile = null;
 
@@ -64,6 +96,18 @@ GoogleAuthService.prototype._setStorage = function _setStorage (authResult, prof
   }
 };
 
+/**
+ *Private method used to remove all gapi named spaced item from localStorage
+ *
+ * @name _clearStorage
+ *
+ * @since 0.0.10
+ *
+ * @access Private
+ *
+ * @fires localStorage.removeItem
+ *
+ */
 GoogleAuthService.prototype._clearStorage = function _clearStorage () {
   localStorage.removeItem('gapi.access_token');
   localStorage.removeItem('gapi.id_token');
@@ -137,28 +181,69 @@ GoogleAuthService.prototype.logout = function logout (event) {
   })
 };
 
+/**
+ * Will determine if the login token is valid using localStorage
+ *
+ * @name isAuthenticated
+ *
+ * @since 0.0.10
+ *
+ * @return Boolean
+ *
+ */
 GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
   var expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'));
   return new Date().getTime() < expiresAt
 };
 
+/**
+ * Will determine if the login token is valid using google methods
+ *
+ * @name isSignedIn
+ *
+ * @since 0.0.10
+ *
+ * @return Boolean
+ *
+ */
 GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
   var GoogleUser = this.authInstance.currentUser.get();
   return GoogleUser.isSignedIn()
 };
 
+/**
+ * Accept the callback to be notified when the authentication status changes.
+ * Will also determine if the login token is valid using google methods and return UserData or false
+ *
+ * @name listenUserSignIn
+ *
+ * @since 0.0.10
+ *
+ * @param { function } Callback
+ * the callback function to be notified of an authentication status change
+ * @return Boolean. False if NOT authenticated, UserData if authenticated
+ *
+ */
 GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callback) {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
   this.authInstance.isSignedIn.listen(callback);
-  if (this.authInstance.currentUser.get().isSignedIn()){
+  if (this.authInstance.currentUser.get().isSignedIn()) {
     return this.getUserData()
-  }
-  else{
+  } else {
     return false
   }
 };
 
+/**
+ * Gets the user data from local storage
+ *
+ * @name getUserData
+ *
+ * @since 0.0.10
+ *
+ * @return object with user data from localStorage
+ */
 GoogleAuthService.prototype.getUserData = function getUserData () {
   return {
     id: localStorage.getItem('gapi.id'),
@@ -189,7 +274,7 @@ var VueGapi = {
     Vue.gapiLoadClientPromise = null;
 
     var resolveAuth2Client = function (resolve, reject) {
-      gapiPromise.then( function (_) {
+      gapiPromise.then(function (_) {
         var gapi = window.gapi;
         if (!gapi) {
           console.error('Failed to load gapi!');
@@ -226,8 +311,10 @@ var VueGapi = {
             Vue.gapiLoadClientPromise &&
             Vue.gapiLoadClientPromise.status === 0
           ) {
-            // promise is being executed
-            resolve(Vue.gapiLoadClientPromise);
+          // A promise cannot be executed twice
+          // In our case, once the promise has been resolve
+          // we know that the `gapi` client is ready.
+            return resolve(window.gapi)
           } else {
             resolveAuth2Client(resolve, reject);
           }

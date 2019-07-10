@@ -46,8 +46,10 @@ export default {
             Vue.gapiLoadClientPromise &&
             Vue.gapiLoadClientPromise.status === 0
           ) {
-            // promise is being executed
-            resolve(Vue.gapiLoadClientPromise)
+          // A promise cannot be executed twice
+          // In our case, once the promise has been resolve
+          // we know that the `gapi` client is ready.
+            return resolve(window.gapi)
           } else {
             resolveAuth2Client(resolve, reject)
           }
