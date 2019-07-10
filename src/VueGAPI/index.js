@@ -42,13 +42,13 @@ export default {
     Vue.prototype.$gapi = {
       getGapiClient: () => {
         return new Promise((resolve, reject) => {
+          // A promise cannot be executed twice
+          // In our case, once the promise has been resolve
+          // we know that the `gapi` client is ready.
           if (
             Vue.gapiLoadClientPromise &&
             Vue.gapiLoadClientPromise.status === 0
           ) {
-          // A promise cannot be executed twice
-          // In our case, once the promise has been resolve
-          // we know that the `gapi` client is ready.
             return resolve(window.gapi)
           } else {
             resolveAuth2Client(resolve, reject)
