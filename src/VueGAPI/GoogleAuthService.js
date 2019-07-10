@@ -226,9 +226,15 @@ export default class GoogleAuthService {
 
   getUserData () {
     return {
+      id: localStorage.getItem('gapi.id'),
       firstName: localStorage.getItem('gapi.first_name'),
       lastName: localStorage.getItem('gapi.last_name'),
-      email: localStorage.getItem('gapi.email')
+      fullName: localStorage.getItem('gapi.full_name'),
+      email: localStorage.getItem('gapi.email'),
+      imageUrl: localStorage.getItem('gapi.image_url'),
+      expiresAt: localStorage.getItem('gapi.expires_at'),
+      accessToken: localStorage.getItem('gapi.access_token'),
+      idToken: localStorage.getItem('gapi.id_token')
     }
   }
 }
