@@ -100,7 +100,7 @@ export default {
 
 ## isAuthenticated
 
-This will shortcut and check if your user is authenticated will return a boolen
+This will shortcut and check if your user is authenticated will return a boolean
 
 ```html
 <script>
@@ -122,7 +122,7 @@ export default {
 
 ## isSignedIn
 
-This will shortcut and check if your user is authenticated will return a boolen from google. and can be used inside v-if views.
+This will shortcut and check if your user is authenticated will return a boolean from google. and can be used inside v-if views.
 ```html
 <script>
 export default {
