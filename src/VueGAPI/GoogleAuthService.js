@@ -1,5 +1,4 @@
 export default class GoogleAuthService {
-
   constructor () {
     this.authenticated = this.isAuthenticated()
     this.authInstance = null
@@ -15,7 +14,7 @@ export default class GoogleAuthService {
     this.listenUserSignIn = this.listenUserSignIn.bind(this)
   }
 
-/**
+  /**
    * Private method that takes in an authResult and returns the authResult expiration time
    *
    * @name _expiresAt
@@ -34,7 +33,7 @@ export default class GoogleAuthService {
     return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
   }
 
-    /**
+  /**
    *  Private method that takes in an authResult and a user Profile setting the values in locaStorage
    *
    * @name _setStorage

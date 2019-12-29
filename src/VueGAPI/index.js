@@ -61,24 +61,32 @@ export default {
       },
       login: (res) => {
         return Vue.prototype.$gapi.getGapiClient()
-                  .then(() => {
-                    login().then(() => { res() })
-                  })
+          .then(() => {
+            login().then(() => {
+              if (typeof res === 'function') {
+                res()
+              }
+            })
+          })
       },
       refreshToken: () => {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
       logout: (res) => {
         return Vue.prototype.$gapi.getGapiClient()
-                  .then(() => {
-                    logout().then(() => { res() })
-                  })
+          .then(() => {
+            logout().then(() => {
+              if (typeof res === 'function') {
+                res()
+              }
+            })
+          })
       },
       listenUserSignIn: (callback) => {
         return Vue.prototype.$gapi.getGapiClient()
-                  .then(() => {
-                    return listenUserSignIn(callback)
-                  })
+          .then(() => {
+            return listenUserSignIn(callback)
+          })
       },
 
       isSignedIn: () => {
