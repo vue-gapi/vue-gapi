@@ -99,7 +99,7 @@ export default class GoogleAuthService {
 
   _setSession (response) {
     const profile = this.authInstance.currentUser.get().getBasicProfile()
-    const authResult = response.Zi
+    const authResult = this.authInstance.currentUser.get().getAuthResponse(true)
     this._setStorage(authResult, profile)
     this.authenticated = true
   }
