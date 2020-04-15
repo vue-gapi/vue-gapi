@@ -31,6 +31,7 @@ export default {
                   console.error(
                     'Failed to initialize gapi: %s (status=%s, code=%s)', error.message, error.status, error.code, err)
                 }
+                reject(err)
               })
           })
         } else {
