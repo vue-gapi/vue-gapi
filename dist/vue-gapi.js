@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.2.1
+ * vue-gapi v0.2.2
  * (c) 2020 CedricPoilly
  * Released under the MIT License.
  */
@@ -28,7 +28,7 @@ function loadGAPIScript (gapiUrl) {
 }
 var gapiPromise = loadGAPIScript('https://apis.google.com/js/api.js');
 
-var GoogleAuthService = function GoogleAuthService () {
+var GoogleAuthService = function GoogleAuthService() {
   this.authenticated = this.isAuthenticated();
   this.authInstance = null;
 
@@ -59,7 +59,7 @@ var GoogleAuthService = function GoogleAuthService () {
  * a string of when the google auth token expires
  */
 GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
-  return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
+  return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime());
 };
 
 /**
@@ -82,17 +82,17 @@ GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
 GoogleAuthService.prototype._setStorage = function _setStorage (authResult, profile) {
     if ( profile === void 0 ) profile = null;
 
-  localStorage.setItem('gapi.access_token', authResult.access_token);
-  localStorage.setItem('gapi.id_token', authResult.id_token);
-  localStorage.setItem('gapi.expires_at', this._expiresAt(authResult));
+  localStorage.setItem("gapi.access_token", authResult.access_token);
+  localStorage.setItem("gapi.id_token", authResult.id_token);
+  localStorage.setItem("gapi.expires_at", this._expiresAt(authResult));
 
   if (profile) {
-    localStorage.setItem('gapi.id', profile.getId());
-    localStorage.setItem('gapi.full_name', profile.getName());
-    localStorage.setItem('gapi.first_name', profile.getGivenName());
-    localStorage.setItem('gapi.last_name', profile.getFamilyName());
-    localStorage.setItem('gapi.image_url', profile.getImageUrl());
-    localStorage.setItem('gapi.email', profile.getEmail());
+    localStorage.setItem("gapi.id", profile.getId());
+    localStorage.setItem("gapi.full_name", profile.getName());
+    localStorage.setItem("gapi.first_name", profile.getGivenName());
+    localStorage.setItem("gapi.last_name", profile.getFamilyName());
+    localStorage.setItem("gapi.image_url", profile.getImageUrl());
+    localStorage.setItem("gapi.email", profile.getEmail());
   }
 };
 
@@ -109,76 +109,77 @@ GoogleAuthService.prototype._setStorage = function _setStorage (authResult, prof
  *
  */
 GoogleAuthService.prototype._clearStorage = function _clearStorage () {
-  localStorage.removeItem('gapi.access_token');
-  localStorage.removeItem('gapi.id_token');
-  localStorage.removeItem('gapi.expires_at');
-  localStorage.removeItem('gapi.id');
-  localStorage.removeItem('gapi.full_name');
-  localStorage.removeItem('gapi.first_name');
-  localStorage.removeItem('gapi.last_name');
-  localStorage.removeItem('gapi.image_url');
-  localStorage.removeItem('gapi.email');
+  localStorage.removeItem("gapi.access_token");
+  localStorage.removeItem("gapi.id_token");
+  localStorage.removeItem("gapi.expires_at");
+  localStorage.removeItem("gapi.id");
+  localStorage.removeItem("gapi.full_name");
+  localStorage.removeItem("gapi.first_name");
+  localStorage.removeItem("gapi.last_name");
+  localStorage.removeItem("gapi.image_url");
+  localStorage.removeItem("gapi.email");
 };
 
 GoogleAuthService.prototype._setOfflineAccessCode = function _setOfflineAccessCode (authResult) {
   if (authResult.code) {
     this.offlineAccessCode = authResult.code;
   } else {
-    throw new Error('Offline access code missing from result', authResult)
+    throw new Error("Offline access code missing from result", authResult);
   }
 };
 
 GoogleAuthService.prototype._setSession = function _setSession (response) {
   var profile = this.authInstance.currentUser.get().getBasicProfile();
-  var authResult = this.authInstance.currentUser.get().getAuthResponse(true);
+  var authResult = this.authInstance.currentUser
+    .get()
+    .getAuthResponse(true);
   this._setStorage(authResult, profile);
   this.authenticated = true;
 };
 
 GoogleAuthService.prototype.getOfflineAccessCode = function getOfflineAccessCode () {
-  return this.offlineAccessCode
+  return this.offlineAccessCode;
 };
 
 GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess (event) {
-  if (!this.authInstance) { throw new Error('gapi not initialized') }
-  return this.authInstance.grantOfflineAccess()
-    .then(this._setOfflineAccessCode.bind(this))
+  if (!this.authInstance) { throw new Error("gapi not initialized"); }
+  return this.authInstance
+    .grantOfflineAccess()
+    .then(this._setOfflineAccessCode.bind(this));
 };
 
 GoogleAuthService.prototype.login = function login (event) {
-  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  if (!this.authInstance) { throw new Error("gapi not initialized"); }
   var this$1 = this;
   return new Promise(function (res, rej) {
-    this$1.authInstance.signIn()
-      .then(function (response) {
-        this$1._setSession(response);
-        res();
-      });
-  })
+    this$1.authInstance.grantOfflineAccess().then(function (response) {
+      localStorage.setItem("gapi.refresh_token", response.code);
+      this$1._setSession(response);
+      res();
+    });
+  });
 };
 
 GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
     var this$1 = this;
 
-  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  if (!this.authInstance) { throw new Error("gapi not initialized"); }
   var GoogleUser = this.authInstance.currentUser.get();
-  GoogleUser.reloadAuthResponse()
-    .then(function (authResult) {
-      this$1._setStorage(authResult);
-    });
+  GoogleUser.reloadAuthResponse().then(function (authResult) {
+    this$1._setStorage(authResult);
+  });
 };
 
 GoogleAuthService.prototype.logout = function logout (event) {
-  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  if (!this.authInstance) { throw new Error("gapi not initialized"); }
   var this$1 = this;
   return new Promise(function (res, rej) {
-    this$1.authInstance.signOut()
-      .then(function () {
-        this$1._clearStorage();
-        this$1.authenticated = false;
-        res();
-      });
-  })
+    this$1.authInstance.signOut().then(function () {
+      this$1._clearStorage();
+      this$1.authenticated = false;
+      res();
+    });
+  });
 };
 
 /**
@@ -192,8 +193,8 @@ GoogleAuthService.prototype.logout = function logout (event) {
  *
  */
 GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
-  var expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'));
-  return new Date().getTime() < expiresAt
+  var expiresAt = JSON.parse(localStorage.getItem("gapi.expires_at"));
+  return new Date().getTime() < expiresAt;
 };
 
 /**
@@ -207,9 +208,9 @@ GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
  *
  */
 GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
-  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  if (!this.authInstance) { throw new Error("gapi not initialized"); }
   var GoogleUser = this.authInstance.currentUser.get();
-  return GoogleUser.isSignedIn()
+  return GoogleUser.isSignedIn();
 };
 
 /**
@@ -226,12 +227,12 @@ GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
  *
  */
 GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callback) {
-  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  if (!this.authInstance) { throw new Error("gapi not initialized"); }
   this.authInstance.isSignedIn.listen(callback);
   if (this.authInstance.currentUser.get().isSignedIn()) {
-    return this.getUserData()
+    return this.getUserData();
   } else {
-    return false
+    return false;
   }
 };
 
@@ -246,16 +247,16 @@ GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callba
  */
 GoogleAuthService.prototype.getUserData = function getUserData () {
   return {
-    id: localStorage.getItem('gapi.id'),
-    firstName: localStorage.getItem('gapi.first_name'),
-    lastName: localStorage.getItem('gapi.last_name'),
-    fullName: localStorage.getItem('gapi.full_name'),
-    email: localStorage.getItem('gapi.email'),
-    imageUrl: localStorage.getItem('gapi.image_url'),
-    expiresAt: localStorage.getItem('gapi.expires_at'),
-    accessToken: localStorage.getItem('gapi.access_token'),
-    idToken: localStorage.getItem('gapi.id_token')
-  }
+    id: localStorage.getItem("gapi.id"),
+    firstName: localStorage.getItem("gapi.first_name"),
+    lastName: localStorage.getItem("gapi.last_name"),
+    fullName: localStorage.getItem("gapi.full_name"),
+    email: localStorage.getItem("gapi.email"),
+    imageUrl: localStorage.getItem("gapi.image_url"),
+    expiresAt: localStorage.getItem("gapi.expires_at"),
+    accessToken: localStorage.getItem("gapi.access_token"),
+    idToken: localStorage.getItem("gapi.id_token"),
+  };
 };
 
 var googleAuthService = new GoogleAuthService();
@@ -459,7 +460,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.2.1';
+var version = '0.2.2';
 
 exports['default'] = plugin;
 exports.version = version;
