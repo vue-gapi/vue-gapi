@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.1.2
+ * vue-gapi v0.2.0
  * (c) 2020 CedricPoilly
  * Released under the MIT License.
  */
@@ -271,15 +271,15 @@ var VueGapi = {
       gapiPromise.then(function (_) {
         var gapi = window.gapi;
         if (!gapi) {
-          console.error("Failed to load gapi!");
-          return;
+          console.error('Failed to load gapi!');
+          return
         }
         if (!gapi.auth) {
-          gapi.load("client:auth2", function () {
+          gapi.load('client:auth2', function () {
             Vue.gapiLoadClientPromise = gapi.client
               .init(clientConfig)
               .then(function () {
-                console.info("gapi client initialised.");
+                console.info('gapi client initialised.');
                 googleAuthService.authInstance = gapi.auth2.getAuthInstance();
                 Vue.gapiLoadClientPromise.status = 0;
 
@@ -288,8 +288,8 @@ var VueGapi = {
                   .then(function (res) {
                     console.log(res);
                     var refreshToken = res.code;
-                    localStorage.setItem("gapi.refresh_token", refreshToken);
-                    debugger;
+                    localStorage.setItem('gapi.refresh_token', refreshToken);
+                    debugger
                   })
                   .catch(console.error)
                   .finally(resolve(gapi));
@@ -298,7 +298,7 @@ var VueGapi = {
                 if (err.error) {
                   var error = err.error;
                   console.error(
-                    "Failed to initialize gapi: %s (status=%s, code=%s)",
+                    'Failed to initialize gapi: %s (status=%s, code=%s)',
                     error.message,
                     error.status,
                     error.code,
@@ -324,54 +324,54 @@ var VueGapi = {
             Vue.gapiLoadClientPromise &&
             Vue.gapiLoadClientPromise.status === 0
           ) {
-            return resolve(window.gapi);
+            return resolve(window.gapi)
           } else {
             resolveAuth2Client(resolve, reject);
           }
-        });
+        })
       },
       getOfflineAccessCode: getOfflineAccessCode,
       grantOfflineAccess: function () {
-        return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess);
+        return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
       },
       login: function (res) {
         return Vue.prototype.$gapi.getGapiClient().then(function () {
           login().then(function () {
-            if (typeof res === "function") {
+            if (typeof res === 'function') {
               res();
             }
           });
-        });
+        })
       },
       refreshToken: function () {
-        return Vue.prototype.$gapi.getGapiClient().then(refreshToken);
+        return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
       logout: function (res) {
         return Vue.prototype.$gapi.getGapiClient().then(function () {
           logout().then(function () {
-            if (typeof res === "function") {
+            if (typeof res === 'function') {
               res();
             }
           });
-        });
+        })
       },
       listenUserSignIn: function (callback) {
         return Vue.prototype.$gapi.getGapiClient().then(function () {
-          return listenUserSignIn(callback);
-        });
+          return listenUserSignIn(callback)
+        })
       },
 
       isSignedIn: function () {
-        return Vue.prototype.$gapi.getGapiClient().then(isSignedIn);
+        return Vue.prototype.$gapi.getGapiClient().then(isSignedIn)
       },
       isAuthenticated: isAuthenticated,
-      getUserData: getUserData,
+      getUserData: getUserData
     };
 
     Vue.prototype.isGapiLoaded = function () {
       return (
         Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0
-      );
+      )
     };
 
     var deprectedMsg = function (oldInstanceMethod, newInstanceMethod) { return ("The " + oldInstanceMethod + " Vue instance method is deprecated and will be removed in a future release. Please use " + newInstanceMethod + " instead."); };
@@ -381,8 +381,8 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$getGapiClient = function () {
-      console.warn(deprectedMsg("$getGapiClient", "$gapi.getGapiClient"));
-      return Vue.prototype.$gapi.getGapiClient();
+      console.warn(deprectedMsg('$getGapiClient', '$gapi.getGapiClient'));
+      return Vue.prototype.$gapi.getGapiClient()
     };
 
     /**
@@ -390,8 +390,8 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$login = function () {
-      console.warn(deprectedMsg("$login", "$gapi.login"));
-      return Vue.prototype.$gapi.login();
+      console.warn(deprectedMsg('$login', '$gapi.login'));
+      return Vue.prototype.$gapi.login()
     };
 
     /**
@@ -399,8 +399,8 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$refreshToken = function () {
-      console.warn(deprectedMsg("$refreshToken", "$gapi.refreshToken"));
-      return Vue.prototype.$gapi.refreshToken();
+      console.warn(deprectedMsg('$refreshToken', '$gapi.refreshToken'));
+      return Vue.prototype.$gapi.refreshToken()
     };
 
     /**
@@ -408,8 +408,8 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$logout = function () {
-      console.warn(deprectedMsg("$logout", "$gapi.logout"));
-      return Vue.prototype.$gapi.logout();
+      console.warn(deprectedMsg('$logout', '$gapi.logout'));
+      return Vue.prototype.$gapi.logout()
     };
 
     /**
@@ -417,8 +417,8 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$isAuthenticated = function () {
-      console.warn(deprectedMsg("$isAuthenticated", "$gapi.isAuthenticated"));
-      return Vue.prototype.$gapi.isAuthenticated();
+      console.warn(deprectedMsg('$isAuthenticated', '$gapi.isAuthenticated'));
+      return Vue.prototype.$gapi.isAuthenticated()
     };
 
     /**
@@ -426,8 +426,8 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$isSignedIn = function () {
-      console.warn(deprectedMsg("$isAuthenticated", "$gapi.isAuthenticated"));
-      return Vue.prototype.$gapi.isSignedIn();
+      console.warn(deprectedMsg('$isAuthenticated', '$gapi.isAuthenticated'));
+      return Vue.prototype.$gapi.isSignedIn()
     };
 
     /**
@@ -435,21 +435,21 @@ var VueGapi = {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$getUserData = function () {
-      console.warn(deprectedMsg("$getUserData", "$gapi.getUserData"));
-      return Vue.prototype.$gapi.getUserData();
+      console.warn(deprectedMsg('$getUserData', '$gapi.getUserData'));
+      return Vue.prototype.$gapi.getUserData()
     };
-  },
+  }
 };
 
-function plugin(Vue, clientConfig) {
+function plugin (Vue, clientConfig) {
   Vue.use(VueGapi, clientConfig);
 }
 
 // Install by default if using the script tag
-if (typeof window !== "undefined" && window.Vue) {
+if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = "0.1.2";
+var version = '0.2.0';
 
 export { version };export default plugin;
