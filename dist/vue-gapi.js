@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.2.0
+ * vue-gapi v0.2.1
  * (c) 2020 CedricPoilly
  * Released under the MIT License.
  */
@@ -289,16 +289,7 @@ var VueGapi = {
                 googleAuthService.authInstance = gapi.auth2.getAuthInstance();
                 Vue.gapiLoadClientPromise.status = 0;
 
-                googleAuthService.authInstance
-                  .grantOfflineAccess()
-                  .then(function (res) {
-                    console.log(res);
-                    var refreshToken = res.code;
-                    localStorage.setItem('gapi.refresh_token', refreshToken);
-                    debugger
-                  })
-                  .catch(console.error)
-                  .finally(resolve(gapi));
+                resolve(gapi);
               })
               .catch(function (err) {
                 if (err.error) {
@@ -338,7 +329,19 @@ var VueGapi = {
       },
       getOfflineAccessCode: getOfflineAccessCode,
       grantOfflineAccess: function () {
-        return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
+        return Vue.prototype.$gapi
+          .getGapiClient()
+          .then(grantOfflineAccess)
+          .then(function () {
+            googleAuthService.authInstance
+              .grantOfflineAccess()
+              .then(function (res) {
+                console.log(res);
+                var refreshToken = res.code;
+                localStorage.setItem('gapi.refresh_token', refreshToken);
+              })
+              .catch(console.error);
+          })
       },
       login: function (res) {
         return Vue.prototype.$gapi.getGapiClient().then(function () {
@@ -456,7 +459,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.2.0';
+var version = '0.2.1';
 
 exports['default'] = plugin;
 exports.version = version;
