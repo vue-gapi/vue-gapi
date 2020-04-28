@@ -122,6 +122,8 @@ export default class GoogleAuthService {
         .then(function (response) {
           this$1._setSession(response)
           res()
+        }, (error) => {
+          rej(error)
         })
     })
   }
@@ -144,6 +146,8 @@ export default class GoogleAuthService {
           this$1._clearStorage()
           this$1.authenticated = false
           res()
+        }, (error) => {
+          rej(error)
         })
     })
   }

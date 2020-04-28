@@ -59,12 +59,16 @@ export default {
       grantOfflineAccess: () => {
         return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
       },
-      login: (res) => {
+      login: (res, rej) => {
         return Vue.prototype.$gapi.getGapiClient()
           .then(() => {
             login().then(() => {
               if (typeof res === 'function') {
                 res()
+              }
+            }, (error) => {
+              if (typeof rej === 'function') {
+                rej(error)
               }
             })
           })
@@ -72,7 +76,7 @@ export default {
       refreshToken: () => {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
-      logout: (res) => {
+      logout: (res, rej) => {
         return Vue.prototype.$gapi.getGapiClient()
           .then(() => {
             logout().then(() => {
@@ -80,6 +84,10 @@ export default {
                 res()
               }
             })
+          }, (error) => {
+            if (typeof rej === 'function') {
+              rej(error)
+            }
           })
       },
       listenUserSignIn: (callback) => {
