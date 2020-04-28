@@ -2,14 +2,24 @@ import { gapiPromise } from './gapi'
 import GoogleAuthService from './GoogleAuthService'
 
 const googleAuthService = new GoogleAuthService()
-const { grantOfflineAccess, getOfflineAccessCode, login, logout, isAuthenticated, getUserData, refreshToken, isSignedIn, listenUserSignIn } = googleAuthService
+const {
+  grantOfflineAccess,
+  getOfflineAccessCode,
+  login,
+  logout,
+  isAuthenticated,
+  getUserData,
+  refreshToken,
+  isSignedIn,
+  listenUserSignIn
+} = googleAuthService
 
 export default {
   install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null
 
     const resolveAuth2Client = (resolve, reject) => {
-      gapiPromise.then(_ => {
+      gapiPromise.then((_) => {
         const gapi = window.gapi
         if (!gapi) {
           console.error('Failed to load gapi!')
@@ -23,14 +33,21 @@ export default {
                 console.info('gapi client initialised.')
                 googleAuthService.authInstance = gapi.auth2.getAuthInstance()
                 Vue.gapiLoadClientPromise.status = 0
+
                 resolve(gapi)
               })
-              .catch(err => {
+              .catch((err) => {
                 if (err.error) {
                   const error = err.error
                   console.error(
-                    'Failed to initialize gapi: %s (status=%s, code=%s)', error.message, error.status, error.code, err)
+                    'Failed to initialize gapi: %s (status=%s, code=%s)',
+                    error.message,
+                    error.status,
+                    error.code,
+                    err
+                  )
                 }
+                reject(err)
               })
           })
         } else {
@@ -57,44 +74,53 @@ export default {
       },
       getOfflineAccessCode,
       grantOfflineAccess: () => {
-        return Vue.prototype.$gapi.getGapiClient().then(grantOfflineAccess)
-      },
-      login: (res, rej) => {
-        return Vue.prototype.$gapi.getGapiClient()
+        return Vue.prototype.$gapi
+          .getGapiClient()
+          .then(grantOfflineAccess)
           .then(() => {
-            login().then(() => {
-              if (typeof res === 'function') {
-                res()
-              }
-            }, (error) => {
-              if (typeof rej === 'function') {
-                rej(error)
-              }
-            })
+            googleAuthService.authInstance
+              .grantOfflineAccess()
+              .then((res) => {
+                console.log(res)
+                const refreshToken = res.code
+                localStorage.setItem('gapi.refresh_token', refreshToken)
+              })
+              .catch(console.error)
           })
       },
-      refreshToken: () => {
-        return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
-      },
-      logout: (res, rej) => {
-        return Vue.prototype.$gapi.getGapiClient()
-          .then(() => {
-            logout().then(() => {
-              if (typeof res === 'function') {
-                res()
-              }
-            })
+      login: (res, rej) => {
+        return Vue.prototype.$gapi.getGapiClient().then(() => {
+          login().then(() => {
+            if (typeof res === 'function') {
+              res()
+            }
           }, (error) => {
             if (typeof rej === 'function') {
               rej(error)
             }
           })
+        })
+      },
+      refreshToken: () => {
+        return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
+      },
+      logout: (res, rej) => {
+        return Vue.prototype.$gapi.getGapiClient().then(() => {
+          logout().then(() => {
+            if (typeof res === 'function') {
+              res()
+            }
+          }, (error) => {
+            if (typeof rej === 'function') {
+              rej(error)
+            }
+          })
+        })
       },
       listenUserSignIn: (callback) => {
-        return Vue.prototype.$gapi.getGapiClient()
-          .then(() => {
-            return listenUserSignIn(callback)
-          })
+        return Vue.prototype.$gapi.getGapiClient().then(() => {
+          return listenUserSignIn(callback)
+        })
       },
 
       isSignedIn: () => {
@@ -105,7 +131,9 @@ export default {
     }
 
     Vue.prototype.isGapiLoaded = () => {
-      return (Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0)
+      return (
+        Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0
+      )
     }
 
     const deprectedMsg = (oldInstanceMethod, newInstanceMethod) =>
