@@ -11,6 +11,10 @@ function loadGAPIScript (gapiUrl) {
         }
       }, 100)
     }
+    script.onerror = function (message, url, line, column, error) {
+      console.log('gapi.js not loaded.')
+      reject({ message, url, line, column, error })
+    }
     document.getElementsByTagName('head')[0].appendChild(script)
   })
 }

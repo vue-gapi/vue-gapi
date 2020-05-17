@@ -125,8 +125,10 @@ export default class GoogleAuthService {
         localStorage.setItem("gapi.refresh_token", response.code);
         this$1._setSession(response);
         res();
-      });
-    });
+      }, (error) => {
+        rej(error)
+      })
+    })
   }
 
   refreshToken(event) {
@@ -145,8 +147,10 @@ export default class GoogleAuthService {
         this$1._clearStorage();
         this$1.authenticated = false;
         res();
-      });
-    });
+      }, (error) => {
+        rej(error)
+      })
+    })
   }
 
   /**
