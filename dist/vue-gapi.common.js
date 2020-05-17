@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.2.2
+ * vue-gapi v0.3.0
  * (c) 2020 CedricPoilly
  * Released under the MIT License.
  */
@@ -20,6 +20,10 @@ function loadGAPIScript (gapiUrl) {
           resolve();
         }
       }, 100);
+    };
+    script.onerror = function (message, url, line, column, error) {
+      console.log('gapi.js not loaded.');
+      reject({ message: message, url: url, line: line, column: column, error: error });
     };
     document.getElementsByTagName('head')[0].appendChild(script);
   })
@@ -154,8 +158,10 @@ GoogleAuthService.prototype.login = function login (event) {
       localStorage.setItem("gapi.refresh_token", response.code);
       this$1._setSession(response);
       res();
+    }, function (error) {
+      rej(error);
     });
-  });
+  })
 };
 
 GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
@@ -176,8 +182,10 @@ GoogleAuthService.prototype.logout = function logout (event) {
       this$1._clearStorage();
       this$1.authenticated = false;
       res();
+    }, function (error) {
+      rej(error);
     });
-  });
+  })
 };
 
 /**
@@ -342,11 +350,15 @@ var VueGapi = {
               .catch(console.error);
           })
       },
-      login: function (res) {
+      login: function (res, rej) {
         return Vue.prototype.$gapi.getGapiClient().then(function () {
           login().then(function () {
             if (typeof res === 'function') {
               res();
+            }
+          }, function (error) {
+            if (typeof rej === 'function') {
+              rej(error);
             }
           });
         })
@@ -354,11 +366,15 @@ var VueGapi = {
       refreshToken: function () {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
-      logout: function (res) {
+      logout: function (res, rej) {
         return Vue.prototype.$gapi.getGapiClient().then(function () {
           logout().then(function () {
             if (typeof res === 'function') {
               res();
+            }
+          }, function (error) {
+            if (typeof rej === 'function') {
+              rej(error);
             }
           });
         })
@@ -458,7 +474,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.2.2';
+var version = '0.3.0';
 
 exports['default'] = plugin;
 exports.version = version;
