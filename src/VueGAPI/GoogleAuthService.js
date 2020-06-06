@@ -2,6 +2,7 @@ export default class GoogleAuthService {
   constructor() {
     this.authenticated = this.isAuthenticated()
     this.authInstance = null
+    this.clientConfig = null
 
     this.offlineAccessCode = null
     this.getOfflineAccessCode = this.getOfflineAccessCode.bind(this)
@@ -115,20 +116,30 @@ export default class GoogleAuthService {
       .then(this._setOfflineAccessCode.bind(this))
   }
 
-  login(event) {
+  login() {
     if (!this.authInstance) throw new Error('gapi not initialized')
     const this$1 = this
     return new Promise((res, rej) => {
-      this$1.authInstance.grantOfflineAccess().then(
-        function (response) {
-          localStorage.setItem('gapi.refresh_token', response.code)
-          this$1._setSession(response)
+      return this$1.authInstance
+        .signIn()
+        .then(function () {
+          this$1._setSession()
+          const { refreshToken: wantsRefreshToken } = this$1.clientConfig
+          const noOfflineAccess = !wantsRefreshToken
+          if (noOfflineAccess) {
+            return res()
+          }
+
+          return this$1.authInstance.grantOfflineAccess()
+        })
+        .then(function (offlineAccessResponse = null) {
+          localStorage.setItem('gapi.refresh_token', offlineAccessResponse.code)
           res()
-        },
-        (error) => {
+        })
+        .catch(function (error) {
+          console.error(error)
           rej(error)
-        }
-      )
+        })
     })
   }
 

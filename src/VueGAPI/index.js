@@ -1,6 +1,8 @@
 import { gapiPromise } from './gapi'
 import GoogleAuthService from './GoogleAuthService'
 
+import { getObjectCopy } from '../helpers/index'
+
 const googleAuthService = new GoogleAuthService()
 const {
   grantOfflineAccess,
@@ -17,6 +19,7 @@ const {
 export default {
   install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null
+    googleAuthService.clientConfig = getObjectCopy(clientConfig)
 
     const resolveAuth2Client = (resolve, reject) => {
       gapiPromise.then((_) => {
