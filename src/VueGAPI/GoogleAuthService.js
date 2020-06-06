@@ -133,7 +133,13 @@ export default class GoogleAuthService {
           return this$1.authInstance.grantOfflineAccess()
         })
         .then(function (offlineAccessResponse = null) {
-          localStorage.setItem('gapi.refresh_token', offlineAccessResponse.code)
+          if (!offlineAccessResponse) {
+            return res()
+          }
+
+          const { code } = offlineAccessResponse
+          localStorage.setItem('gapi.refresh_token', code)
+
           res()
         })
         .catch(function (error) {
