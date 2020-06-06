@@ -90,15 +90,18 @@ export default {
       },
       login: (res, rej) => {
         return Vue.prototype.$gapi.getGapiClient().then(() => {
-          login().then(() => {
-            if (typeof res === 'function') {
-              res()
+          login().then(
+            () => {
+              if (typeof res === 'function') {
+                res()
+              }
+            },
+            (error) => {
+              if (typeof rej === 'function') {
+                rej(error)
+              }
             }
-          }, (error) => {
-            if (typeof rej === 'function') {
-              rej(error)
-            }
-          })
+          )
         })
       },
       refreshToken: () => {
@@ -106,15 +109,18 @@ export default {
       },
       logout: (res, rej) => {
         return Vue.prototype.$gapi.getGapiClient().then(() => {
-          logout().then(() => {
-            if (typeof res === 'function') {
-              res()
+          logout().then(
+            () => {
+              if (typeof res === 'function') {
+                res()
+              }
+            },
+            (error) => {
+              if (typeof rej === 'function') {
+                rej(error)
+              }
             }
-          }, (error) => {
-            if (typeof rej === 'function') {
-              rej(error)
-            }
-          })
+          )
         })
       },
       listenUserSignIn: (callback) => {
@@ -131,9 +137,7 @@ export default {
     }
 
     Vue.prototype.isGapiLoaded = () => {
-      return (
-        Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0
-      )
+      return Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0
     }
 
     const deprectedMsg = (oldInstanceMethod, newInstanceMethod) =>

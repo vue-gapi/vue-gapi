@@ -1,4 +1,4 @@
-function loadGAPIScript (gapiUrl) {
+function loadGAPIScript(gapiUrl) {
   return new Promise(function (resolve, reject) {
     var script = document.createElement('script')
     script.src = gapiUrl
