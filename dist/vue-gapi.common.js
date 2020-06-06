@@ -1,5 +1,5 @@
 /*!
- * vue-gapi v0.3.0
+ * vue-gapi v0.3.1
  * (c) 2020 CedricPoilly
  * Released under the MIT License.
  */
@@ -507,7 +507,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '0.3.0';
+var version = '0.3.1';
 
 exports['default'] = plugin;
 exports.version = version;
