@@ -17,22 +17,25 @@ yarn add vue-gapi
 To connect to your app and load the APIs you need
 
 ```js
-import Vue from "vue";
+import Vue from 'vue'
 
 // import the plugin
-import VueGAPI from "vue-gapi";
+import VueGAPI from 'vue-gapi'
 
 // create the 'options' object
 const apiConfig = {
-  apiKey: "<YOUR_API_KEY>",
-  clientId: "<YOUR_CLIENT_ID>.apps.googleusercontent.com",
-  discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
-  scope: "https://www.googleapis.com/auth/spreadsheets"
+  apiKey: '<YOUR_API_KEY>',
+  clientId: '<YOUR_CLIENT_ID>.apps.googleusercontent.com',
+  discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
-};
+  scope: 'https://www.googleapis.com/auth/spreadsheets',
+
+  // works only with `ux_mode: "prompt"`
+  refreshToken: true,
+}
 
 // Use the plugin and pass along the configuration
-Vue.use(VueGAPI, apiConfig);
+Vue.use(VueGAPI, apiConfig)
 ```
 
 Exposes the `$getGapiClient` on the Vue instance that returns a promise containing the initialised instance of the Google API client.
@@ -40,21 +43,18 @@ See full list of options for apiConfig object [here](https://developers.google.c
 
 ```html
 <script>
+  export default {
+    name: 'my-component',
 
-export default {
-  name: 'my-component',
-
-  methods: {
-    login () {
-      this.$getGapiClient()
-        .then(gapi => {
+    methods: {
+      login() {
+        this.$getGapiClient().then((gapi) => {
           // gapi.sheets.spreadsheet.get(...)
           // ...
         })
-    }
-  },
-
-}
+      },
+    },
+  }
 </script>
 ```
 
@@ -64,17 +64,15 @@ This will shortcut the login process
 
 ```html
 <script>
-export default {
-  name: 'login-shortcut',
+  export default {
+    name: 'login-shortcut',
 
-  methods: {
-    login () {
-      this.$login()
-    }
+    methods: {
+      login() {
+        this.$login()
+      },
+    },
   }
-
-}
-
 </script>
 ```
 
@@ -84,17 +82,15 @@ This will shortcut the logout process
 
 ```html
 <script>
-export default {
-  name: 'logout-shortcut',
+  export default {
+    name: 'logout-shortcut',
 
-  methods: {
-    logout () {
-      this.$logout()
-    }
+    methods: {
+      logout() {
+        this.$logout()
+      },
+    },
   }
-
-}
-
 </script>
 ```
 
@@ -104,38 +100,35 @@ This will shortcut and check if your user is authenticated will return a boolean
 
 ```html
 <script>
-export default {
-  name: 'login-shortcut-check',
+  export default {
+    name: 'login-shortcut-check',
 
-  methods: {
-    login () {
-      if (this.$isAuthenticated() !== true) {
-        this.$login()
-      }
-    }
+    methods: {
+      login() {
+        if (this.$isAuthenticated() !== true) {
+          this.$login()
+        }
+      },
+    },
   }
-
-}
-
 </script>
 ```
 
 ## isSignedIn
 
 This will shortcut and check if your user is authenticated will return a boolean from google. and can be used inside v-if views.
+
 ```html
 <script>
-export default {
-  name: 'is-signed-in',
+  export default {
+    name: 'is-signed-in',
 
-  computed: {
-    isSignedIn () {
-      return this.$isSignedIn()
-    }
+    computed: {
+      isSignedIn() {
+        return this.$isSignedIn()
+      },
+    },
   }
-
-}
-
 </script>
 ```
 
@@ -145,16 +138,16 @@ This will shortcut getting a refresh token from Google, this should be placed in
 
 ```html
 <script>
-  name: 'App'
+    name: 'App'
 
-  created () {
-  try {
-    // NOTE: 45min refresh policy is what google recommends
-    window.setInterval(this.$refreshToken(), 2.7e+6)
-  } catch (e) {
-    console.error(e)
+    created () {
+    try {
+      // NOTE: 45min refresh policy is what google recommends
+      window.setInterval(this.$refreshToken(), 2.7e+6)
+    } catch (e) {
+      console.error(e)
+    }
+
   }
-
-}
 </script>
 ```
