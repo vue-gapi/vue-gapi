@@ -11,7 +11,7 @@ const {
   getUserData,
   refreshToken,
   isSignedIn,
-  listenUserSignIn
+  listenUserSignIn,
 } = googleAuthService
 
 export default {
@@ -133,7 +133,7 @@ export default {
         return Vue.prototype.$gapi.getGapiClient().then(isSignedIn)
       },
       isAuthenticated,
-      getUserData
+      getUserData,
     }
 
     Vue.prototype.isGapiLoaded = () => {
@@ -205,5 +205,5 @@ export default {
       console.warn(deprectedMsg('$getUserData', '$gapi.getUserData'))
       return Vue.prototype.$gapi.getUserData()
     }
-  }
+  },
 }
