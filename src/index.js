@@ -1,6 +1,6 @@
-import VueGapi from './VueGAPI'
+import VueGapi from './VueGapi'
 
-function plugin (Vue, clientConfig) {
+function plugin(Vue, clientConfig) {
   Vue.use(VueGapi, clientConfig)
 }
 
