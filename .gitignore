@@ -1,7 +1,6 @@
 # dist/
 # IDE config
 .vscode
-.idea
 
 # Logs
 logs
