@@ -1,19 +1,15 @@
 {
   "presets": [
     [
-      "env",
-    {
-      "targets": {
-        "browsers": [
-          "last 2 versions"
-        ]
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": [
+            "last 2 versions"
+          ]
+        }
       }
-    }
     ]
-  ],
-  "plugins": [
-    "transform-vue-jsx",
-    "transform-object-rest-spread"
   ],
   "env": {
     "test": {

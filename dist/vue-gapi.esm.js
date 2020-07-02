@@ -494,7 +494,7 @@ var VueGapi = {
   },
 };
 
-function plugin (Vue, clientConfig) {
+function plugin(Vue, clientConfig) {
   Vue.use(VueGapi, clientConfig);
 }
 
