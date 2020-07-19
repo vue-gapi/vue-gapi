@@ -98,7 +98,7 @@ export default class GoogleAuthService {
     }
   }
 
-  _setSession(response) {
+  _setSession() {
     const profile = this.authInstance.currentUser.get().getBasicProfile()
     const authResult = this.authInstance.currentUser.get().getAuthResponse(true)
     this._setStorage(authResult, profile)
@@ -109,7 +109,7 @@ export default class GoogleAuthService {
     return this.offlineAccessCode
   }
 
-  grantOfflineAccess(event) {
+  grantOfflineAccess() {
     if (!this.authInstance) throw new Error('gapi not initialized')
     return this.authInstance
       .grantOfflineAccess()
@@ -149,7 +149,7 @@ export default class GoogleAuthService {
     })
   }
 
-  refreshToken(event) {
+  refreshToken() {
     if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
     GoogleUser.reloadAuthResponse().then((authResult) => {
@@ -157,7 +157,7 @@ export default class GoogleAuthService {
     })
   }
 
-  logout(event) {
+  logout() {
     if (!this.authInstance) throw new Error('gapi not initialized')
     const this$1 = this
     return new Promise((res, rej) => {

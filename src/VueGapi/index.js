@@ -22,7 +22,7 @@ export default {
     googleAuthService.clientConfig = getObjectCopy(clientConfig)
 
     const resolveAuth2Client = (resolve, reject) => {
-      gapiPromise.then((_) => {
+      gapiPromise.then(() => {
         const gapi = window.gapi
         if (!gapi) {
           console.error('Failed to load gapi!')
