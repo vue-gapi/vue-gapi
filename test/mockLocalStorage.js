@@ -1,21 +1,21 @@
 export default class LocalStorageMock {
-  constructor () {
+  constructor() {
     this.store = {}
   }
 
-  clear () {
+  clear() {
     this.store = {}
   }
 
-  getItem (key) {
+  getItem(key) {
     return this.store[key] || null
   }
 
-  setItem (key, value) {
+  setItem(key, value) {
     this.store[key] = value.toString()
   }
 
-  removeItem (key) {
+  removeItem(key) {
     delete this.store[key]
   }
 }

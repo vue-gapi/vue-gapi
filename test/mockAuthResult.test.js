@@ -10,7 +10,7 @@ it('matches if the actual obejct does not change', () => {
       id_token: expect.any(String),
       scope: expect.any(String),
       first_issued_at: expect.any(Number),
-      expires_at: expect.any(Number)
+      expires_at: expect.any(Number),
     })
   )
 })

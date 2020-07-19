@@ -16,7 +16,7 @@
     "build": "node build/build.js",
     "lint": "yon run lint:eslint && yon run lint:prettier",
     "lint:eslint": "eslint --ext js build src test",
-    "lint:prettier": "prettier --check \"**/*.js\"",
+    "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
     "lint:staged": "lint-staged",
     "test": "jest",
     "prepublish": "yon run build"
