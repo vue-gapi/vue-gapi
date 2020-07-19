@@ -1,13 +1,10 @@
 const mkdirp = require('mkdirp')
 const rollup = require('rollup').rollup
-const vue = require('rollup-plugin-vue')
-const jsx = require('rollup-plugin-jsx')
 const buble = require('rollup-plugin-buble')
 const replace = require('rollup-plugin-replace')
 const cjs = require('rollup-plugin-commonjs')
 const node = require('rollup-plugin-node-resolve')
 const uglify = require('uglify-js')
-const CleanCSS = require('clean-css')
 
 // Make sure dist dir exists
 mkdirp('dist')
@@ -18,8 +15,7 @@ const {
   banner,
   name,
   moduleName,
-  version,
-  processStyle
+  version
 } = require('./utils')
 
 function rollupBundle ({ env }) {
@@ -30,29 +26,9 @@ function rollupBundle ({ env }) {
     },
     plugins: [
       node({
-        extensions: ['.js', '.jsx', '.vue']
+        extensions: ['.js']
       }),
       cjs(),
-      vue({
-        compileTemplate: true,
-        css (styles, stylesNodes) {
-          // Only generate the styles once
-          if (env['process.env.NODE_ENV'] === '"production"') {
-            Promise.all(
-              stylesNodes.map(processStyle)
-            ).then(css => {
-              const result = css.map(c => c.css).join('')
-              // write the css for every component
-              // TODO add it back if we extract all components to individual js
-              // files too
-              // css.forEach(writeCss)
-              write(`dist/${name}.css`, result)
-              write(`dist/${name}.min.css`, new CleanCSS().minify(result).styles)
-            }).catch(logError)
-          }
-        }
-      }),
-      jsx({ factory: 'h' }),
       replace(Object.assign({
         __VERSION__: version
       }, env)),
@@ -71,9 +47,7 @@ const bundleOptions = {
 }
 
 function createBundle ({ name, env, format }) {
-  return rollupBundle({
-    env
-  }).then(function (bundle) {
+  return rollupBundle({ env }).then(function (bundle) {
     const options = Object.assign({}, bundleOptions)
     if (format) options.format = format
     const code = bundle.generate(options).code
@@ -93,7 +67,7 @@ function createBundle ({ name, env, format }) {
 
 // Browser bundle (can be used with script)
 createBundle({
-  name: `${name}`,
+  name,
   env: {
     'process.env.NODE_ENV': '"development"'
   }
