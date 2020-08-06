@@ -502,7 +502,7 @@ function plugin(Vue, clientConfig) {
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
-
 var version = '0.3.1';
 
-export { version };export default plugin;
+export default plugin;
+export { version };
