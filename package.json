@@ -19,7 +19,7 @@
     "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
     "lint:staged": "lint-staged",
     "test": "jest",
-    "prepublish": "yon run build"
+    "prepublish": "npm run build"
   },
   "lint-staged": {
     "*.js": [
