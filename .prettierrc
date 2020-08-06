@@ -1,6 +1,6 @@
 {
-    "bracketSpacing": true,
-    "semi": false,
-    "quoteProps": "consistent",
-    "singleQuote": true
+  "bracketSpacing": true,
+  "semi": false,
+  "quoteProps": "consistent",
+  "singleQuote": true
 }

@@ -1,17 +1,10 @@
-const {
-  red,
-  logError
-} = require('./log')
+const { red, logError } = require('./log')
 
 const uppercamelcase = require('uppercamelcase')
 
 exports.write = require('./write')
 
-const {
-  author,
-  name,
-  version
-} = require('../../package.json')
+const { author, name, version } = require('../../package.json')
 
 const authorName = author.replace(/\s+<.*/, '')
 const minExt = process.env.NODE_ENV === 'production' ? '.min' : ''

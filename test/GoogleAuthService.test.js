@@ -11,7 +11,5 @@ it('Ensure we have class', () => {
 it('_expiresAt returns string of numbers only', () => {
   const newService = new AuthService()
   const res = newService._expiresAt(mockAuthResult)
-  expect(res).toEqual(
-    expect.stringMatching(/^[0-9]*$/)
-  )
+  expect(res).toEqual(expect.stringMatching(/^[0-9]*$/))
 })

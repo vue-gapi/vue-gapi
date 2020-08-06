@@ -131,7 +131,7 @@ GoogleAuthService.prototype._setOfflineAccessCode = function _setOfflineAccessCo
   }
 };
 
-GoogleAuthService.prototype._setSession = function _setSession (response) {
+GoogleAuthService.prototype._setSession = function _setSession () {
   var profile = this.authInstance.currentUser.get().getBasicProfile();
   var authResult = this.authInstance.currentUser.get().getAuthResponse(true);
   this._setStorage(authResult, profile);
@@ -142,7 +142,7 @@ GoogleAuthService.prototype.getOfflineAccessCode = function getOfflineAccessCode
   return this.offlineAccessCode
 };
 
-GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess (event) {
+GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess () {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
   return this.authInstance
     .grantOfflineAccess()
@@ -185,7 +185,7 @@ GoogleAuthService.prototype.login = function login () {
   })
 };
 
-GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
+GoogleAuthService.prototype.refreshToken = function refreshToken () {
     var this$1 = this;
 
   if (!this.authInstance) { throw new Error('gapi not initialized') }
@@ -195,7 +195,7 @@ GoogleAuthService.prototype.refreshToken = function refreshToken (event) {
   });
 };
 
-GoogleAuthService.prototype.logout = function logout (event) {
+GoogleAuthService.prototype.logout = function logout () {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
   var this$1 = this;
   return new Promise(function (res, rej) {
@@ -310,7 +310,7 @@ var VueGapi = {
     googleAuthService.clientConfig = getObjectCopy(clientConfig);
 
     var resolveAuth2Client = function (resolve, reject) {
-      gapiPromise.then(function (_) {
+      gapiPromise.then(function () {
         var gapi = window.gapi;
         if (!gapi) {
           console.error('Failed to load gapi!');

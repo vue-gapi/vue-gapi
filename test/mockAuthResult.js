@@ -23,5 +23,5 @@ export const mockAuthResult = {
   id_token: 'holder',
   scope: 'holder',
   first_issued_at: 1,
-  expires_at: 1
+  expires_at: 1,
 }

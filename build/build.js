@@ -15,27 +15,32 @@ const {
   banner,
   name,
   moduleName,
-  version
+  version,
 } = require('./utils')
 
-function rollupBundle ({ env }) {
+function rollupBundle({ env }) {
   return rollup({
     entry: 'src/index.js',
     moduleContext: {
-      [require.resolve('whatwg-fetch')]: 'window'
+      [require.resolve('whatwg-fetch')]: 'window',
     },
     plugins: [
       node({
-        extensions: ['.js']
+        extensions: ['.js'],
       }),
       cjs(),
-      replace(Object.assign({
-        __VERSION__: version
-      }, env)),
+      replace(
+        Object.assign(
+          {
+            __VERSION__: version,
+          },
+          env
+        )
+      ),
       buble({
-        objectAssign: 'Object.assign'
-      })
-    ]
+        objectAssign: 'Object.assign',
+      }),
+    ],
   })
 }
 
@@ -43,34 +48,36 @@ const bundleOptions = {
   banner,
   exports: 'named',
   format: 'umd',
-  moduleName
+  moduleName,
 }
 
-function createBundle ({ name, env, format }) {
-  return rollupBundle({ env }).then(function (bundle) {
-    const options = Object.assign({}, bundleOptions)
-    if (format) options.format = format
-    const code = bundle.generate(options).code
-    if (/min$/.test(name)) {
-      const minified = uglify.minify(code, {
-        output: {
-          preamble: banner,
-          ascii_only: true // eslint-disable-line camelcase
-        }
-      }).code
-      return write(`dist/${name}.js`, minified)
-    } else {
-      return write(`dist/${name}.js`, code)
-    }
-  }).catch(logError)
+function createBundle({ name, env, format }) {
+  return rollupBundle({ env })
+    .then(function (bundle) {
+      const options = Object.assign({}, bundleOptions)
+      if (format) options.format = format
+      const code = bundle.generate(options).code
+      if (/min$/.test(name)) {
+        const minified = uglify.minify(code, {
+          output: {
+            preamble: banner,
+            ascii_only: true, // eslint-disable-line camelcase
+          },
+        }).code
+        return write(`dist/${name}.js`, minified)
+      } else {
+        return write(`dist/${name}.js`, code)
+      }
+    })
+    .catch(logError)
 }
 
 // Browser bundle (can be used with script)
 createBundle({
   name,
   env: {
-    'process.env.NODE_ENV': '"development"'
-  }
+    'process.env.NODE_ENV': '"development"',
+  },
 })
 
 // Commonjs bundle (preserves process.env.NODE_ENV) so
@@ -78,7 +85,7 @@ createBundle({
 createBundle({
   name: `${name}.common`,
   env: {},
-  format: 'cjs'
+  format: 'cjs',
 })
 
 // uses export and import syntax. Should be used with modern bundlers
@@ -86,13 +93,13 @@ createBundle({
 createBundle({
   name: `${name}.esm`,
   env: {},
-  format: 'es'
+  format: 'es',
 })
 
 // Minified version for browser
 createBundle({
   name: `${name}.min`,
   env: {
-    'process.env.NODE_ENV': '"production"'
-  }
+    'process.env.NODE_ENV': '"production"',
+  },
 })

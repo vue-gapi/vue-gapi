@@ -1,20 +1,20 @@
 export const mockProfile = {
-  getId () {
+  getId() {
     return 'Test'
   },
-  getName () {
+  getName() {
     return 'Test'
   },
-  getGivenName () {
+  getGivenName() {
     return 'Test'
   },
-  getFamilyName () {
+  getFamilyName() {
     return 'Test'
   },
-  getImageUrl () {
+  getImageUrl() {
     return 'Test'
   },
-  getEmail () {
+  getEmail() {
     return 'Test'
-  }
+  },
 }
