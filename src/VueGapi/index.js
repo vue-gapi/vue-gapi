@@ -16,7 +16,49 @@ const {
   listenUserSignIn,
 } = googleAuthService
 
+/**
+ * @class Vue
+ */
+
+/** @module vue-gapi */
+
+/**
+ * VueGapi plugin options and <code>gapi.auth2.init</code> configuration parameters.
+ *
+ * @typedef {object} Options
+ * @static
+ * @see [gapi.auth2.ClientConfig]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2clientconfig}
+ * @todo finish documenting
+ */
+
 export default {
+  /**
+   * @param {Vue} Vue Vue constructor
+   * @param {module:vue-gapi.Options} clientConfig VueGapi plugin options
+   *
+   * @see [Using a Plugin]{@link https://vuejs.org/v2/guide/plugins.html#Using-a-Plugin}
+   *
+   * @example
+   * import Vue from 'vue'
+   *
+   * // import the plugin
+   * import VueGAPI from 'vue-gapi'
+   *
+   * // create the 'options' object
+   * const apiConfig = {
+   *   apiKey: '<YOUR_API_KEY>',
+   *   clientId: '<YOUR_CLIENT_ID>.apps.googleusercontent.com',
+   *   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+   *   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
+   *   scope: 'https://www.googleapis.com/auth/spreadsheets',
+   *
+   *   // works only with `ux_mode: "prompt"`
+   *   refreshToken: true,
+   * }
+   *
+   * // Use the plugin and pass along the configuration
+   * Vue.use(VueGAPI, apiConfig)
+   */
   install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null
     googleAuthService.clientConfig = getObjectCopy(clientConfig)
@@ -59,7 +101,33 @@ export default {
       })
     }
 
+    /**
+     * @memberof Vue
+     * @member {GoogleAuthService}
+     *
+     * @example
+     * <script>
+     *   export default {
+     *     name: 'my-component',
+     *
+     *     methods: {
+     *       login() {
+     *         this.$gapi.login().then((gapi) => {
+     *           // gapi.sheets.spreadsheet.get(...)
+     *           // ...
+     *         })
+     *       },
+     *     },
+     *   }
+     * </script>
+     */
     Vue.prototype.$gapi = {
+      /**
+       * @todo determine a better place for this docblock?
+       * @memberof GoogleAuthService
+       * @method GoogleAuthService#getGapiClient
+       * @return {Promise<GoogleAuth>}
+       */
       getGapiClient: () => {
         return new Promise((resolve, reject) => {
           // A promise cannot be executed twice
@@ -147,6 +215,7 @@ export default {
       `The ${oldInstanceMethod} Vue instance method is deprecated and will be removed in a future release. Please use ${newInstanceMethod} instead.`
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
@@ -156,6 +225,7 @@ export default {
     }
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
@@ -165,6 +235,7 @@ export default {
     }
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
@@ -174,6 +245,7 @@ export default {
     }
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
@@ -183,6 +255,7 @@ export default {
     }
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
@@ -192,6 +265,7 @@ export default {
     }
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
@@ -201,6 +275,7 @@ export default {
     }
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
