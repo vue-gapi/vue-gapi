@@ -1,0 +1,26 @@
+name: github pages
+on:
+  push:
+#    branches: [master]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Read .nvmrc
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+        id: nvm
+      - name: Use Node.js ${{ steps.nvm.outputs.NVMRC }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate documentation
+        run: npm run jsdoc
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
