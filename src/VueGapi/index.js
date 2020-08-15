@@ -35,29 +35,7 @@ export default {
   /**
    * @param {Vue} Vue Vue constructor
    * @param {module:vue-gapi.Options} clientConfig VueGapi plugin options
-   *
    * @see [Using a Plugin]{@link https://vuejs.org/v2/guide/plugins.html#Using-a-Plugin}
-   *
-   * @example
-   * import Vue from 'vue'
-   *
-   * // import the plugin
-   * import VueGAPI from 'vue-gapi'
-   *
-   * // create the 'options' object
-   * const apiConfig = {
-   *   apiKey: '<YOUR_API_KEY>',
-   *   clientId: '<YOUR_CLIENT_ID>.apps.googleusercontent.com',
-   *   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-   *   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
-   *   scope: 'https://www.googleapis.com/auth/spreadsheets',
-   *
-   *   // works only with `ux_mode: "prompt"`
-   *   refreshToken: true,
-   * }
-   *
-   * // Use the plugin and pass along the configuration
-   * Vue.use(VueGAPI, apiConfig)
    */
   install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null
@@ -112,7 +90,7 @@ export default {
      *
      *     methods: {
      *       login() {
-     *         this.$gapi.login().then((gapi) => {
+     *         this.$gapi.getGapiClient().then((gapi) => {
      *           // gapi.sheets.spreadsheet.get(...)
      *           // ...
      *         })

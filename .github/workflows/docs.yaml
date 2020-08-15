@@ -1,9 +1,9 @@
-name: github pages
+name: docs
 on:
   push:
-#    branches: [master]
+#    branches: [master] # @todo uncomment this
 jobs:
-  deploy:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

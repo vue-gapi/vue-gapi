@@ -9,6 +9,8 @@
  */
 
 /**
+ * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
+ *
  * @package
  * @class GoogleAuthService
  */
@@ -142,6 +144,19 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#login
    * @see [GoogleAuth.signIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignin}
    * @return {Promise}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'login-shortcut',
+   *
+   *     methods: {
+   *       login() {
+   *         this.$gapi.login()
+   *       },
+   *     },
+   *   }
+   * </script>
    */
   login() {
     if (!this.authInstance) throw new Error('gapi not initialized')
@@ -179,8 +194,25 @@ export default class GoogleAuthService {
   /**
    * Forces a refresh of the access token.
    *
+   * This should be placed in your App.vue on the created page and run on a timer of 45min.
+   *
    * @method GoogleAuthService#refreshToken
    * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
+   *
+   * @example
+   * <script>
+   *     name: 'App'
+   *
+   *     created () {
+   *     try {
+   *       // NOTE: 45min refresh policy is what google recommends
+   *       window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
+   *     } catch (e) {
+   *       console.error(e)
+   *     }
+   *
+   *   }
+   * </script>
    */
   refreshToken() {
     if (!this.authInstance) throw new Error('gapi not initialized')
@@ -196,6 +228,19 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#logout
    * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
    * @return {Promise}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'logout-shortcut',
+   *
+   *     methods: {
+   *       login() {
+   *         this.$gapi.logout()
+   *       },
+   *     },
+   *   }
+   * </script>
    */
   logout() {
     if (!this.authInstance) throw new Error('gapi not initialized')
@@ -220,6 +265,21 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#isAuthenticated
    * @since 0.0.10
    * @return {boolean}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'login-shortcut-check',
+   *
+   *     methods: {
+   *       login() {
+   *         if (this.$gapi.isAuthenticated() !== true) {
+   *           this.$gapi.login()
+   *         }
+   *       },
+   *     },
+   *   }
+   * </script>
    */
   isAuthenticated() {
     const expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'))
@@ -227,12 +287,25 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Determines if the user is signed in via Google.
+   * Determines if the user is signed in via Google. Can be used inside v-if views.
    *
    * @method GoogleAuthService#isSignedIn
    * @see [GoogleUser.isSignedIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserissignedin}
    * @since 0.0.10
    * @return {boolean}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'is-signed-in',
+   *
+   *     computed: {
+   *       isSignedIn() {
+   *         return this.$gapi.isSignedIn()
+   *       },
+   *     },
+   *   }
+   * </script>
    */
   isSignedIn() {
     if (!this.authInstance) throw new Error('gapi not initialized')

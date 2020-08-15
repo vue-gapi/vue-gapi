@@ -20,7 +20,7 @@
     "lint:staged": "lint-staged",
     "test": "jest",
     "prepublish": "npm run build",
-    "jsdoc": "jsdoc --recurse --destination docs src"
+    "jsdoc": "jsdoc --recurse --destination docs src README.md"
   },
   "lint-staged": {
     "*.js": [
