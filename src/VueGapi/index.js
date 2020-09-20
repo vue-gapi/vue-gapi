@@ -1,7 +1,6 @@
 import { gapiPromise } from './gapi'
 import GoogleAuthService from './GoogleAuthService'
-
-import { getObjectCopy } from '../helpers/index'
+import { deprecatedMsg, getObjectCopy } from './utils'
 
 const googleAuthService = new GoogleAuthService()
 const {
@@ -101,7 +100,6 @@ export default {
      */
     Vue.prototype.$gapi = {
       /**
-       * @todo determine a better place for this docblock?
        * @memberof GoogleAuthService
        * @method GoogleAuthService#getGapiClient
        * @return {Promise<GoogleAuth>}
@@ -138,46 +136,19 @@ export default {
           })
       },
       login: (res, rej) => {
-        return Vue.prototype.$gapi.getGapiClient().then(() => {
-          login().then(
-            () => {
-              if (typeof res === 'function') {
-                res()
-              }
-            },
-            (error) => {
-              if (typeof rej === 'function') {
-                rej(error)
-              }
-            }
-          )
-        })
+        return Vue.prototype.$gapi.getGapiClient().then(() => login(res, rej))
       },
       refreshToken: () => {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
       logout: (res, rej) => {
-        return Vue.prototype.$gapi.getGapiClient().then(() => {
-          logout().then(
-            () => {
-              if (typeof res === 'function') {
-                res()
-              }
-            },
-            (error) => {
-              if (typeof rej === 'function') {
-                rej(error)
-              }
-            }
-          )
-        })
+        return Vue.prototype.$gapi.getGapiClient().then(() => logout(res, rej))
       },
       listenUserSignIn: (callback) => {
-        return Vue.prototype.$gapi.getGapiClient().then(() => {
-          return listenUserSignIn(callback)
-        })
+        return Vue.prototype.$gapi
+          .getGapiClient()
+          .then(() => listenUserSignIn(callback))
       },
-
       isSignedIn: () => {
         return Vue.prototype.$gapi.getGapiClient().then(isSignedIn)
       },
@@ -186,11 +157,9 @@ export default {
     }
 
     Vue.prototype.isGapiLoaded = () => {
+      console.warn(deprecatedMsg('isGapiLoaded'))
       return Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0
     }
-
-    const deprectedMsg = (oldInstanceMethod, newInstanceMethod) =>
-      `The ${oldInstanceMethod} Vue instance method is deprecated and will be removed in a future release. Please use ${newInstanceMethod} instead.`
 
     /**
      * @memberof Vue
@@ -198,7 +167,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$getGapiClient = () => {
-      console.warn(deprectedMsg('$getGapiClient', '$gapi.getGapiClient'))
+      console.warn(deprecatedMsg('$getGapiClient', '$gapi.getGapiClient'))
       return Vue.prototype.$gapi.getGapiClient()
     }
 
@@ -208,7 +177,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$login = () => {
-      console.warn(deprectedMsg('$login', '$gapi.login'))
+      console.warn(deprecatedMsg('$login', '$gapi.login'))
       return Vue.prototype.$gapi.login()
     }
 
@@ -218,7 +187,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$refreshToken = () => {
-      console.warn(deprectedMsg('$refreshToken', '$gapi.refreshToken'))
+      console.warn(deprecatedMsg('$refreshToken', '$gapi.refreshToken'))
       return Vue.prototype.$gapi.refreshToken()
     }
 
@@ -228,7 +197,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$logout = () => {
-      console.warn(deprectedMsg('$logout', '$gapi.logout'))
+      console.warn(deprecatedMsg('$logout', '$gapi.logout'))
       return Vue.prototype.$gapi.logout()
     }
 
@@ -238,7 +207,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$isAuthenticated = () => {
-      console.warn(deprectedMsg('$isAuthenticated', '$gapi.isAuthenticated'))
+      console.warn(deprecatedMsg('$isAuthenticated', '$gapi.isAuthenticated'))
       return Vue.prototype.$gapi.isAuthenticated()
     }
 
@@ -248,7 +217,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$isSignedIn = () => {
-      console.warn(deprectedMsg('$isAuthenticated', '$gapi.isAuthenticated'))
+      console.warn(deprecatedMsg('$isAuthenticated', '$gapi.isAuthenticated'))
       return Vue.prototype.$gapi.isSignedIn()
     }
 
@@ -258,7 +227,7 @@ export default {
      * Will be removed in version 1.0.
      */
     Vue.prototype.$getUserData = () => {
-      console.warn(deprectedMsg('$getUserData', '$gapi.getUserData'))
+      console.warn(deprecatedMsg('$getUserData', '$gapi.getUserData'))
       return Vue.prototype.$gapi.getUserData()
     }
   },

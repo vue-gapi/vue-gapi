@@ -1,3 +1,5 @@
+import { thenArgsFromCallbacks } from './utils'
+
 /**
  * Singleton class that provides methods to allow the user to sign in with a
  * Google account, get the user's current sign-in status, get specific data
@@ -143,6 +145,10 @@ export default class GoogleAuthService {
    *
    * @method GoogleAuthService#login
    * @see [GoogleAuth.signIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignin}
+   *
+   * @param {onResolved} [onResolve]
+   * @param {onRejected} [onReject]
+   *
    * @return {Promise}
    *
    * @example
@@ -158,21 +164,20 @@ export default class GoogleAuthService {
    *   }
    * </script>
    */
-  login() {
+  login(onResolve, onReject) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    const this$1 = this
     return new Promise((res, rej) => {
-      return this$1.authInstance
+      return this.authInstance
         .signIn()
-        .then(function () {
-          this$1._setSession()
-          const { refreshToken: wantsRefreshToken } = this$1.clientConfig
+        .then(() => {
+          this._setSession()
+          const { refreshToken: wantsRefreshToken } = this.clientConfig
           const noOfflineAccess = !wantsRefreshToken
           if (noOfflineAccess) {
             return res()
           }
 
-          return this$1.authInstance.grantOfflineAccess()
+          return this.authInstance.grantOfflineAccess()
         })
         .then(function (offlineAccessResponse = null) {
           if (!offlineAccessResponse) {
@@ -188,7 +193,7 @@ export default class GoogleAuthService {
           console.error(error)
           rej(error)
         })
-    })
+    }).then(...thenArgsFromCallbacks(onResolve, onReject))
   }
 
   /**
@@ -227,6 +232,10 @@ export default class GoogleAuthService {
    *
    * @method GoogleAuthService#logout
    * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
+   *
+   * @param {onResolved} [onResolve]
+   * @param {onRejected} [onReject]
+   *
    * @return {Promise}
    *
    * @example
@@ -242,21 +251,20 @@ export default class GoogleAuthService {
    *   }
    * </script>
    */
-  logout() {
+  logout(onResolve, onReject) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    const this$1 = this
     return new Promise((res, rej) => {
-      this$1.authInstance.signOut().then(
-        function () {
-          this$1._clearStorage()
-          this$1.authenticated = false
+      this.authInstance.signOut().then(
+        () => {
+          this._clearStorage()
+          this.authenticated = false
           res()
         },
         (error) => {
           rej(error)
         }
       )
-    })
+    }).then(...thenArgsFromCallbacks(onResolve, onReject))
   }
 
   /**
