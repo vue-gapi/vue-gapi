@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: GoogleAuthService.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: GoogleAuthService.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { thenArgsFromCallbacks } from './utils'
+
+/**
+ * Singleton class that provides methods to allow the user to sign in with a
+ * Google account, get the user's current sign-in status, get specific data
+ * from the user's Google profile, request additional scopes, and sign out
+ * from the current account.
+ *
+ * @typedef {object} GoogleAuth
+ * @see https://developers.google.com/identity/sign-in/web/reference#authentication
+ */
+
+/**
+ * Exposed as a &lt;code>$gapi&lt;/code> member of the {@link Vue} instance.
+ *
+ * @package
+ * @class GoogleAuthService
+ */
+export default class GoogleAuthService {
+  constructor() {
+    this.authenticated = this.isAuthenticated()
+    /** @type {GoogleAuth} */
+    this.authInstance = null
+    this.clientConfig = null
+
+    this.offlineAccessCode = null
+    this.getOfflineAccessCode = this.getOfflineAccessCode.bind(this)
+    this.grantOfflineAccess = this.grantOfflineAccess.bind(this)
+    this.login = this.login.bind(this)
+    this.refreshToken = this.refreshToken.bind(this)
+    this.logout = this.logout.bind(this)
+    this.isAuthenticated = this.isAuthenticated.bind(this)
+    this.isSignedIn = this.isSignedIn.bind(this)
+    this.listenUserSignIn = this.listenUserSignIn.bind(this)
+  }
+
+  /**
+   * Private method that takes in an authResult and returns the authResult expiration time
+   *
+   * @private
+   * @method GoogleAuthService#_expiresAt
+   * @since 0.0.10
+   *
+   * @param {object} authResult
+   *   authResult object from google
+   *
+   * @returns {string}
+   *   a string of when the google auth token expires
+   */
+  _expiresAt(authResult) {
+    return JSON.stringify(authResult.expires_in * 1000 + new Date().getTime())
+  }
+
+  /**
+   * Private method that takes in an authResult and a user Profile setting the values in locaStorage
+   *
+   * @private
+   * @method GoogleAuthService#_setStorage
+   * @since 0.0.10
+   *
+   * @param {object} authResult
+   *  authResult object from google
+   * @param {object} profile
+   *  Default is null and if not passed it will be null this is the google user profile object
+   *
+   * @fires localStorage.setItem
+   */
+  _setStorage(authResult, profile = null) {
+    localStorage.setItem('gapi.access_token', authResult.access_token)
+    localStorage.setItem('gapi.id_token', authResult.id_token)
+    localStorage.setItem('gapi.expires_at', this._expiresAt(authResult))
+
+    if (profile) {
+      localStorage.setItem('gapi.id', profile.getId())
+      localStorage.setItem('gapi.full_name', profile.getName())
+      localStorage.setItem('gapi.first_name', profile.getGivenName())
+      localStorage.setItem('gapi.last_name', profile.getFamilyName())
+      localStorage.setItem('gapi.image_url', profile.getImageUrl())
+      localStorage.setItem('gapi.email', profile.getEmail())
+    }
+  }
+
+  /**
+   * Private method used to remove all gapi named spaced item from localStorage
+   *
+   * @private
+   * @method GoogleAuthService#_clearStorage
+   * @since 0.0.10
+   *
+   * @fires localStorage.removeItem
+   */
+  _clearStorage() {
+    localStorage.removeItem('gapi.access_token')
+    localStorage.removeItem('gapi.id_token')
+    localStorage.removeItem('gapi.expires_at')
+    localStorage.removeItem('gapi.id')
+    localStorage.removeItem('gapi.full_name')
+    localStorage.removeItem('gapi.first_name')
+    localStorage.removeItem('gapi.last_name')
+    localStorage.removeItem('gapi.image_url')
+    localStorage.removeItem('gapi.email')
+  }
+
+  _setOfflineAccessCode(authResult) {
+    if (authResult.code) {
+      this.offlineAccessCode = authResult.code
+    } else {
+      throw new Error('Offline access code missing from result', authResult)
+    }
+  }
+
+  _setSession() {
+    const profile = this.authInstance.currentUser.get().getBasicProfile()
+    const authResult = this.authInstance.currentUser.get().getAuthResponse(true)
+    this._setStorage(authResult, profile)
+    this.authenticated = true
+  }
+
+  /**
+   * Returns the authorization code set via {@link GoogleAuthService#grantOfflineAccess}.
+   *
+   * @method GoogleAuthService#getOfflineAccessCode
+   * @return {string|null}
+   */
+  getOfflineAccessCode() {
+    return this.offlineAccessCode
+  }
+
+  /**
+   * Get permission from the user to access the specified scopes offline.
+   *
+   * @method GoogleAuthService#grantOfflineAccess
+   * @see [GoogleAuth.grantOfflineAccess]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthgrantofflineaccessoptions}
+   * @return {Promise}
+   */
+  grantOfflineAccess() {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    return this.authInstance
+      .grantOfflineAccess()
+      .then(this._setOfflineAccessCode.bind(this))
+  }
+
+  /**
+   * Signs in the user.
+   *
+   * @method GoogleAuthService#login
+   * @see [GoogleAuth.signIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignin}
+   *
+   * @param {onResolved} [onResolve]
+   * @param {onRejected} [onReject]
+   *
+   * @return {Promise}
+   *
+   * @example
+   * &lt;script>
+   *   export default {
+   *     name: 'login-shortcut',
+   *
+   *     methods: {
+   *       login() {
+   *         this.$gapi.login()
+   *       },
+   *     },
+   *   }
+   * &lt;/script>
+   */
+  login(onResolve, onReject) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    return new Promise((res, rej) => {
+      return this.authInstance
+        .signIn()
+        .then(() => {
+          this._setSession()
+          const { refreshToken: wantsRefreshToken } = this.clientConfig
+          const noOfflineAccess = !wantsRefreshToken
+          if (noOfflineAccess) {
+            return res()
+          }
+
+          return this.authInstance.grantOfflineAccess()
+        })
+        .then(function (offlineAccessResponse = null) {
+          if (!offlineAccessResponse) {
+            return res()
+          }
+
+          const { code } = offlineAccessResponse
+          localStorage.setItem('gapi.refresh_token', code)
+
+          res()
+        })
+        .catch(function (error) {
+          console.error(error)
+          rej(error)
+        })
+    }).then(...thenArgsFromCallbacks(onResolve, onReject))
+  }
+
+  /**
+   * Forces a refresh of the access token.
+   *
+   * This should be placed in your App.vue on the created page and run on a timer of 45min.
+   *
+   * @method GoogleAuthService#refreshToken
+   * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
+   *
+   * @example
+   * &lt;script>
+   *     name: 'App'
+   *
+   *     created () {
+   *     try {
+   *       // NOTE: 45min refresh policy is what google recommends
+   *       window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
+   *     } catch (e) {
+   *       console.error(e)
+   *     }
+   *
+   *   }
+   * &lt;/script>
+   */
+  refreshToken() {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    const GoogleUser = this.authInstance.currentUser.get()
+    GoogleUser.reloadAuthResponse().then((authResult) => {
+      this._setStorage(authResult)
+    })
+  }
+
+  /**
+   * Signs out the current account from the application.
+   *
+   * @method GoogleAuthService#logout
+   * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
+   *
+   * @param {onResolved} [onResolve]
+   * @param {onRejected} [onReject]
+   *
+   * @return {Promise}
+   *
+   * @example
+   * &lt;script>
+   *   export default {
+   *     name: 'logout-shortcut',
+   *
+   *     methods: {
+   *       login() {
+   *         this.$gapi.logout()
+   *       },
+   *     },
+   *   }
+   * &lt;/script>
+   */
+  logout(onResolve, onReject) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    return new Promise((res, rej) => {
+      this.authInstance.signOut().then(
+        () => {
+          this._clearStorage()
+          this.authenticated = false
+          res()
+        },
+        (error) => {
+          rej(error)
+        }
+      )
+    }).then(...thenArgsFromCallbacks(onResolve, onReject))
+  }
+
+  /**
+   * Determines if the user is signed in via local storage.
+   *
+   * @method GoogleAuthService#isAuthenticated
+   * @since 0.0.10
+   * @return {boolean}
+   *
+   * @example
+   * &lt;script>
+   *   export default {
+   *     name: 'login-shortcut-check',
+   *
+   *     methods: {
+   *       login() {
+   *         if (this.$gapi.isAuthenticated() !== true) {
+   *           this.$gapi.login()
+   *         }
+   *       },
+   *     },
+   *   }
+   * &lt;/script>
+   */
+  isAuthenticated() {
+    const expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'))
+    return new Date().getTime() &lt; expiresAt
+  }
+
+  /**
+   * Determines if the user is signed in via Google. Can be used inside v-if views.
+   *
+   * @method GoogleAuthService#isSignedIn
+   * @see [GoogleUser.isSignedIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserissignedin}
+   * @since 0.0.10
+   * @return {boolean}
+   *
+   * @example
+   * &lt;script>
+   *   export default {
+   *     name: 'is-signed-in',
+   *
+   *     computed: {
+   *       isSignedIn() {
+   *         return this.$gapi.isSignedIn()
+   *       },
+   *     },
+   *   }
+   * &lt;/script>
+   */
+  isSignedIn() {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    const GoogleUser = this.authInstance.currentUser.get()
+    return GoogleUser.isSignedIn()
+  }
+
+  /**
+   * Accept the callback to be notified when the authentication status changes.
+   * Will also determine if the login token is valid using google methods and return UserData or false
+   *
+   * @method GoogleAuthService#listenUserSignIn
+   * @see [GoogleAuth.isSignedIn.listen]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthissignedinlistenlistener}
+   * @since 0.0.10
+   *
+   * @param {function} callback
+   *   the callback function to be notified of an authentication status change
+   *
+   * @return {boolean|GoogleAuthService#UserData} False if NOT authenticated, UserData if authenticated
+   */
+  listenUserSignIn(callback) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    this.authInstance.isSignedIn.listen(callback)
+    if (this.authInstance.currentUser.get().isSignedIn()) {
+      return this.getUserData()
+    } else {
+      return false
+    }
+  }
+
+  /**
+   * @typedef {object} GoogleAuthService#UserData
+   *
+   * @see [gapi.auth2.AuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse}
+   * @see [GoogleUser.getBasicProfile]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergetbasicprofile}
+   *
+   * @property {string} id user's unique ID string
+   * @property {string} firstName given name
+   * @property {string} lastName family name
+   * @property {string} fullName full name
+   * @property {string} email
+   * @property {string} imageUrl
+   * @property {string} expiresAt
+   * @property {string} accessToken granted access token
+   * @property {string} idToken granted ID token
+   */
+
+  /**
+   * Gets the user data from local storage
+   *
+   * @method GoogleAuthService#getUserData
+   * @since 0.0.10
+   * @return {GoogleAuthService#UserData}
+   */
+  getUserData() {
+    return {
+      id: localStorage.getItem('gapi.id'),
+      firstName: localStorage.getItem('gapi.first_name'),
+      lastName: localStorage.getItem('gapi.last_name'),
+      fullName: localStorage.getItem('gapi.full_name'),
+      email: localStorage.getItem('gapi.email'),
+      imageUrl: localStorage.getItem('gapi.image_url'),
+      expiresAt: localStorage.getItem('gapi.expires_at'),
+      accessToken: localStorage.getItem('gapi.access_token'),
+      idToken: localStorage.getItem('gapi.id_token'),
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-vue-gapi.html">vue-gapi</a></li></ul><h3>Classes</h3><ul><li><a href="GoogleAuthService.html">GoogleAuthService</a></li><li><a href="Vue.html">Vue</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.5</a> on Sun Sep 20 2020 16:09:55 GMT+0000 (Coordinated Universal Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
