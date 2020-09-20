@@ -26,8 +26,12 @@ const {
  *
  * @typedef {object} Options
  * @static
- * @see [gapi.auth2.ClientConfig]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2clientconfig}
- * @todo finish documenting
+ * @see [gapi.client.init]{@link https://github.com/google/google-api-javascript-client/blob/master/docs/reference.md#----gapiclientinitargs--}
+ *
+ * @property {string} [apiKey] The API Key to use
+ * @property {string[]} [discoveryDocs] An array of discovery doc URLs or discovery doc JSON objects
+ * @property {string} [clientId] The app's client ID, found and created in the Google Developers Console
+ * @property {string} [scope] The scopes to request, as a space-delimited string
  */
 
 export default {
