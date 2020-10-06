@@ -14,12 +14,12 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "node build/build.js",
-    "lint": "yon run lint:eslint && yon run lint:prettier",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --ext js .",
     "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
     "lint:staged": "lint-staged",
     "test": "jest",
-    "prepublish": "yon run build"
+    "prepublish": "npm run build"
   },
   "lint-staged": {
     "*.js": [
@@ -33,8 +33,11 @@
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
+    "@rollup/plugin-buble": "^0.21.3",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "@rollup/plugin-replace": "^2.3.3",
     "babel-jest": "^26.1.0",
-    "buble": "^0.15.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-vue": "^6.2.2",
@@ -44,16 +47,10 @@
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^2.6.0",
-    "rollup": "^0.41.6",
-    "rollup-plugin-buble": "^0.15.0",
-    "rollup-plugin-commonjs": "^8.4.1",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-replace": "^1.1.0",
-    "uglify-js": "^3.4.7",
+    "rollup": "^2.23.0",
+    "uglify-js": "^3.10.1",
     "uppercamelcase": "^3.0.0",
-    "vue": "^2.5.17",
-    "whatwg-fetch": "^3.0.0",
-    "yarn-or-npm": "^2.0.0"
+    "vue": "^2.5.17"
   },
   "peerDependencies": {
     "vue": "^2.3.0"

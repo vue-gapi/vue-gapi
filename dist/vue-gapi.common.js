@@ -506,8 +506,7 @@ function plugin(Vue, clientConfig) {
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
-
 var version = '0.3.1';
 
-exports['default'] = plugin;
+exports.default = plugin;
 exports.version = version;
