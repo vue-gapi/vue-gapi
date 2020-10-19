@@ -19,7 +19,8 @@
     "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
     "lint:staged": "lint-staged",
     "test": "jest",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "jsdoc": "jsdoc --recurse --destination docs src README.md"
   },
   "lint-staged": {
     "*.js": [
@@ -42,6 +43,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^26.1.0",
+    "jsdoc": "^3.6.5",
     "lint-staged": "^10.2.11",
     "mkdirp": "^0.5.1",
     "pre-commit": "^1.2.0",

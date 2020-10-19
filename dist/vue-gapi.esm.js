@@ -26,8 +26,81 @@ function loadGAPIScript(gapiUrl) {
 }
 var gapiPromise = loadGAPIScript('https://apis.google.com/js/api.js');
 
+function deprecatedMsg(oldInstanceMethod, newInstanceMethod) {
+  var msg = "The " + oldInstanceMethod + " Vue instance method is deprecated and will be removed in a future release.";
+
+  if (newInstanceMethod) {
+    msg += " Please use " + newInstanceMethod + " instead.";
+  }
+
+  return msg
+}
+
+function getObjectCopy(object) {
+  return JSON.parse(JSON.stringify(object))
+}
+
+/**
+ * A Function called if the Promise is fulfilled.
+ *
+ * @callback onResolved
+ * @param {*} value
+ */
+
+/**
+ * A Function called if the Promise is rejected.
+ *
+ * @callback onRejected
+ * @param {*} error
+ */
+
+/**
+ * Creates Promise.then() handlers for the optional callbacks.
+ *
+ * @private
+ *
+ * @param {onResolved} [onResolve]
+ * @param {onRejected} [onReject]
+ *
+ * @return {function[]}
+ */
+function thenArgsFromCallbacks(onResolve, onReject) {
+  return [
+    function onFulfilled(value) {
+      if (typeof onResolve === 'function') {
+        onResolve(value);
+      }
+
+      return value
+    },
+    function onRejected(error) {
+      if (typeof onReject === 'function') {
+        onReject(error);
+      }
+
+      return Promise.reject(error)
+    } ]
+}
+
+/**
+ * Singleton class that provides methods to allow the user to sign in with a
+ * Google account, get the user's current sign-in status, get specific data
+ * from the user's Google profile, request additional scopes, and sign out
+ * from the current account.
+ *
+ * @typedef {object} GoogleAuth
+ * @see https://developers.google.com/identity/sign-in/web/reference#authentication
+ */
+
+/**
+ * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
+ *
+ * @package
+ * @class GoogleAuthService
+ */
 var GoogleAuthService = function GoogleAuthService() {
   this.authenticated = this.isAuthenticated();
+  /** @type {GoogleAuth} */
   this.authInstance = null;
   this.clientConfig = null;
 
@@ -45,16 +118,14 @@ var GoogleAuthService = function GoogleAuthService() {
 /**
  * Private method that takes in an authResult and returns the authResult expiration time
  *
- * @name _expiresAt
- *
+ * @private
+ * @method GoogleAuthService#_expiresAt
  * @since 0.0.10
  *
- * @access Private
- *
- * @param { object } authResult
+ * @param {object} authResult
  * authResult object from google
  *
- * @returns
+ * @returns {string}
  * a string of when the google auth token expires
  */
 GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
@@ -62,21 +133,18 @@ GoogleAuthService.prototype._expiresAt = function _expiresAt (authResult) {
 };
 
 /**
- *Private method that takes in an authResult and a user Profile setting the values in locaStorage
+ * Private method that takes in an authResult and a user Profile setting the values in locaStorage
  *
- * @name _setStorage
- *
+ * @private
+ * @method GoogleAuthService#_setStorage
  * @since 0.0.10
  *
- * @access Private
- *
- * @param { object } authResult
+ * @param {object} authResult
  *authResult object from google
- * @param { object } profile
+ * @param {object} profile
  *Default is null and if not passed it will be null this is the google user profile object
  *
  * @fires localStorage.setItem
- *
  */
 GoogleAuthService.prototype._setStorage = function _setStorage (authResult, profile) {
     if ( profile === void 0 ) profile = null;
@@ -96,16 +164,13 @@ GoogleAuthService.prototype._setStorage = function _setStorage (authResult, prof
 };
 
 /**
- *Private method used to remove all gapi named spaced item from localStorage
+ * Private method used to remove all gapi named spaced item from localStorage
  *
- * @name _clearStorage
- *
+ * @private
+ * @method GoogleAuthService#_clearStorage
  * @since 0.0.10
  *
- * @access Private
- *
  * @fires localStorage.removeItem
- *
  */
 GoogleAuthService.prototype._clearStorage = function _clearStorage () {
   localStorage.removeItem('gapi.access_token');
@@ -134,10 +199,23 @@ GoogleAuthService.prototype._setSession = function _setSession () {
   this.authenticated = true;
 };
 
+/**
+ * Returns the authorization code set via {@link GoogleAuthService#grantOfflineAccess}.
+ *
+ * @method GoogleAuthService#getOfflineAccessCode
+ * @return {string|null}
+ */
 GoogleAuthService.prototype.getOfflineAccessCode = function getOfflineAccessCode () {
   return this.offlineAccessCode
 };
 
+/**
+ * Get permission from the user to access the specified scopes offline.
+ *
+ * @method GoogleAuthService#grantOfflineAccess
+ * @see [GoogleAuth.grantOfflineAccess]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthgrantofflineaccessoptions}
+ * @return {Promise}
+ */
 GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess () {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
   return this.authInstance
@@ -145,10 +223,36 @@ GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess () 
     .then(this._setOfflineAccessCode.bind(this))
 };
 
-GoogleAuthService.prototype.login = function login () {
+/**
+ * Signs in the user.
+ *
+ * @method GoogleAuthService#login
+ * @see [GoogleAuth.signIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignin}
+ *
+ * @param {onResolved} [onResolve]
+ * @param {onRejected} [onReject]
+ *
+ * @return {Promise}
+ *
+ * @example
+ * <script>
+ * export default {
+ *   name: 'login-shortcut',
+ *
+ *   methods: {
+ *     login() {
+ *       this.$gapi.login()
+ *     },
+ *   },
+ * }
+ * </script>
+ */
+GoogleAuthService.prototype.login = function login (onResolve, onReject) {
+    var this$1 = this;
+    var ref;
+
   if (!this.authInstance) { throw new Error('gapi not initialized') }
-  var this$1 = this;
-  return new Promise(function (res, rej) {
+  return (ref = new Promise(function (res, rej) {
     return this$1.authInstance
       .signIn()
       .then(function () {
@@ -178,9 +282,32 @@ GoogleAuthService.prototype.login = function login () {
         console.error(error);
         rej(error);
       })
-  })
+  })).then.apply(ref, thenArgsFromCallbacks(onResolve, onReject))
 };
 
+/**
+ * Forces a refresh of the access token.
+ *
+ * This should be placed in your App.vue on the created page and run on a timer of 45min.
+ *
+ * @method GoogleAuthService#refreshToken
+ * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
+ *
+ * @example
+ * <script>
+ *   name: 'App'
+ *
+ *   created () {
+ *   try {
+ *     // NOTE: 45min refresh policy is what google recommends
+ *     window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
+ *   } catch (e) {
+ *     console.error(e)
+ *   }
+ *
+ * }
+ * </script>
+ */
 GoogleAuthService.prototype.refreshToken = function refreshToken () {
     var this$1 = this;
 
@@ -191,10 +318,36 @@ GoogleAuthService.prototype.refreshToken = function refreshToken () {
   });
 };
 
-GoogleAuthService.prototype.logout = function logout () {
+/**
+ * Signs out the current account from the application.
+ *
+ * @method GoogleAuthService#logout
+ * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
+ *
+ * @param {onResolved} [onResolve]
+ * @param {onRejected} [onReject]
+ *
+ * @return {Promise}
+ *
+ * @example
+ * <script>
+ * export default {
+ *   name: 'logout-shortcut',
+ *
+ *   methods: {
+ *     login() {
+ *       this.$gapi.logout()
+ *     },
+ *   },
+ * }
+ * </script>
+ */
+GoogleAuthService.prototype.logout = function logout (onResolve, onReject) {
+    var this$1 = this;
+    var ref;
+
   if (!this.authInstance) { throw new Error('gapi not initialized') }
-  var this$1 = this;
-  return new Promise(function (res, rej) {
+  return (ref = new Promise(function (res, rej) {
     this$1.authInstance.signOut().then(
       function () {
         this$1._clearStorage();
@@ -205,18 +358,30 @@ GoogleAuthService.prototype.logout = function logout () {
         rej(error);
       }
     );
-  })
+  })).then.apply(ref, thenArgsFromCallbacks(onResolve, onReject))
 };
 
 /**
- * Will determine if the login token is valid using localStorage
+ * Determines if the user is signed in via local storage.
  *
- * @name isAuthenticated
- *
+ * @method GoogleAuthService#isAuthenticated
  * @since 0.0.10
+ * @return {boolean}
  *
- * @return Boolean
+ * @example
+ * <script>
+ * export default {
+ *   name: 'login-shortcut-check',
  *
+ *   methods: {
+ *     login() {
+ *       if (this.$gapi.isAuthenticated() !== true) {
+ *         this.$gapi.login()
+ *       }
+ *     },
+ *   },
+ * }
+ * </script>
  */
 GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
   var expiresAt = JSON.parse(localStorage.getItem('gapi.expires_at'));
@@ -224,14 +389,25 @@ GoogleAuthService.prototype.isAuthenticated = function isAuthenticated () {
 };
 
 /**
- * Will determine if the login token is valid using google methods
+ * Determines if the user is signed in via Google. Can be used inside v-if views.
  *
- * @name isSignedIn
- *
+ * @method GoogleAuthService#isSignedIn
+ * @see [GoogleUser.isSignedIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserissignedin}
  * @since 0.0.10
+ * @return {boolean}
  *
- * @return Boolean
+ * @example
+ * <script>
+ * export default {
+ *   name: 'is-signed-in',
  *
+ *   computed: {
+ *     isSignedIn() {
+ *       return this.$gapi.isSignedIn()
+ *     },
+ *   },
+ * }
+ * </script>
  */
 GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
@@ -243,14 +419,14 @@ GoogleAuthService.prototype.isSignedIn = function isSignedIn () {
  * Accept the callback to be notified when the authentication status changes.
  * Will also determine if the login token is valid using google methods and return UserData or false
  *
- * @name listenUserSignIn
- *
+ * @method GoogleAuthService#listenUserSignIn
+ * @see [GoogleAuth.isSignedIn.listen]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthissignedinlistenlistener}
  * @since 0.0.10
  *
- * @param { function } Callback
+ * @param {function} callback
  * the callback function to be notified of an authentication status change
- * @return Boolean. False if NOT authenticated, UserData if authenticated
  *
+ * @return {boolean|GoogleAuthService#UserData} False if NOT authenticated, UserData if authenticated
  */
 GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callback) {
   if (!this.authInstance) { throw new Error('gapi not initialized') }
@@ -263,13 +439,28 @@ GoogleAuthService.prototype.listenUserSignIn = function listenUserSignIn (callba
 };
 
 /**
+ * @typedef {object} GoogleAuthService#UserData
+ *
+ * @see [gapi.auth2.AuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse}
+ * @see [GoogleUser.getBasicProfile]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergetbasicprofile}
+ *
+ * @property {string} id user's unique ID string
+ * @property {string} firstName given name
+ * @property {string} lastName family name
+ * @property {string} fullName full name
+ * @property {string} email
+ * @property {string} imageUrl
+ * @property {string} expiresAt
+ * @property {string} accessToken granted access token
+ * @property {string} idToken granted ID token
+ */
+
+/**
  * Gets the user data from local storage
  *
- * @name getUserData
- *
+ * @method GoogleAuthService#getUserData
  * @since 0.0.10
- *
- * @return object with user data from localStorage
+ * @return {GoogleAuthService#UserData}
  */
 GoogleAuthService.prototype.getUserData = function getUserData () {
   return {
@@ -285,10 +476,6 @@ GoogleAuthService.prototype.getUserData = function getUserData () {
   }
 };
 
-function getObjectCopy(object) {
-  return JSON.parse(JSON.stringify(object))
-}
-
 var googleAuthService = new GoogleAuthService();
 var grantOfflineAccess = googleAuthService.grantOfflineAccess;
 var getOfflineAccessCode = googleAuthService.getOfflineAccessCode;
@@ -300,7 +487,31 @@ var refreshToken = googleAuthService.refreshToken;
 var isSignedIn = googleAuthService.isSignedIn;
 var listenUserSignIn = googleAuthService.listenUserSignIn;
 
+/**
+ * @class Vue
+ */
+
+/** @module vue-gapi */
+
+/**
+ * VueGapi plugin options and <code>gapi.auth2.init</code> configuration parameters.
+ *
+ * @typedef {object} Options
+ * @static
+ * @see [gapi.client.init]{@link https://github.com/google/google-api-javascript-client/blob/master/docs/reference.md#----gapiclientinitargs--}
+ *
+ * @property {string} [apiKey] The API Key to use
+ * @property {string[]} [discoveryDocs] An array of discovery doc URLs or discovery doc JSON objects
+ * @property {string} [clientId] The app's client ID, found and created in the Google Developers Console
+ * @property {string} [scope] The scopes to request, as a space-delimited string
+ */
+
 var VueGapi = {
+  /**
+   * @param {Vue} Vue Vue constructor
+   * @param {module:vue-gapi.Options} clientConfig VueGapi plugin options
+   * @see [Using a Plugin]{@link https://vuejs.org/v2/guide/plugins.html#Using-a-Plugin}
+   */
   install: function (Vue, clientConfig) {
     Vue.gapiLoadClientPromise = null;
     googleAuthService.clientConfig = getObjectCopy(clientConfig);
@@ -343,7 +554,32 @@ var VueGapi = {
       });
     };
 
+    /**
+     * @memberof Vue
+     * @member {GoogleAuthService}
+     *
+     * @example
+     * <script>
+     *   export default {
+     *     name: 'my-component',
+     *
+     *     methods: {
+     *       login() {
+     *         this.$gapi.getGapiClient().then((gapi) => {
+     *           // gapi.sheets.spreadsheet.get(...)
+     *           // ...
+     *         })
+     *       },
+     *     },
+     *   }
+     * </script>
+     */
     Vue.prototype.$gapi = {
+      /**
+       * @memberof GoogleAuthService
+       * @method GoogleAuthService#getGapiClient
+       * @return {Promise<GoogleAuth>}
+       */
       getGapiClient: function () {
         return new Promise(function (resolve, reject) {
           // A promise cannot be executed twice
@@ -376,46 +612,19 @@ var VueGapi = {
           })
       },
       login: function (res, rej) {
-        return Vue.prototype.$gapi.getGapiClient().then(function () {
-          login().then(
-            function () {
-              if (typeof res === 'function') {
-                res();
-              }
-            },
-            function (error) {
-              if (typeof rej === 'function') {
-                rej(error);
-              }
-            }
-          );
-        })
+        return Vue.prototype.$gapi.getGapiClient().then(function () { return login(res, rej); })
       },
       refreshToken: function () {
         return Vue.prototype.$gapi.getGapiClient().then(refreshToken)
       },
       logout: function (res, rej) {
-        return Vue.prototype.$gapi.getGapiClient().then(function () {
-          logout().then(
-            function () {
-              if (typeof res === 'function') {
-                res();
-              }
-            },
-            function (error) {
-              if (typeof rej === 'function') {
-                rej(error);
-              }
-            }
-          );
-        })
+        return Vue.prototype.$gapi.getGapiClient().then(function () { return logout(res, rej); })
       },
       listenUserSignIn: function (callback) {
-        return Vue.prototype.$gapi.getGapiClient().then(function () {
-          return listenUserSignIn(callback)
-        })
+        return Vue.prototype.$gapi
+          .getGapiClient()
+          .then(function () { return listenUserSignIn(callback); })
       },
-
       isSignedIn: function () {
         return Vue.prototype.$gapi.getGapiClient().then(isSignedIn)
       },
@@ -424,71 +633,77 @@ var VueGapi = {
     };
 
     Vue.prototype.isGapiLoaded = function () {
+      console.warn(deprecatedMsg('isGapiLoaded'));
       return Vue.gapiLoadClientPromise && Vue.gapiLoadClientPromise.status === 0
     };
 
-    var deprectedMsg = function (oldInstanceMethod, newInstanceMethod) { return ("The " + oldInstanceMethod + " Vue instance method is deprecated and will be removed in a future release. Please use " + newInstanceMethod + " instead."); };
-
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$getGapiClient = function () {
-      console.warn(deprectedMsg('$getGapiClient', '$gapi.getGapiClient'));
+      console.warn(deprecatedMsg('$getGapiClient', '$gapi.getGapiClient'));
       return Vue.prototype.$gapi.getGapiClient()
     };
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$login = function () {
-      console.warn(deprectedMsg('$login', '$gapi.login'));
+      console.warn(deprecatedMsg('$login', '$gapi.login'));
       return Vue.prototype.$gapi.login()
     };
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$refreshToken = function () {
-      console.warn(deprectedMsg('$refreshToken', '$gapi.refreshToken'));
+      console.warn(deprecatedMsg('$refreshToken', '$gapi.refreshToken'));
       return Vue.prototype.$gapi.refreshToken()
     };
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$logout = function () {
-      console.warn(deprectedMsg('$logout', '$gapi.logout'));
+      console.warn(deprecatedMsg('$logout', '$gapi.logout'));
       return Vue.prototype.$gapi.logout()
     };
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$isAuthenticated = function () {
-      console.warn(deprectedMsg('$isAuthenticated', '$gapi.isAuthenticated'));
+      console.warn(deprecatedMsg('$isAuthenticated', '$gapi.isAuthenticated'));
       return Vue.prototype.$gapi.isAuthenticated()
     };
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$isSignedIn = function () {
-      console.warn(deprectedMsg('$isAuthenticated', '$gapi.isAuthenticated'));
+      console.warn(deprecatedMsg('$isAuthenticated', '$gapi.isAuthenticated'));
       return Vue.prototype.$gapi.isSignedIn()
     };
 
     /**
+     * @memberof Vue
      * @deprecated since version 0.0.10.
      * Will be removed in version 1.0.
      */
     Vue.prototype.$getUserData = function () {
-      console.warn(deprectedMsg('$getUserData', '$gapi.getUserData'));
+      console.warn(deprecatedMsg('$getUserData', '$gapi.getUserData'));
       return Vue.prototype.$gapi.getUserData()
     };
   },

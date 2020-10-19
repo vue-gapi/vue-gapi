@@ -2,28 +2,32 @@
 
 [![npm](https://img.shields.io/npm/v/vue-gapi.svg)](https://www.npmjs.com/package/vue-gapi) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
-> A Google API client wrapper for Vue
+> [Google API Client Library wrapper](https://developers.google.com/identity/sign-in/web/reference) for [Vue.js](https://vuejs.org/)
 
 ## Installation
 
 ```bash
 npm install --save vue-gapi
+```
+
 or
+
+```
 yarn add vue-gapi
 ```
 
 ## Usage
 
-To connect to your app and load the APIs you need
+Installing the plugin:
 
 ```js
 import Vue from 'vue'
 
 // import the plugin
-import VueGAPI from 'vue-gapi'
+import VueGapi from 'vue-gapi'
 
 // create the 'options' object
-const apiConfig = {
+const clientConfig = {
   apiKey: '<YOUR_API_KEY>',
   clientId: '<YOUR_CLIENT_ID>.apps.googleusercontent.com',
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
@@ -35,11 +39,10 @@ const apiConfig = {
 }
 
 // Use the plugin and pass along the configuration
-Vue.use(VueGAPI, apiConfig)
+Vue.use(VueGapi, clientConfig)
 ```
 
-Exposes the `$getGapiClient` on the Vue instance that returns a promise containing the initialised instance of the Google API client.
-See full list of options for apiConfig object [here](https://developers.google.com/identity/sign-in/web/reference) under gapi.auth2.SignInOptions
+exposes a `$gapi` member on the Vue instance:
 
 ```html
 <script>
@@ -48,7 +51,7 @@ See full list of options for apiConfig object [here](https://developers.google.c
 
     methods: {
       login() {
-        this.$getGapiClient().then((gapi) => {
+        this.$gapi.getGapiClient().then((gapi) => {
           // gapi.sheets.spreadsheet.get(...)
           // ...
         })
@@ -58,96 +61,8 @@ See full list of options for apiConfig object [here](https://developers.google.c
 </script>
 ```
 
-## Login
+## Reference
 
-This will shortcut the login process
+<!-- @todo update link -->
 
-```html
-<script>
-  export default {
-    name: 'login-shortcut',
-
-    methods: {
-      login() {
-        this.$login()
-      },
-    },
-  }
-</script>
-```
-
-## Logout
-
-This will shortcut the logout process
-
-```html
-<script>
-  export default {
-    name: 'logout-shortcut',
-
-    methods: {
-      logout() {
-        this.$logout()
-      },
-    },
-  }
-</script>
-```
-
-## isAuthenticated
-
-This will shortcut and check if your user is authenticated will return a boolean
-
-```html
-<script>
-  export default {
-    name: 'login-shortcut-check',
-
-    methods: {
-      login() {
-        if (this.$isAuthenticated() !== true) {
-          this.$login()
-        }
-      },
-    },
-  }
-</script>
-```
-
-## isSignedIn
-
-This will shortcut and check if your user is authenticated will return a boolean from google. and can be used inside v-if views.
-
-```html
-<script>
-  export default {
-    name: 'is-signed-in',
-
-    computed: {
-      isSignedIn() {
-        return this.$isSignedIn()
-      },
-    },
-  }
-</script>
-```
-
-## refreshToken
-
-This will shortcut getting a refresh token from Google, this should be placed in your App.vue on the created page and run on a timer of 45min
-
-```html
-<script>
-    name: 'App'
-
-    created () {
-    try {
-      // NOTE: 45min refresh policy is what google recommends
-      window.setInterval(this.$refreshToken(), 2.7e+6)
-    } catch (e) {
-      console.error(e)
-    }
-
-  }
-</script>
-```
+See the [generated `GoogleAuthService` documentation](https://vue-gapi.github.io/vue-gapi/GoogleAuthService.html) for a complete reference of the `Vue.$gapi` methods.
