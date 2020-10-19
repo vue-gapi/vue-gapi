@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/vue-gapi.svg)](https://www.npmjs.com/package/vue-gapi) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
-> [Google Sign-In JavaScript client wrapper](https://developers.google.com/identity/sign-in/web/reference) for [Vue.js](https://vuejs.org/)
+> [Google API Client Library wrapper](https://developers.google.com/identity/sign-in/web/reference) for [Vue.js](https://vuejs.org/)
 
 ## Installation
 
@@ -65,4 +65,4 @@ exposes a `$gapi` member on the Vue instance:
 
 <!-- @todo update link -->
 
-See the [generated `GoogleAuthService` documentation](https://namoscato.github.io/vue-gapi/GoogleAuthService.html) for a complete reference of the `Vue.$gapi` methods.
+See the [generated `GoogleAuthService` documentation](https://vue-gapi.github.io/vue-gapi/GoogleAuthService.html) for a complete reference of the `Vue.$gapi` methods.
