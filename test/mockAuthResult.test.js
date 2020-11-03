@@ -2,7 +2,7 @@
 /*eslint camelcase: ["error", {properties: "never"}]*/
 import { mockAuthResult } from './mockAuthResult'
 
-it('matches if the actual obejct does not change', () => {
+it('matches if the actual object does not change', () => {
   expect(mockAuthResult).toEqual(
     expect.objectContaining({
       expires_in: expect.any(Number),
