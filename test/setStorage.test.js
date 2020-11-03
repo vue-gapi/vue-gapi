@@ -21,14 +21,14 @@ it('_setStorage localstorage is namespaced id_token', () => {
 it('_setStorage localstorage is namespaced expires_at', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.expires_at')).toEqual(expect.any(String))
 })
 
 it('_setStorage localstorage is namespaced expires_at', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.expires_at')).toEqual(expect.any(String))
 })
 
@@ -41,41 +41,41 @@ it('_setStorage ensure no profile set returns no profile features', () => {
 it('_setStorage localstorage is namespaced profile id', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.id')).toEqual(expect.any(String))
 })
 
 it('_setStorage localstorage is namespaced profile full name', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.full_name')).toEqual(expect.any(String))
 })
 
 it('_setStorage localstorage is namespaced profile first name', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.first_name')).toEqual(expect.any(String))
 })
 
 it('_setStorage localstorage is namespaced profile last name', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.last_name')).toEqual(expect.any(String))
 })
 
 it('_setStorage localstorage is namespaced profile image url', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.image_url')).toEqual(expect.any(String))
 })
 
 it('_setStorage localstorage is namespaced profile email', () => {
   const newService = new AuthService()
   newService._setStorage(mockAuthResult, mockProfile)
-  // localstroage must be a string
+  // localStorage must be a string
   expect(localStorage.getItem('gapi.email')).toEqual(expect.any(String))
 })
