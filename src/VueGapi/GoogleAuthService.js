@@ -167,27 +167,38 @@ export default class GoogleAuthService {
   login(onResolve, onReject) {
     if (!this.authInstance) throw new Error('gapi not initialized')
     return new Promise((res, rej) => {
+      const { refreshToken: wantsRefreshToken, scope } = this.clientConfig
       return this.authInstance
         .signIn()
         .then(() => {
           this._setSession()
-          const { refreshToken: wantsRefreshToken } = this.clientConfig
           const noOfflineAccess = !wantsRefreshToken
           if (noOfflineAccess) {
-            return res()
+            let hasGrantedScopes = true
+            if (scope) {
+              const GoogleUser = this.authInstance.currentUser.get()
+              hasGrantedScopes = GoogleUser.hasGrantedScopes(scope)
+            }
+            return res(hasGrantedScopes)
           }
 
           return this.authInstance.grantOfflineAccess()
         })
         .then(function (offlineAccessResponse = null) {
+          let hasGrantedScopes = true
+          if (scope) {
+            const GoogleUser = this.authInstance.currentUser.get()
+            hasGrantedScopes = GoogleUser.hasGrantedScopes(scope)
+          }
+
           if (!offlineAccessResponse) {
-            return res()
+            return res(hasGrantedScopes)
           }
 
           const { code } = offlineAccessResponse
           localStorage.setItem('gapi.refresh_token', code)
 
-          res()
+          res(hasGrantedScopes)
         })
         .catch(function (error) {
           console.error(error)
