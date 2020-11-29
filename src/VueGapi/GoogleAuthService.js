@@ -141,6 +141,11 @@ export default class GoogleAuthService {
   }
 
   /**
+   * @typedef LoginResponse
+   * @property {bool} hasGrantedScopes True if the requested scopes were granted.
+   */
+
+  /**
    * Signs in the user.
    *
    * @method GoogleAuthService#login
@@ -149,7 +154,7 @@ export default class GoogleAuthService {
    * @param {onResolved} [onResolve]
    * @param {onRejected} [onReject]
    *
-   * @return {Promise}
+   * @return {Promise<LoginResponse>}
    *
    * @example
    * <script>
@@ -200,7 +205,7 @@ export default class GoogleAuthService {
           const { code } = offlineAccessResponse
           localStorage.setItem('gapi.refresh_token', code)
 
-          res(hasGrantedScopes)
+          res({ hasGrantedScopes })
         })
         .catch(function (error) {
           console.error(error)
