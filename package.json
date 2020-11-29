@@ -48,7 +48,7 @@
     "mkdirp": "^0.5.1",
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
-    "rimraf": "^2.6.0",
+    "rimraf": "^3.0.2",
     "rollup": "^2.23.0",
     "uglify-js": "^3.10.1",
     "uppercamelcase": "^3.0.0",
