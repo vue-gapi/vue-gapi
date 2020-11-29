@@ -1,0 +1,339 @@
+import { sessionFromAuthResponse, sessionFromCurrentUser } from './utils'
+
+/**
+ * Singleton class that provides methods to allow the user to sign in with a
+ * Google account, get the user's current sign-in status, get specific data
+ * from the user's Google profile, request additional scopes, and sign out
+ * from the current account.
+ *
+ * @typedef {object} GoogleAuth
+ * @see https://developers.google.com/identity/sign-in/web/reference#authentication
+ */
+
+/**
+ * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
+ *
+ * @package
+ * @class GoogleAuthService
+ */
+export default class GoogleAuthService {
+  constructor(clientProvider, sessionStorage) {
+    this.clientProvider = clientProvider
+    this.sessionStorage = sessionStorage
+  }
+
+  /**
+   * @method GoogleAuthService#getGapiClient
+   * @return {Promise<GoogleAuth>}
+   */
+  getGapiClient() {
+    return this.clientProvider.getClient().then(({ gapi }) => gapi)
+  }
+
+  getAuthInstance() {
+    return this.clientProvider
+      .getClient()
+      .then(({ authInstance }) => authInstance)
+  }
+
+  getCurrentUser() {
+    return this.getAuthInstance().then((authInstance) => {
+      return authInstance.currentUser.get()
+    })
+  }
+
+  /**
+   * Returns the authorization code set via {@link GoogleAuthService#grantOfflineAccess}.
+   *
+   * @method GoogleAuthService#getOfflineAccessCode
+   * @return {string|null}
+   */
+  getOfflineAccessCode() {
+    return this.sessionStorage.getItem('offlineAccessCode')
+  }
+
+  /**
+   * Get permission from the user to access the specified scopes offline.
+   *
+   * @method GoogleAuthService#grantOfflineAccess
+   * @see [GoogleAuth.grantOfflineAccess]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthgrantofflineaccessoptions}
+   * @return {Promise}
+   */
+  grantOfflineAccess() {
+    return this.getAuthInstance()
+      .grantOfflineAccess()
+      .then(({ code }) => {
+        this.sessionStorage.setItem('offlineAccessCode', code)
+
+        return code
+      })
+  }
+
+  /**
+   * Check if requested scopes were granted or not.
+   *
+   * @method GoogleAuthService#hasGrantedRequestedScopes
+   * @param {GoogleUser} currentUser
+   * @return {boolean}
+   */
+  hasGrantedRequestedScopes(currentUser) {
+    const { scope } = this.clientProvider.getClientConfig()
+
+    return scope ? currentUser.hasGrantedScopes(scope) : true
+  }
+
+  /**
+   * @typedef LoginResponse
+   * @property {bool} hasGrantedScopes True if the requested scopes were granted.
+   * @property {GoogleUser} googleUser GoogleUser
+   */
+
+  /**
+   * Signs in the user.
+   *
+   * @method GoogleAuthService#login
+   * @see [GoogleAuth.signIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignin}
+   *
+   * @return {Promise<LoginResponse>}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'login-shortcut',
+   *
+   *     methods: {
+   *       login() {
+   *         this.$gapi.login()
+   *       },
+   *     },
+   *   }
+   * </script>
+   */
+  login({ grantOfflineAccess = false } = {}) {
+    return this.getAuthInstance()
+      .then((authInstance) => {
+        return authInstance.signIn().then((currentUser) => {
+          this.sessionStorage.set(sessionFromCurrentUser(currentUser))
+
+          return {
+            currentUser,
+            hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
+          }
+        })
+      })
+      .then((response) => {
+        if (grantOfflineAccess) {
+          return this.grantOfflineAccess().then(() => response)
+        }
+
+        return response
+      })
+  }
+
+  /**
+   * Forces a refresh of the access token.
+   *
+   * This should be placed in your App.vue on the created page and run on a timer of 45min.
+   *
+   * @method GoogleAuthService#refreshToken
+   * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
+   *
+   * @return {Promise}
+   *
+   * @example
+   * <script>
+   *     name: 'App'
+   *
+   *     created () {
+   *     try {
+   *       // NOTE: 45min refresh policy is what google recommends
+   *       window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
+   *     } catch (e) {
+   *       console.error(e)
+   *     }
+   *
+   *   }
+   * </script>
+   */
+  refreshToken() {
+    return this.getCurrentUser()
+      .then((currentUser) => currentUser.reloadAuthResponse())
+      .then((authResponse) => {
+        this.sessionStorage.set({
+          ...this.sessionStorage.get(),
+          ...sessionFromAuthResponse(authResponse),
+        })
+
+        return authResponse
+      })
+  }
+
+  /**
+   * Ask to grant scopes from user.
+   *
+   * @method GoogleAuthService#grant
+   * @see [GoogleUser.grant]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergrantoptions}
+   * @since 0.3.2
+   *
+   * @param {onResolved} [onResolve]
+   * @param {onRejected} [onReject]
+   *
+   * @return {Promise<GoogleUser>}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'grant-scope',
+   *
+   *     methods: {
+   *       grant() {
+   *         return this.$gapi.grant()
+   *       },
+   *     },
+   *   }
+   * </script>
+   */
+  grant() {
+    return this.getCurrentUser().then((currentUser) => {
+      if (this.hasGrantedRequestedScopes(currentUser)) {
+        return currentUser
+      }
+
+      const { scope } = this.clientProvider.getClientConfig()
+
+      return currentUser.grant({ scope }).then(() => currentUser)
+    })
+  }
+
+  /**
+   * Signs out the current account from the application.
+   *
+   * @method GoogleAuthService#logout
+   * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
+   *
+   * @return {Promise}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'logout-shortcut',
+   *
+   *     methods: {
+   *       login() {
+   *         this.$gapi.logout()
+   *       },
+   *     },
+   *   }
+   * </script>
+   */
+  logout() {
+    return this.getAuthInstance()
+      .then((authInstance) => authInstance.signOut())
+      .then(() => this.sessionStorage.clear())
+  }
+
+  /**
+   * Determines if the user is signed in via local storage.
+   *
+   * @method GoogleAuthService#isAuthenticated
+   * @since 0.0.10
+   * @return {boolean}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'login-shortcut-check',
+   *
+   *     methods: {
+   *       login() {
+   *         if (this.$gapi.isAuthenticated() !== true) {
+   *           this.$gapi.login()
+   *         }
+   *       },
+   *     },
+   *   }
+   * </script>
+   */
+  isAuthenticated() {
+    return new Date().getTime() < this.sessionStorage.getItem('expiresAt')
+  }
+
+  /**
+   * Determines if the user is signed in via Google. Can be used inside v-if views.
+   *
+   * @method GoogleAuthService#isSignedIn
+   * @see [GoogleUser.isSignedIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserissignedin}
+   * @since 0.0.10
+   * @return {boolean}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'is-signed-in',
+   *
+   *     computed: {
+   *       isSignedIn() {
+   *         return this.$gapi.isSignedIn()
+   *       },
+   *     },
+   *   }
+   * </script>
+   */
+  isSignedIn() {
+    return this.getCurrentUser().then((currentUser) => currentUser.isSignedIn())
+  }
+
+  /**
+   * Accept the callback to be notified when the authentication status changes.
+   * Will also determine if the login token is valid using google methods and return UserData or false
+   *
+   * @method GoogleAuthService#listenUserSignIn
+   * @see [GoogleAuth.isSignedIn.listen]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthissignedinlistenlistener}
+   * @since 0.0.10
+   *
+   * @param {function} callback
+   *   the callback function to be notified of an authentication status change
+   *
+   * @return {boolean|GoogleAuthService#UserData} False if NOT authenticated, UserData if authenticated
+   */
+  listenUserSignIn(callback) {
+    return this.getAuthInstance().then((authInstance) => {
+      callback(authInstance.currentUser.get().isSignedIn())
+      authInstance.isSignedIn.listen(callback)
+
+      // if (authInstance.currentUser.get().isSignedIn()) {
+      //   return this.getUserData()
+      // } else {
+      //   return false
+      // }
+    })
+  }
+
+  /**
+   * @typedef {object} GoogleAuthService#UserData
+   *
+   * @see [gapi.auth2.AuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse}
+   * @see [GoogleUser.getBasicProfile]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergetbasicprofile}
+   *
+   * @property {string} id user's unique ID string
+   * @property {string} firstName given name
+   * @property {string} lastName family name
+   * @property {string} fullName full name
+   * @property {string} email
+   * @property {string} imageUrl
+   * @property {string} expiresAt
+   * @property {string} accessToken granted access token
+   * @property {string} idToken granted ID token
+   */
+
+  /**
+   * Gets the user data from local storage
+   *
+   * @method GoogleAuthService#getUserData
+   * @since 0.0.10
+   * @return {GoogleAuthService#UserData|null}
+   */
+  getUserData() {
+    return this.sessionStorage.get()
+  }
+}
