@@ -1,15 +1,14 @@
 {
   "name": "vue-gapi",
-  "version": "0.3.1",
-  "description": "Google API client wrapper for Vue",
+  "version": "0.4.0",
+  "description": "Google API Client Library wrapper for Vue.js",
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
   "main": "dist/vue-gapi.common.js",
   "module": "dist/vue-gapi.esm.js",
   "browser": "dist/vue-gapi.common.js",
   "unpkg": "dist/vue-gapi.js",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "clean": "rimraf dist",
@@ -57,13 +56,13 @@
   "peerDependencies": {
     "vue": "^2.3.0"
   },
-  "homepage": "https://github.com/CedricPoilly/vue-gapi#readme",
+  "homepage": "https://github.com/vue-gapi/vue-gapi#readme",
   "bugs": {
-    "url": "https://github.com/CedricPoilly/vue-gapi/issues"
+    "url": "https://github.com/vue-gapi/vue-gapi/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CedricPoilly/vue-gapi.git"
+    "url": "git+https://github.com/vue-gapi/vue-gapi.git"
   },
   "license": "MIT",
   "dependencies": {}
