@@ -158,7 +158,9 @@ export default class GoogleAuthService {
    *
    *     methods: {
    *       login() {
-   *         this.$gapi.login()
+   *         this.$gapi.login().then((resp) => {
+   *           console.log( resp.hasGrantedScopes );
+   *         })
    *       },
    *     },
    *   }
@@ -179,7 +181,7 @@ export default class GoogleAuthService {
               const GoogleUser = this.authInstance.currentUser.get()
               hasGrantedScopes = GoogleUser.hasGrantedScopes(scope)
             }
-            return res(hasGrantedScopes)
+            return res({ hasGrantedScopes })
           }
 
           return this.authInstance.grantOfflineAccess()
@@ -192,7 +194,7 @@ export default class GoogleAuthService {
           }
 
           if (!offlineAccessResponse) {
-            return res(hasGrantedScopes)
+            return res({ hasGrantedScopes })
           }
 
           const { code } = offlineAccessResponse
