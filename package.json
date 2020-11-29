@@ -17,20 +17,10 @@
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --ext js .",
     "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
-    "lint:staged": "lint-staged",
     "test": "jest",
     "prepublish": "npm run build",
     "jsdoc": "jsdoc --recurse --destination docs src README.md"
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix"
-    ],
-    "*.{js,json}": [
-      "prettier --write"
-    ]
-  },
-  "pre-commit": "lint:staged",
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
@@ -44,9 +34,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^26.1.0",
     "jsdoc": "^3.6.5",
-    "lint-staged": "^10.2.11",
     "mkdirp": "^0.5.1",
-    "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^2.6.0",
     "rollup": "^2.23.0",
