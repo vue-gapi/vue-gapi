@@ -280,11 +280,16 @@ export default class GoogleAuthService {
    */
   grant(onResolve, onReject) {
     if (!this.authInstance) throw new Error('gapi not initialized')
-    const { scope } = this.clientConfig
-    const GoogleUser = this.authInstance.currentUser.get()
-    return GoogleUser.grant({ scope }).then(
-      ...thenArgsFromCallbacks(onResolve, onReject)
-    )
+    return new Promise((res) => {
+      const GoogleUser = this.authInstance.currentUser.get()
+      let hasGrantedScopes = this.hasGrantedRequestedScopes()
+      if (hasGrantedScopes) {
+        // GoogleUser.grant resolves with GoogleUser object.
+        return res(GoogleUser)
+      }
+      const { scope } = this.clientConfig
+      return GoogleUser.grant({ scope })
+    }).then(...thenArgsFromCallbacks(onResolve, onReject))
   }
 
   /**
