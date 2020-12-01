@@ -33,6 +33,7 @@
   "pre-commit": "lint:staged",
   "devDependencies": {
     "@babel/core": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.10.4",
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-commonjs": "^14.0.0",

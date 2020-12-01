@@ -14,6 +14,7 @@
   "env": {
     "test": {
       "plugins": [
+        "@babel/transform-runtime",
         "istanbul"
       ]
     }
