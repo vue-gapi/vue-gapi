@@ -111,6 +111,7 @@ var GoogleAuthService = function GoogleAuthService() {
   this.offlineAccessCode = null;
   this.getOfflineAccessCode = this.getOfflineAccessCode.bind(this);
   this.grantOfflineAccess = this.grantOfflineAccess.bind(this);
+  this.grant = this.grant.bind(this);
   this.login = this.login.bind(this);
   this.refreshToken = this.refreshToken.bind(this);
   this.logout = this.logout.bind(this);
