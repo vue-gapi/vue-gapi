@@ -228,6 +228,29 @@ GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess () 
 };
 
 /**
+ * Check if requested scopes were granted or not.
+ *
+ * @method GoogleAuthService#hasGrantedRequestedScopes
+ * @return {boolean}
+ */
+GoogleAuthService.prototype.hasGrantedRequestedScopes = function hasGrantedRequestedScopes () {
+  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  var ref = this.clientConfig;
+    var scope = ref.scope;
+  var hasGrantedScopes = true;
+  if (scope) {
+    var GoogleUser = this.authInstance.currentUser.get();
+    hasGrantedScopes = GoogleUser.hasGrantedScopes(scope);
+  }
+  return hasGrantedScopes
+};
+
+/**
+ * @typedef LoginResponse
+ * @property {bool} hasGrantedScopes True if the requested scopes were granted.
+ */
+
+/**
  * Signs in the user.
  *
  * @method GoogleAuthService#login
@@ -236,7 +259,7 @@ GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess () 
  * @param {onResolved} [onResolve]
  * @param {onRejected} [onReject]
  *
- * @return {Promise}
+ * @return {Promise<LoginResponse>}
  *
  * @example
  * <script>
@@ -245,7 +268,9 @@ GoogleAuthService.prototype.grantOfflineAccess = function grantOfflineAccess () 
  *
  *   methods: {
  *     login() {
- *       this.$gapi.login()
+ *       this.$gapi.login().then((resp) => {
+ *         console.log( resp.hasGrantedScopes );
+ *       })
  *     },
  *   },
  * }
@@ -265,7 +290,8 @@ GoogleAuthService.prototype.login = function login (onResolve, onReject) {
           var wantsRefreshToken = ref.refreshToken;
         var noOfflineAccess = !wantsRefreshToken;
         if (noOfflineAccess) {
-          return res()
+          var hasGrantedScopes = this$1.hasGrantedRequestedScopes();
+          return res({ hasGrantedScopes: hasGrantedScopes })
         }
 
         return this$1.authInstance.grantOfflineAccess()
@@ -273,14 +299,15 @@ GoogleAuthService.prototype.login = function login (onResolve, onReject) {
       .then(function (offlineAccessResponse) {
           if ( offlineAccessResponse === void 0 ) offlineAccessResponse = null;
 
+        var hasGrantedScopes = this.hasGrantedRequestedScopes();
         if (!offlineAccessResponse) {
-          return res()
+          return res({ hasGrantedScopes: hasGrantedScopes })
         }
 
         var code = offlineAccessResponse.code;
         localStorage.setItem('gapi.refresh_token', code);
 
-        res();
+        res({ hasGrantedScopes: hasGrantedScopes });
       })
       .catch(function (error) {
         console.error(error);
@@ -320,6 +347,56 @@ GoogleAuthService.prototype.refreshToken = function refreshToken () {
   GoogleUser.reloadAuthResponse().then(function (authResult) {
     this$1._setStorage(authResult);
   });
+};
+
+/**
+ * Ask to grant scopes from user.
+ *
+ * @method GoogleAuthService#grant
+ * @see [GoogleUser.grant]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergrantoptions}
+ * @since 0.3.2
+ *
+ * @param {onResolved} [onResolve]
+ * @param {onRejected} [onReject]
+ *
+ * @return {Promise<GoogleUser>}
+ *
+ * @example
+ * <script>
+ * export default {
+ *   name: 'grant-scope',
+ *
+ *   methods: {
+ *     grant() {
+ *       return this.$gapi.grant()
+ *     },
+ *   },
+ * }
+ * </script>
+ */
+GoogleAuthService.prototype.grant = function grant (onResolve, onReject) {
+    var this$1 = this;
+    var ref;
+
+  if (!this.authInstance) { throw new Error('gapi not initialized') }
+  return (ref = new Promise(function (res, rej) {
+    var GoogleUser = this$1.authInstance.currentUser.get();
+    var hasGrantedScopes = this$1.hasGrantedRequestedScopes();
+    if (hasGrantedScopes) {
+      // GoogleUser.grant resolves with GoogleUser object.
+      return res(GoogleUser)
+    }
+    var ref = this$1.clientConfig;
+      var scope = ref.scope;
+    GoogleUser.grant({ scope: scope }).then(
+      function (googleUser) {
+        res(googleUser);
+      },
+      function (error) {
+        rej(error);
+      }
+    );
+  })).then.apply(ref, thenArgsFromCallbacks(onResolve, onReject))
 };
 
 /**
@@ -481,15 +558,16 @@ GoogleAuthService.prototype.getUserData = function getUserData () {
 };
 
 var googleAuthService = new GoogleAuthService();
-var grantOfflineAccess = googleAuthService.grantOfflineAccess;
 var getOfflineAccessCode = googleAuthService.getOfflineAccessCode;
-var login = googleAuthService.login;
-var logout = googleAuthService.logout;
-var isAuthenticated = googleAuthService.isAuthenticated;
 var getUserData = googleAuthService.getUserData;
-var refreshToken = googleAuthService.refreshToken;
+var grant = googleAuthService.grant;
+var grantOfflineAccess = googleAuthService.grantOfflineAccess;
+var isAuthenticated = googleAuthService.isAuthenticated;
 var isSignedIn = googleAuthService.isSignedIn;
 var listenUserSignIn = googleAuthService.listenUserSignIn;
+var login = googleAuthService.login;
+var logout = googleAuthService.logout;
+var refreshToken = googleAuthService.refreshToken;
 
 /**
  * @class Vue
@@ -623,6 +701,9 @@ var VueGapi = {
       },
       logout: function (res, rej) {
         return Vue.prototype.$gapi.getGapiClient().then(function () { return logout(res, rej); })
+      },
+      grant: function (res, rej) {
+        return Vue.prototype.$gapi.getGapiClient().then(function () { return grant(res, rej); })
       },
       listenUserSignIn: function (callback) {
         return Vue.prototype.$gapi
