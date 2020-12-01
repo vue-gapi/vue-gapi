@@ -326,6 +326,8 @@
    * @method GoogleAuthService#refreshToken
    * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
    *
+   * @return {Promise}
+   *
    * @example
    * <script>
    *   name: 'App'
@@ -346,9 +348,10 @@
 
     if (!this.authInstance) { throw new Error('gapi not initialized') }
     var GoogleUser = this.authInstance.currentUser.get();
-    GoogleUser.reloadAuthResponse().then(function (authResult) {
+    return GoogleUser.reloadAuthResponse().then(function (authResult) {
       this$1._setStorage(authResult);
-    });
+      return authResult
+    })
   };
 
   /**
