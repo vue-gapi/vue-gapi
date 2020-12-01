@@ -43,10 +43,12 @@ export class GoogleUser {
 
   rejectGrant(rejectMsg) {
     this._rejectGrant = rejectMsg
+    this._grantedScopes = ''
   }
 
   resolveGrant() {
     this._rejectGrant = null
+    this._grantedScopes = ''
   }
 
   async grant(options) {
@@ -56,7 +58,7 @@ export class GoogleUser {
       const error = {
         error: this._rejectGrant,
       }
-      throw Error(error)
+      throw error
     }
     this.setGrantedScopes(scope)
     return this.get()

@@ -22,15 +22,44 @@ it('grant() returns correct response', async () => {
   newService.clientConfig = {
     scope: 'scope1',
   }
-  let res = await new Promise((res, rej) => {
+  // Test that onResolve callback works.
+  let res = await new Promise((res) => {
     newService.grant(
       (googleUser) => res(googleUser),
       (error) => {
         console.log(error)
-        rej(error)
         expect(false).toBeTruthy()
       }
     )
   })
+  expect(res).toBeInstanceOf(GoogleUser)
+
+  // Test that onReject callback as well as the promise is rejected works.
+  gAuth.currentUser.rejectGrant('access_denied')
+  res = await new Promise((res) => {
+    newService
+      .grant(
+        () => {
+          expect(false).toBeTruthy()
+        },
+        (error) => {
+          expect(error).toMatchObject({
+            error: 'access_denied',
+          })
+          res()
+        }
+      )
+      .catch((error) => {
+        expect(error).toMatchObject({
+          error: 'access_denied',
+        })
+        res()
+      })
+  })
+  expect(res).toBeUndefined()
+
+  // Test that the promise is also returned.
+  gAuth.currentUser.resolveGrant()
+  res = await newService.grant()
   expect(res).toBeInstanceOf(GoogleUser)
 })
