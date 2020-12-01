@@ -230,6 +230,8 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#refreshToken
    * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
    *
+   * @return {Promise}
+   *
    * @example
    * <script>
    *     name: 'App'
@@ -248,8 +250,9 @@ export default class GoogleAuthService {
   refreshToken() {
     if (!this.authInstance) throw new Error('gapi not initialized')
     const GoogleUser = this.authInstance.currentUser.get()
-    GoogleUser.reloadAuthResponse().then((authResult) => {
+    return GoogleUser.reloadAuthResponse().then((authResult) => {
       this._setStorage(authResult)
+      return authResult
     })
   }
 
