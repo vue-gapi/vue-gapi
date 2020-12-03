@@ -161,6 +161,7 @@ export default class GoogleAuthService {
   /**
    * @typedef LoginResponse
    * @property {bool} hasGrantedScopes True if the requested scopes were granted.
+   * @property {GoogleUser} gUser GoogleUser
    */
 
   /**
@@ -182,7 +183,7 @@ export default class GoogleAuthService {
    *     methods: {
    *       login() {
    *         this.$gapi.login().then((resp) => {
-   *           console.log( resp.hasGrantedScopes );
+   *           console.log( resp, resp.hasGrantedScopes );
    *         })
    *       },
    *     },
@@ -194,27 +195,39 @@ export default class GoogleAuthService {
     return new Promise((res, rej) => {
       return this.authInstance
         .signIn()
-        .then(() => {
+        .then((gUser) => {
           this._setSession()
           const { refreshToken: wantsRefreshToken } = this.clientConfig
           const noOfflineAccess = !wantsRefreshToken
           if (noOfflineAccess) {
             let hasGrantedScopes = this.hasGrantedRequestedScopes()
-            return res({ hasGrantedScopes })
+            return res({
+              gUser,
+              hasGrantedScopes,
+            })
           }
 
-          return this.authInstance.grantOfflineAccess()
+          return {
+            offlineAccessResponse: this.authInstance.grantOfflineAccess(),
+            gUser,
+          }
         })
-        .then(function (offlineAccessResponse = null) {
+        .then(function ({ offlineAccessResponse, gUser }) {
           let hasGrantedScopes = this.hasGrantedRequestedScopes()
           if (!offlineAccessResponse) {
-            return res({ hasGrantedScopes })
+            return res({
+              gUser,
+              hasGrantedScopes,
+            })
           }
 
           const { code } = offlineAccessResponse
           localStorage.setItem('gapi.refresh_token', code)
 
-          res({ hasGrantedScopes })
+          res({
+            gUser,
+            hasGrantedScopes,
+          })
         })
         .catch(function (error) {
           console.error(error)
