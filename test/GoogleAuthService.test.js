@@ -71,3 +71,43 @@ describe('grant() returns correct response', () => {
     expect(res).toBeInstanceOf(GoogleUserMock)
   })
 })
+
+describe('login() returns correct response', () => {
+  let newService
+  let gAuth
+
+  beforeEach(async () => {
+    newService = new AuthService()
+    gAuth = new GoogleAuthMock()
+    newService.authInstance = gAuth
+    newService.clientConfig = {
+      scope: 'scope1',
+    }
+  })
+
+  it('Test that onResolve callback works', async () => {
+    let res = await new Promise((res) => {
+      newService.login(
+        (googleUser) => res(googleUser),
+        (error) => {
+          console.log(error)
+          expect(false).toBeTruthy()
+        }
+      )
+    })
+    expect(res).toHaveProperty('hasGrantedScopes')
+    expect(res).toHaveProperty('gUser')
+    const { hasGrantedScopes, gUser } = res
+    expect(hasGrantedScopes).toBeTruthy()
+    expect(gUser).toBeInstanceOf(GoogleUserMock)
+  })
+
+  it('Test that the promise is also returned', async () => {
+    let res = await newService.login()
+    expect(res).toHaveProperty('hasGrantedScopes')
+    expect(res).toHaveProperty('gUser')
+    const { hasGrantedScopes, gUser } = res
+    expect(hasGrantedScopes).toBeTruthy()
+    expect(gUser).toBeInstanceOf(GoogleUserMock)
+  })
+})

@@ -1,3 +1,7 @@
+import { mockProfile } from './mockProfile'
+import { mockAuthResult } from './mockAuthResult'
+import { getObjectCopy } from '../src/VueGapi/utils'
+
 /**
  * A test helper for GoogleUser
  *
@@ -111,6 +115,42 @@ export class GoogleUserMock {
     }
     this.setGrantedScopes(scope)
     return this.get()
+  }
+
+  /**
+   * @typedef BasicProfileMock
+   * @property {function} getId
+   * @property {function} getName
+   * @property {function} getGivenName
+   * @property {function} getFamilyName
+   * @property {function} getImageUrl
+   * @property {function} getEmail
+   */
+
+  /**
+   *
+   *
+   * @returns {BasicProfileMock}
+   * @memberof GoogleUserMock
+   */
+  getBasicProfile() {
+    return mockProfile
+  }
+
+  /**
+   *
+   *
+   * @param {boolean} includeAuthorizationData
+   * @returns {mockAuthResult}
+   * @memberof GoogleUserMock
+   */
+  getAuthResponse(includeAuthorizationData) {
+    let res = getObjectCopy(mockAuthResult)
+    if (!includeAuthorizationData) {
+      delete res.access_token
+      delete res.scope
+    }
+    return res
   }
 }
 
