@@ -97,7 +97,7 @@ export class GoogleUserMock {
    * Simulate grant() from gapi
    *
    * @param {object} options Google sign-in object
-   * @returns {GoogleUserMock}
+   * @returns {Promise<GoogleUserMock>}
    * @memberof GoogleUserMock
    */
   async grant(options) {
@@ -122,5 +122,15 @@ export class GoogleUserMock {
 export class GoogleAuthMock {
   constructor() {
     this.currentUser = new GoogleUserMock()
+  }
+
+  /**
+   *
+   *
+   * @returns {Promise<GoogleUserMock>}
+   * @memberof GoogleAuthMock
+   */
+  async signIn() {
+    return this.currentUser
   }
 }
