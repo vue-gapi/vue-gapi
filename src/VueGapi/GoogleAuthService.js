@@ -192,6 +192,7 @@ export default class GoogleAuthService {
    */
   login(onResolve, onReject) {
     if (!this.authInstance) throw new Error('gapi not initialized')
+    const self = this
     return new Promise((res, rej) => {
       return this.authInstance
         .signIn()
@@ -210,10 +211,10 @@ export default class GoogleAuthService {
           return this.authInstance.grantOfflineAccess()
         })
         .then(function (offlineAccessResponse = null) {
-          let hasGrantedScopes = this.hasGrantedRequestedScopes()
+          let hasGrantedScopes = self.hasGrantedRequestedScopes()
           if (!offlineAccessResponse) {
             return res({
-              gUser: this.authInstance.currentUser.get(),
+              gUser: self.authInstance.currentUser.get(),
               hasGrantedScopes,
             })
           }
@@ -222,13 +223,13 @@ export default class GoogleAuthService {
           localStorage.setItem('gapi.refresh_token', code)
 
           return res({
-            gUser: this.authInstance.currentUser.get(),
+            gUser: self.authInstance.currentUser.get(),
             hasGrantedScopes,
           })
         })
         .catch(function (error) {
           console.error(error)
-          rej(error)
+          return rej(error)
         })
     }).then(...thenArgsFromCallbacks(onResolve, onReject))
   }

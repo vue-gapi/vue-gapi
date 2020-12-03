@@ -98,7 +98,7 @@ describe('login() returns correct response', () => {
     expect(res).toHaveProperty('hasGrantedScopes')
     expect(res).toHaveProperty('gUser')
     const { hasGrantedScopes, gUser } = res
-    expect(hasGrantedScopes).toBeInstanceOf(Boolean)
+    expect(hasGrantedScopes).toBeFalsy()
     expect(gUser).toBeInstanceOf(GoogleUserMock)
   })
 
@@ -107,7 +107,7 @@ describe('login() returns correct response', () => {
     expect(res).toHaveProperty('hasGrantedScopes')
     expect(res).toHaveProperty('gUser')
     const { hasGrantedScopes, gUser } = res
-    expect(hasGrantedScopes).toBeInstanceOf(Boolean)
+    expect(hasGrantedScopes).toBeFalsy()
     expect(gUser).toBeInstanceOf(GoogleUserMock)
   })
 })
