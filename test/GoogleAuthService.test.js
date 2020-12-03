@@ -2,7 +2,7 @@
 // https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse
 import AuthService from '../src/VueGapi/GoogleAuthService'
 import { mockAuthResult } from './mockAuthResult'
-import { GoogleAuth, GoogleUser } from './GoogleAuth'
+import { GoogleAuthMock, GoogleUserMock } from './mockGoogleAuth'
 
 it('Ensure we have class', () => {
   const newService = new AuthService()
@@ -17,7 +17,7 @@ it('_expiresAt returns string of numbers only', () => {
 
 it('grant() returns correct response', async () => {
   const newService = new AuthService()
-  const gAuth = new GoogleAuth()
+  const gAuth = new GoogleAuthMock()
   newService.authInstance = gAuth
   newService.clientConfig = {
     scope: 'scope1',
@@ -32,7 +32,7 @@ it('grant() returns correct response', async () => {
       }
     )
   })
-  expect(res).toBeInstanceOf(GoogleUser)
+  expect(res).toBeInstanceOf(GoogleUserMock)
 
   // Test that onReject callback as well as the promise is rejected works.
   gAuth.currentUser.rejectGrant('access_denied')
@@ -61,5 +61,5 @@ it('grant() returns correct response', async () => {
   // Test that the promise is also returned.
   gAuth.currentUser.resolveGrant()
   res = await newService.grant()
-  expect(res).toBeInstanceOf(GoogleUser)
+  expect(res).toBeInstanceOf(GoogleUserMock)
 })
