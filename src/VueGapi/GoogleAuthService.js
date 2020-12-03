@@ -207,16 +207,13 @@ export default class GoogleAuthService {
             })
           }
 
-          return {
-            offlineAccessResponse: this.authInstance.grantOfflineAccess(),
-            gUser,
-          }
+          return this.authInstance.grantOfflineAccess()
         })
-        .then(function ({ offlineAccessResponse, gUser }) {
+        .then(function (offlineAccessResponse = null) {
           let hasGrantedScopes = this.hasGrantedRequestedScopes()
           if (!offlineAccessResponse) {
             return res({
-              gUser,
+              gUser: this.authInstance.currentUser.get(),
               hasGrantedScopes,
             })
           }
@@ -224,8 +221,8 @@ export default class GoogleAuthService {
           const { code } = offlineAccessResponse
           localStorage.setItem('gapi.refresh_token', code)
 
-          res({
-            gUser,
+          return res({
+            gUser: this.authInstance.currentUser.get(),
             hasGrantedScopes,
           })
         })
