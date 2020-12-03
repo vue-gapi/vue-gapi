@@ -1,15 +1,15 @@
-const mkdirp = require('mkdirp')
+const fs = require('fs')
 const rollup = require('rollup').rollup
 const buble = require('@rollup/plugin-buble')
 const replace = require('@rollup/plugin-replace')
 const commonjs = require('@rollup/plugin-commonjs')
 const { nodeResolve } = require('@rollup/plugin-node-resolve')
 const uglify = require('uglify-js')
-
-// Make sure dist dir exists
-mkdirp('dist')
-
 const { write, banner, name, moduleName, version } = require('./utils')
+
+if (!fs.existsSync('dist')) {
+  fs.mkdirSync('dist')
+}
 
 function rollupBundle() {
   return rollup({
