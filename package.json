@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist",
-    "build": "node build/build.js",
+    "build": "node build",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --ext js .",
     "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
@@ -45,7 +45,6 @@
     "jest": "^26.1.0",
     "jsdoc": "^3.6.5",
     "lint-staged": "^10.2.11",
-    "mkdirp": "^0.5.1",
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
