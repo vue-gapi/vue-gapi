@@ -251,6 +251,7 @@
   /**
    * @typedef LoginResponse
    * @property {bool} hasGrantedScopes True if the requested scopes were granted.
+   * @property {GoogleUser} gUser GoogleUser
    */
 
   /**
@@ -272,7 +273,7 @@
    *   methods: {
    *     login() {
    *       this.$gapi.login().then((resp) => {
-   *         console.log( resp.hasGrantedScopes );
+   *         console.log( resp, resp.hasGrantedScopes );
    *       })
    *     },
    *   },
@@ -284,17 +285,21 @@
       var ref;
 
     if (!this.authInstance) { throw new Error('gapi not initialized') }
+    var self = this;
     return (ref = new Promise(function (res, rej) {
       return this$1.authInstance
         .signIn()
-        .then(function () {
+        .then(function (gUser) {
           this$1._setSession();
           var ref = this$1.clientConfig;
             var wantsRefreshToken = ref.refreshToken;
           var noOfflineAccess = !wantsRefreshToken;
           if (noOfflineAccess) {
             var hasGrantedScopes = this$1.hasGrantedRequestedScopes();
-            return res({ hasGrantedScopes: hasGrantedScopes })
+            return res({
+              gUser: gUser,
+              hasGrantedScopes: hasGrantedScopes,
+            })
           }
 
           return this$1.authInstance.grantOfflineAccess()
@@ -302,19 +307,25 @@
         .then(function (offlineAccessResponse) {
             if ( offlineAccessResponse === void 0 ) offlineAccessResponse = null;
 
-          var hasGrantedScopes = this.hasGrantedRequestedScopes();
+          var hasGrantedScopes = self.hasGrantedRequestedScopes();
           if (!offlineAccessResponse) {
-            return res({ hasGrantedScopes: hasGrantedScopes })
+            return res({
+              gUser: self.authInstance.currentUser.get(),
+              hasGrantedScopes: hasGrantedScopes,
+            })
           }
 
           var code = offlineAccessResponse.code;
           localStorage.setItem('gapi.refresh_token', code);
 
-          res({ hasGrantedScopes: hasGrantedScopes });
+          return res({
+            gUser: self.authInstance.currentUser.get(),
+            hasGrantedScopes: hasGrantedScopes,
+          })
         })
         .catch(function (error) {
           console.error(error);
-          rej(error);
+          return rej(error)
         })
     })).then.apply(ref, thenArgsFromCallbacks(onResolve, onReject))
   };
