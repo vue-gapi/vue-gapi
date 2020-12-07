@@ -4,15 +4,16 @@ import { deprecatedMsg, getObjectCopy } from './utils'
 
 const googleAuthService = new GoogleAuthService()
 const {
-  grantOfflineAccess,
   getOfflineAccessCode,
-  login,
-  logout,
-  isAuthenticated,
   getUserData,
-  refreshToken,
+  grant,
+  grantOfflineAccess,
+  isAuthenticated,
   isSignedIn,
   listenUserSignIn,
+  login,
+  logout,
+  refreshToken,
 } = googleAuthService
 
 /**
@@ -147,6 +148,9 @@ export default {
       },
       logout: (res, rej) => {
         return Vue.prototype.$gapi.getGapiClient().then(() => logout(res, rej))
+      },
+      grant: (res, rej) => {
+        return Vue.prototype.$gapi.getGapiClient().then(() => grant(res, rej))
       },
       listenUserSignIn: (callback) => {
         return Vue.prototype.$gapi

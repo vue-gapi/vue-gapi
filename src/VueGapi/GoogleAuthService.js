@@ -26,6 +26,7 @@ export default class GoogleAuthService {
     this.offlineAccessCode = null
     this.getOfflineAccessCode = this.getOfflineAccessCode.bind(this)
     this.grantOfflineAccess = this.grantOfflineAccess.bind(this)
+    this.grant = this.grant.bind(this)
     this.login = this.login.bind(this)
     this.refreshToken = this.refreshToken.bind(this)
     this.logout = this.logout.bind(this)
@@ -141,6 +142,29 @@ export default class GoogleAuthService {
   }
 
   /**
+   * Check if requested scopes were granted or not.
+   *
+   * @method GoogleAuthService#hasGrantedRequestedScopes
+   * @return {boolean}
+   */
+  hasGrantedRequestedScopes() {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    const { scope } = this.clientConfig
+    let hasGrantedScopes = true
+    if (scope) {
+      const GoogleUser = this.authInstance.currentUser.get()
+      hasGrantedScopes = GoogleUser.hasGrantedScopes(scope)
+    }
+    return hasGrantedScopes
+  }
+
+  /**
+   * @typedef LoginResponse
+   * @property {bool} hasGrantedScopes True if the requested scopes were granted.
+   * @property {GoogleUser} googleUser GoogleUser
+   */
+
+  /**
    * Signs in the user.
    *
    * @method GoogleAuthService#login
@@ -149,7 +173,7 @@ export default class GoogleAuthService {
    * @param {onResolved} [onResolve]
    * @param {onRejected} [onReject]
    *
-   * @return {Promise}
+   * @return {Promise<LoginResponse>}
    *
    * @example
    * <script>
@@ -158,7 +182,9 @@ export default class GoogleAuthService {
    *
    *     methods: {
    *       login() {
-   *         this.$gapi.login()
+   *         this.$gapi.login().then((resp) => {
+   *           console.log( resp, resp.hasGrantedScopes );
+   *         })
    *       },
    *     },
    *   }
@@ -166,32 +192,44 @@ export default class GoogleAuthService {
    */
   login(onResolve, onReject) {
     if (!this.authInstance) throw new Error('gapi not initialized')
+    const self = this
     return new Promise((res, rej) => {
       return this.authInstance
         .signIn()
-        .then(() => {
+        .then((googleUser) => {
           this._setSession()
           const { refreshToken: wantsRefreshToken } = this.clientConfig
           const noOfflineAccess = !wantsRefreshToken
           if (noOfflineAccess) {
-            return res()
+            let hasGrantedScopes = this.hasGrantedRequestedScopes()
+            return res({
+              googleUser,
+              hasGrantedScopes,
+            })
           }
 
           return this.authInstance.grantOfflineAccess()
         })
         .then(function (offlineAccessResponse = null) {
+          let hasGrantedScopes = self.hasGrantedRequestedScopes()
           if (!offlineAccessResponse) {
-            return res()
+            return res({
+              googleUser: self.authInstance.currentUser.get(),
+              hasGrantedScopes,
+            })
           }
 
           const { code } = offlineAccessResponse
           localStorage.setItem('gapi.refresh_token', code)
 
-          res()
+          return res({
+            googleUser: self.authInstance.currentUser.get(),
+            hasGrantedScopes,
+          })
         })
         .catch(function (error) {
           console.error(error)
-          rej(error)
+          return rej(error)
         })
     }).then(...thenArgsFromCallbacks(onResolve, onReject))
   }
@@ -228,6 +266,52 @@ export default class GoogleAuthService {
       this._setStorage(authResult)
       return authResult
     })
+  }
+
+  /**
+   * Ask to grant scopes from user.
+   *
+   * @method GoogleAuthService#grant
+   * @see [GoogleUser.grant]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergrantoptions}
+   * @since 0.3.2
+   *
+   * @param {onResolved} [onResolve]
+   * @param {onRejected} [onReject]
+   *
+   * @return {Promise<GoogleUser>}
+   *
+   * @example
+   * <script>
+   *   export default {
+   *     name: 'grant-scope',
+   *
+   *     methods: {
+   *       grant() {
+   *         return this.$gapi.grant()
+   *       },
+   *     },
+   *   }
+   * </script>
+   */
+  grant(onResolve, onReject) {
+    if (!this.authInstance) throw new Error('gapi not initialized')
+    return new Promise((res, rej) => {
+      const GoogleUser = this.authInstance.currentUser.get()
+      let hasGrantedScopes = this.hasGrantedRequestedScopes()
+      if (hasGrantedScopes) {
+        // GoogleUser.grant resolves with GoogleUser object.
+        return res(GoogleUser)
+      }
+      const { scope } = this.clientConfig
+      GoogleUser.grant({ scope }).then(
+        (googleUser) => {
+          res(googleUser)
+        },
+        (error) => {
+          rej(error)
+        }
+      )
+    }).then(...thenArgsFromCallbacks(onResolve, onReject))
   }
 
   /**
