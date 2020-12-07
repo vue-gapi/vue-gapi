@@ -161,7 +161,7 @@ export default class GoogleAuthService {
   /**
    * @typedef LoginResponse
    * @property {bool} hasGrantedScopes True if the requested scopes were granted.
-   * @property {GoogleUser} gUser GoogleUser
+   * @property {GoogleUser} googleUser GoogleUser
    */
 
   /**
@@ -196,14 +196,14 @@ export default class GoogleAuthService {
     return new Promise((res, rej) => {
       return this.authInstance
         .signIn()
-        .then((gUser) => {
+        .then((googleUser) => {
           this._setSession()
           const { refreshToken: wantsRefreshToken } = this.clientConfig
           const noOfflineAccess = !wantsRefreshToken
           if (noOfflineAccess) {
             let hasGrantedScopes = this.hasGrantedRequestedScopes()
             return res({
-              gUser,
+              googleUser,
               hasGrantedScopes,
             })
           }
@@ -214,7 +214,7 @@ export default class GoogleAuthService {
           let hasGrantedScopes = self.hasGrantedRequestedScopes()
           if (!offlineAccessResponse) {
             return res({
-              gUser: self.authInstance.currentUser.get(),
+              googleUser: self.authInstance.currentUser.get(),
               hasGrantedScopes,
             })
           }
@@ -223,7 +223,7 @@ export default class GoogleAuthService {
           localStorage.setItem('gapi.refresh_token', code)
 
           return res({
-            gUser: self.authInstance.currentUser.get(),
+            googleUser: self.authInstance.currentUser.get(),
             hasGrantedScopes,
           })
         })

@@ -96,18 +96,18 @@ describe('login() returns correct response', () => {
       )
     })
     expect(res).toHaveProperty('hasGrantedScopes')
-    expect(res).toHaveProperty('gUser')
-    const { hasGrantedScopes, gUser } = res
+    expect(res).toHaveProperty('googleUser')
+    const { hasGrantedScopes, googleUser } = res
     expect(hasGrantedScopes).toBeFalsy()
-    expect(gUser).toBeInstanceOf(GoogleUserMock)
+    expect(googleUser).toBeInstanceOf(GoogleUserMock)
   })
 
   it('Test that the promise is also returned', async () => {
     let res = await newService.login()
     expect(res).toHaveProperty('hasGrantedScopes')
-    expect(res).toHaveProperty('gUser')
-    const { hasGrantedScopes, gUser } = res
+    expect(res).toHaveProperty('googleUser')
+    const { hasGrantedScopes, googleUser } = res
     expect(hasGrantedScopes).toBeFalsy()
-    expect(gUser).toBeInstanceOf(GoogleUserMock)
+    expect(googleUser).toBeInstanceOf(GoogleUserMock)
   })
 })
