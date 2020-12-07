@@ -63,6 +63,4 @@ exposes a `$gapi` member on the Vue instance:
 
 ## Reference
 
-<!-- @todo update link -->
-
 See the [generated `GoogleAuthService` documentation](https://vue-gapi.github.io/vue-gapi/GoogleAuthService.html) for a complete reference of the `Vue.$gapi` methods.
