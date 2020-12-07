@@ -1,19 +1,18 @@
 {
   "name": "vue-gapi",
-  "version": "0.3.1",
-  "description": "Google API client wrapper for Vue",
+  "version": "0.4.0",
+  "description": "Google API Client Library wrapper for Vue.js",
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
   "main": "dist/vue-gapi.common.js",
   "module": "dist/vue-gapi.esm.js",
   "browser": "dist/vue-gapi.common.js",
   "unpkg": "dist/vue-gapi.js",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "clean": "rimraf dist",
-    "build": "node build/build.js",
+    "build": "node build",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --ext js .",
     "lint:prettier": "prettier --check \"{**/*,*}.{js,json}\"",
@@ -35,17 +34,16 @@
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "@rollup/plugin-buble": "^0.21.3",
-    "@rollup/plugin-commonjs": "^14.0.0",
-    "@rollup/plugin-node-resolve": "^8.4.0",
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-replace": "^2.3.3",
     "babel-jest": "^26.1.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.14.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-vue": "^7.1.0",
     "jest": "^26.1.0",
     "jsdoc": "^3.6.5",
     "lint-staged": "^10.2.11",
-    "mkdirp": "^0.5.1",
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
@@ -57,13 +55,13 @@
   "peerDependencies": {
     "vue": "^2.3.0"
   },
-  "homepage": "https://github.com/CedricPoilly/vue-gapi#readme",
+  "homepage": "https://github.com/vue-gapi/vue-gapi#readme",
   "bugs": {
-    "url": "https://github.com/CedricPoilly/vue-gapi/issues"
+    "url": "https://github.com/vue-gapi/vue-gapi/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CedricPoilly/vue-gapi.git"
+    "url": "git+https://github.com/vue-gapi/vue-gapi.git"
   },
   "license": "MIT",
   "dependencies": {}
