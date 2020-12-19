@@ -74,13 +74,13 @@ export default class GoogleAuthService {
    * @return {Promise<string>} authorization code
    */
   grantOfflineAccess() {
-    return this.getAuthInstance()
-      .grantOfflineAccess()
-      .then(({ code }) => {
+    return this.getAuthInstance().then((authInstance) => {
+      return authInstance.grantOfflineAccess().then(({ code }) => {
         this.sessionStorage.setItem('offlineAccessCode', code)
 
         return code
       })
+    })
   }
 
   /**
@@ -105,8 +105,9 @@ export default class GoogleAuthService {
 
   /**
    * @typedef GoogleAuthService#LoginResponse
-   * @property {boolean} hasGrantedScopes True if the requested scopes were granted.
    * @property {GoogleUser} currentUser Current user
+   * @property {gapi} gapi Initialized {@link gapi} client
+   * @property {boolean} hasGrantedScopes <code>true</code> if the requested scopes were granted.
    * @property {string} [code] Authorization code if <code>grantOfflineAccess: true</code>
    */
 
@@ -123,24 +124,26 @@ export default class GoogleAuthService {
    * @example
    * <script>
    *   export default {
-   *     name: 'login-shortcut',
-   *
    *     methods: {
    *       login() {
-   *         this.$gapi.login({ grantOfflineAccess: true })
+   *         this.$gapi.login().then(({ gapi }) => {
+   *           // gapi.sheets.spreadsheet.get(...)
+   *         })
    *       },
    *     },
    *   }
    * </script>
    */
   login({ grantOfflineAccess = false } = {}) {
-    return this.getAuthInstance()
-      .then((authInstance) => {
+    return this.clientProvider
+      .getClient()
+      .then(({ gapi, authInstance }) => {
         return authInstance.signIn().then((currentUser) => {
           this.sessionStorage.set(sessionFromCurrentUser(currentUser))
 
           return {
             currentUser,
+            gapi,
             hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
           }
         })
@@ -240,10 +243,8 @@ export default class GoogleAuthService {
    * @example
    * <script>
    *   export default {
-   *     name: 'logout-shortcut',
-   *
    *     methods: {
-   *       login() {
+   *       logout() {
    *         this.$gapi.logout()
    *       },
    *     },

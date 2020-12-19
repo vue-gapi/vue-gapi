@@ -39,7 +39,7 @@ exposes a `$gapi` member on the Vue instance:
   export default {
     methods: {
       login() {
-        this.$gapi.getGapiClient().then((gapi) => {
+        this.$gapi.login().then(({ gapi }) => {
           // gapi.sheets.spreadsheet.get(...)
           // ...
         })
