@@ -20,7 +20,7 @@ function rollupBundle() {
       replace({
         __VERSION__: version,
       }),
-      buble(),
+      buble({ objectAssign: 'Object.assign' }),
     ],
   })
 }

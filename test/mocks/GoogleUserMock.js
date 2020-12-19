@@ -1,14 +1,11 @@
-import { mockProfile } from './mockProfile'
-import { mockAuthResult } from './mockAuthResult'
-import { getObjectCopy } from '../src/VueGapi/utils'
+import BasicProfileMock from './BasicProfileMock'
 
 /**
  * A test helper for GoogleUser
  *
  * @class GoogleUserMock
  */
-
-export class GoogleUserMock {
+export default class GoogleUserMock {
   constructor() {
     this._grantedScopes = ''
     this._rejectGrant = false
@@ -134,43 +131,24 @@ export class GoogleUserMock {
    * @memberof GoogleUserMock
    */
   getBasicProfile() {
-    return mockProfile
+    return BasicProfileMock
   }
 
-  /**
-   *
-   *
-   * @param {boolean} includeAuthorizationData
-   * @returns {mockAuthResult}
-   * @memberof GoogleUserMock
-   */
   getAuthResponse(includeAuthorizationData) {
-    let res = getObjectCopy(mockAuthResult)
+    const res = {
+      expires_in: 123456,
+      access_token: 'ACCESS_TOKEN',
+      id_token: 'ID_TOKEN',
+      scope: 'SCOPE',
+      first_issued_at: 1,
+      expires_at: 1,
+    }
+
     if (!includeAuthorizationData) {
       delete res.access_token
       delete res.scope
     }
+
     return res
-  }
-}
-
-/**
- * A test helper for GoogleAuth
- *
- * @class GoogleAuthMock
- */
-export class GoogleAuthMock {
-  constructor() {
-    this.currentUser = new GoogleUserMock()
-  }
-
-  /**
-   *
-   *
-   * @returns {Promise<GoogleUserMock>}
-   * @memberof GoogleAuthMock
-   */
-  async signIn() {
-    return this.currentUser
   }
 }

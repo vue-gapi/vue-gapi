@@ -1,113 +1,73 @@
-/* eslint-env node, jest */
-// https://developers.google.com/identity/sign-in/web/reference#gapiauth2authresponse
-import AuthService from '../src/VueGapi/GoogleAuthService'
-import { mockAuthResult } from './mockAuthResult'
-import { GoogleAuthMock, GoogleUserMock } from './mockGoogleAuth'
+import GoogleAuthService from '../src/GoogleAuthService'
+import SessionStorage from '../src/SessionStorage'
+import GoogleClientProviderMock from './mocks/GoogleClientProviderMock'
+import GoogleUserMock from './mocks/GoogleUserMock'
+import LocalStorageMock from './mocks/LocalStorageMock'
 
-it('Ensure we have class', () => {
-  const newService = new AuthService()
-  expect(newService).toBeInstanceOf(AuthService)
-})
+const realDateNow = Date.now
 
-it('_expiresAt returns string of numbers only', () => {
-  const newService = new AuthService()
-  const res = newService._expiresAt(mockAuthResult)
-  expect(res).toEqual(expect.stringMatching(/^[0-9]*$/))
-})
+describe('GoogleAuthService', () => {
+  let target
+  let sessionStorage
+  let currentUser
 
-describe('grant() returns correct response', () => {
-  let newService
-  let gAuth
+  beforeAll(() => {
+    global.Date.now = jest.fn(() => new Date('2020-12-19T12:00:00Z').getTime())
+  })
+
+  afterAll(() => {
+    global.Date.now = realDateNow
+  })
 
   beforeEach(async () => {
-    newService = new AuthService()
-    gAuth = new GoogleAuthMock()
-    newService.authInstance = gAuth
-    newService.clientConfig = {
-      scope: 'scope1',
-    }
+    currentUser = new GoogleUserMock()
+    sessionStorage = new SessionStorage(new LocalStorageMock())
+    target = new GoogleAuthService(
+      new GoogleClientProviderMock(
+        {
+          scope: 'scope1',
+        },
+        currentUser
+      ),
+      sessionStorage
+    )
   })
 
-  it('Test that onResolve callback works', async () => {
-    let res = await new Promise((res) => {
-      newService.grant(
-        (googleUser) => res(googleUser),
-        (error) => {
-          console.log(error)
-          expect(false).toBeTruthy()
-        }
-      )
+  describe('login', () => {
+    let response
+
+    beforeEach(async () => {
+      response = await target.login()
     })
-    expect(res).toBeInstanceOf(GoogleUserMock)
-  })
 
-  it('Test that onReject callback as well as the promise is rejected works', async () => {
-    gAuth.currentUser.rejectGrant('access_denied')
-    let res = await new Promise((res) => {
-      newService
-        .grant(
-          () => {
-            expect(false).toBeTruthy()
-          },
-          (error) => {
-            expect(error).toMatchObject({
-              error: 'access_denied',
-            })
-            res()
-          }
-        )
-        .catch((error) => {
-          expect(error).toMatchObject({
-            error: 'access_denied',
-          })
-          res()
-        })
+    it('should initialize session', () => {
+      expect(sessionStorage.get()).toStrictEqual({
+        accessToken: 'ACCESS_TOKEN',
+        idToken: 'ID_TOKEN',
+        expiresAt: 1608502656000,
+        id: '123',
+        fullName: 'Jane Doe',
+        firstName: 'Jane',
+        lastName: 'Doe',
+        email: 'jane.doe@example.com',
+        imageUrl: 'https://via.placeholder.com/150',
+      })
     })
-    expect(res).toBeUndefined()
-  })
 
-  it('Test that the promise is also returned', async () => {
-    let res = await newService.grant()
-    expect(res).toBeInstanceOf(GoogleUserMock)
-  })
-})
-
-describe('login() returns correct response', () => {
-  let newService
-  let gAuth
-
-  beforeEach(async () => {
-    newService = new AuthService()
-    gAuth = new GoogleAuthMock()
-    newService.authInstance = gAuth
-    newService.clientConfig = {
-      scope: 'scope1',
-    }
-  })
-
-  it('Test that onResolve callback works', async () => {
-    let res = await new Promise((res) => {
-      newService.login(
-        (googleUser) => res(googleUser),
-        (error) => {
-          console.log(error)
-          expect(false).toBeTruthy()
-        }
-      )
+    it('should resolve with login response', () => {
+      expect(response.hasGrantedScopes).toBeFalsy()
+      expect(response.currentUser).toBeInstanceOf(GoogleUserMock)
     })
-    expect(res).toHaveProperty('hasGrantedScopes')
-    expect(res).toHaveProperty('googleUser')
-    const { hasGrantedScopes, googleUser } = res
-    expect(hasGrantedScopes).toBeFalsy()
-    expect(googleUser).toBeInstanceOf(GoogleUserMock)
   })
 
-  it('Test that the promise is also returned', async () => {
-    let res = await newService.login()
-    expect(res).toHaveProperty('hasGrantedScopes')
-    expect(res).toHaveProperty('googleUser')
-    const { hasGrantedScopes, googleUser } = res
-    expect(hasGrantedScopes).toBeFalsy()
-    expect(googleUser).toBeInstanceOf(GoogleUserMock)
+  describe('grant', () => {
+    it('success', () => {
+      expect(target.grant()).resolves.toBeInstanceOf(GoogleUserMock)
+    })
+
+    it('error', async () => {
+      currentUser.rejectGrant('access_denied')
+      expect(target.grant()).rejects.toStrictEqual({ error: 'access_denied' })
+    })
   })
 })
