@@ -1,16 +1,6 @@
 import { sessionFromAuthResponse, sessionFromCurrentUser } from './utils'
 
 /**
- * Singleton class that provides methods to allow the user to sign in with a
- * Google account, get the user's current sign-in status, get specific data
- * from the user's Google profile, request additional scopes, and sign out
- * from the current account.
- *
- * @typedef {object} GoogleAuth
- * @see https://developers.google.com/identity/sign-in/web/reference#authentication
- */
-
-/**
  * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
  *
  * @package
@@ -23,19 +13,41 @@ export default class GoogleAuthService {
   }
 
   /**
+   * Returns an initialized {@link gapi} client.
+   *
    * @method GoogleAuthService#getGapiClient
-   * @return {Promise<GoogleAuth>}
+   * @see https://github.com/google/google-api-javascript-client/blob/master/docs/start.md
+   *
+   * @return {Promise<gapi>}
    */
   getGapiClient() {
     return this.clientProvider.getClient().then(({ gapi }) => gapi)
   }
 
+  /**
+   * Returns the {@link GoogleAuth} object.
+   *
+   * @method GoogleAuthService#getAuthInstance
+   * @see [gapi.auth2.getAuthInstance]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2getauthinstance}
+   * @since 1.0.0
+   *
+   * @return {Promise<GoogleAuth>}
+   */
   getAuthInstance() {
     return this.clientProvider
       .getClient()
       .then(({ authInstance }) => authInstance)
   }
 
+  /**
+   * Returns a {@link GoogleUser} object that represents the current user.
+   *
+   * @method GoogleAuthService#getCurrentUser
+   * @see [GoogleAuth.currentUser.get]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthcurrentuserget}
+   * @since 1.0.0
+   *
+   * @return {Promise<GoogleUser>}
+   */
   getCurrentUser() {
     return this.getAuthInstance().then((authInstance) => {
       return authInstance.currentUser.get()
@@ -46,6 +58,7 @@ export default class GoogleAuthService {
    * Returns the authorization code set via {@link GoogleAuthService#grantOfflineAccess}.
    *
    * @method GoogleAuthService#getOfflineAccessCode
+   *
    * @return {string|null}
    */
   getOfflineAccessCode() {
@@ -57,7 +70,8 @@ export default class GoogleAuthService {
    *
    * @method GoogleAuthService#grantOfflineAccess
    * @see [GoogleAuth.grantOfflineAccess]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthgrantofflineaccessoptions}
-   * @return {Promise}
+   *
+   * @return {Promise<string>} authorization code
    */
   grantOfflineAccess() {
     return this.getAuthInstance()
@@ -72,8 +86,10 @@ export default class GoogleAuthService {
   /**
    * Check if requested scopes were granted or not.
    *
+   * @private
    * @method GoogleAuthService#hasGrantedRequestedScopes
    * @param {GoogleUser} currentUser
+   *
    * @return {boolean}
    */
   hasGrantedRequestedScopes(currentUser) {
@@ -83,18 +99,26 @@ export default class GoogleAuthService {
   }
 
   /**
-   * @typedef LoginResponse
-   * @property {bool} hasGrantedScopes True if the requested scopes were granted.
-   * @property {GoogleUser} googleUser GoogleUser
+   * @typedef GoogleAuthService#LoginOptions
+   * @property {boolean} [grantOfflineAccess=false] Additionally gets permission from the user to access the specified scopes offline via {@link GoogleAuthService#getOfflineAccessCode}
    */
 
   /**
-   * Signs in the user.
+   * @typedef GoogleAuthService#LoginResponse
+   * @property {boolean} hasGrantedScopes True if the requested scopes were granted.
+   * @property {GoogleUser} currentUser Current user
+   * @property {string} [code] Authorization code if <code>grantOfflineAccess: true</code>
+   */
+
+  /**
+   * Signs in the user and initializes session.
    *
    * @method GoogleAuthService#login
    * @see [GoogleAuth.signIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignin}
    *
-   * @return {Promise<LoginResponse>}
+   * @param {GoogleAuthService#LoginOptions} [options]
+   *
+   * @return {Promise<GoogleAuthService#LoginResponse>}
    *
    * @example
    * <script>
@@ -103,7 +127,7 @@ export default class GoogleAuthService {
    *
    *     methods: {
    *       login() {
-   *         this.$gapi.login()
+   *         this.$gapi.login({ grantOfflineAccess: true })
    *       },
    *     },
    *   }
@@ -123,7 +147,10 @@ export default class GoogleAuthService {
       })
       .then((response) => {
         if (grantOfflineAccess) {
-          return this.grantOfflineAccess().then(() => response)
+          return this.grantOfflineAccess().then((code) => ({
+            ...response,
+            code,
+          }))
         }
 
         return response
@@ -173,10 +200,7 @@ export default class GoogleAuthService {
    *
    * @method GoogleAuthService#grant
    * @see [GoogleUser.grant]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergrantoptions}
-   * @since 0.3.2
-   *
-   * @param {onResolved} [onResolve]
-   * @param {onRejected} [onReject]
+   * @since 0.4.0
    *
    * @return {Promise<GoogleUser>}
    *
@@ -206,7 +230,7 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Signs out the current account from the application.
+   * Signs out the current account from the application and clear session storage.
    *
    * @method GoogleAuthService#logout
    * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
@@ -259,25 +283,13 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Determines if the user is signed in via Google. Can be used inside v-if views.
+   * Determines if the user is signed in via Google.
    *
    * @method GoogleAuthService#isSignedIn
    * @see [GoogleUser.isSignedIn]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserissignedin}
    * @since 0.0.10
-   * @return {boolean}
    *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'is-signed-in',
-   *
-   *     computed: {
-   *       isSignedIn() {
-   *         return this.$gapi.isSignedIn()
-   *       },
-   *     },
-   *   }
-   * </script>
+   * @return {Promise<boolean>}
    */
   isSignedIn() {
     return this.getCurrentUser().then((currentUser) => currentUser.isSignedIn())
@@ -294,18 +306,12 @@ export default class GoogleAuthService {
    * @param {function} callback
    *   the callback function to be notified of an authentication status change
    *
-   * @return {boolean|GoogleAuthService#UserData} False if NOT authenticated, UserData if authenticated
+   * @return {Promise<void>}
    */
   listenUserSignIn(callback) {
     return this.getAuthInstance().then((authInstance) => {
       callback(authInstance.currentUser.get().isSignedIn())
       authInstance.isSignedIn.listen(callback)
-
-      // if (authInstance.currentUser.get().isSignedIn()) {
-      //   return this.getUserData()
-      // } else {
-      //   return false
-      // }
     })
   }
 
@@ -331,6 +337,7 @@ export default class GoogleAuthService {
    *
    * @method GoogleAuthService#getUserData
    * @since 0.0.10
+   *
    * @return {GoogleAuthService#UserData|null}
    */
   getUserData() {

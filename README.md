@@ -1,8 +1,8 @@
-# VueGapi
-
 [![npm](https://img.shields.io/npm/v/vue-gapi.svg)](https://www.npmjs.com/package/vue-gapi) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
-> [Google API Client Library wrapper](https://developers.google.com/identity/sign-in/web/reference) for [Vue.js](https://vuejs.org/)
+# VueGapi
+
+[Google API Client Library](https://github.com/google/google-api-javascript-client) wrapper for [Vue.js](https://vuejs.org/)
 
 ## Installation
 
@@ -18,28 +18,18 @@ yarn add vue-gapi
 
 ## Usage
 
-Installing the plugin:
+Installing the plugin with [`gapi.client.init`](https://github.com/google/google-api-javascript-client/blob/master/docs/reference.md#----gapiclientinitargs--) configuration parameters:
 
 ```js
 import Vue from 'vue'
-
-// import the plugin
 import VueGapi from 'vue-gapi'
 
-// create the 'options' object
-const clientConfig = {
+Vue.use(VueGapi, {
   apiKey: '<YOUR_API_KEY>',
   clientId: '<YOUR_CLIENT_ID>.apps.googleusercontent.com',
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-  // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
   scope: 'https://www.googleapis.com/auth/spreadsheets',
-
-  // works only with `ux_mode: "prompt"`
-  refreshToken: true,
-}
-
-// Use the plugin and pass along the configuration
-Vue.use(VueGapi, clientConfig)
+})
 ```
 
 exposes a `$gapi` member on the Vue instance:
@@ -47,8 +37,6 @@ exposes a `$gapi` member on the Vue instance:
 ```html
 <script>
   export default {
-    name: 'my-component',
-
     methods: {
       login() {
         this.$gapi.getGapiClient().then((gapi) => {

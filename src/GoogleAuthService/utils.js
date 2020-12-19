@@ -25,6 +25,7 @@ export function sessionFromAuthResponse(authResponse) {
 /**
  * Return the expiration time of the user's auth session.
  *
+ * @private
  * @param {object} authResponse gapi.auth2.AuthResponse object
  *
  * @return {number}
