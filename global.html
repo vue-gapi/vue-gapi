@@ -102,6 +102,85 @@
 
         
                 
+<h4 class="name" id="gapi">gapi</h4>
+
+
+
+
+<div class="description">
+    Google API Client.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GapiClientProvider_index.js.html">GapiClientProvider/index.js</a>, <a href="GapiClientProvider_index.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/google/google-api-javascript-client">https://github.com/google/google-api-javascript-client</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
 <h4 class="name" id="GoogleAuth">GoogleAuth</h4>
 
 
@@ -159,7 +238,7 @@ from the current account.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GoogleAuthService.js.html">GoogleAuthService.js</a>, <a href="GoogleAuthService.js.html#line3">line 3</a>
+        <a href="GapiClientProvider_index.js.html">GapiClientProvider/index.js</a>, <a href="GapiClientProvider_index.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -184,210 +263,26 @@ from the current account.
 
             
                 
-<h4 class="name" id="LoginResponse">LoginResponse</h4>
+<h4 class="name" id="GoogleUser">GoogleUser</h4>
 
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>hasGrantedScopes</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">True if the requested scopes were granted.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>googleUser</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GoogleUser</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">GoogleUser</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="GoogleAuthService.js.html">GoogleAuthService.js</a>, <a href="GoogleAuthService.js.html#line161">line 161</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-            
-                
-
-    
-
-    
-    <h4 class="name" id="onRejected"><span class="type-signature"></span>onRejected<span class="signature">(error)</span><span class="type-signature"></span></h4>
-    
-
-    
 
 
 
 <div class="description">
-    A Function called if the Promise is rejected.
+    Object that represents the current user.
 </div>
 
 
 
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
+    <h5>Type:</h5>
+    <ul>
+        <li>
             
-                <td class="name"><code>error</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
+<span class="param-type">object</span>
 
 
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
+        </li>
+    </ul>
 
 
 
@@ -422,167 +317,23 @@ from the current account.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line22">line 22</a>
+        <a href="GapiClientProvider_index.js.html">GapiClientProvider/index.js</a>, <a href="GapiClientProvider_index.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
     
 
     
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-                
-
-    
-
-    
-    <h4 class="name" id="onResolved"><span class="type-signature"></span>onResolved<span class="signature">(value)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    A Function called if the Promise is fulfilled.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line15">line 15</a>
-    </li></ul></dd>
-    
-
-    
-
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://developers.google.com/identity/sign-in/web/reference#googleusergetid">https://developers.google.com/identity/sign-in/web/reference#googleusergetid</a></li>
+        </ul>
+    </dd>
     
 
     
 </dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -609,7 +360,7 @@ from the current account.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Dec 08 2020 00:08:19 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Dec 19 2020 17:29:21 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
