@@ -1,8 +1,12 @@
-const LOCAL_STORAGE_KEY = 'gapi.session'
+export const LOCAL_STORAGE_KEY = 'gapi.session'
 
 export default class SessionStorage {
+  constructor(localStorage = window.localStorage) {
+    this.localStorage = localStorage
+  }
+
   set(session) {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(session))
+    this.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(session))
   }
 
   setItem(key, value) {
@@ -12,7 +16,7 @@ export default class SessionStorage {
   }
 
   get() {
-    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
+    return JSON.parse(this.localStorage.getItem(LOCAL_STORAGE_KEY))
   }
 
   getItem(key) {
@@ -22,6 +26,6 @@ export default class SessionStorage {
   }
 
   clear() {
-    localStorage.removeItem(LOCAL_STORAGE_KEY)
+    this.localStorage.removeItem(LOCAL_STORAGE_KEY)
   }
 }

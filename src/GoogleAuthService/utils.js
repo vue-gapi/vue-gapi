@@ -31,5 +31,5 @@ export function sessionFromAuthResponse(authResponse) {
  * @return {number}
  */
 export function expiresAt(authResponse) {
-  return authResponse.expires_in * 1000 + new Date().getTime()
+  return authResponse.expires_in * 1000 + Date.now()
 }
