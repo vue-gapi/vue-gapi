@@ -7,8 +7,10 @@
   "module": "dist/vue-gapi.esm.js",
   "browser": "dist/vue-gapi.common.js",
   "unpkg": "dist/vue-gapi.js",
+  "types": "./vue-gapi.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "vue-gapi.d.ts"
   ],
   "scripts": {
     "clean": "rimraf dist",
@@ -65,5 +67,8 @@
     "url": "git+https://github.com/vue-gapi/vue-gapi.git"
   },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@types/gapi": "0.0.39",
+    "@types/gapi.auth2": "0.0.52"
+  }
 }
