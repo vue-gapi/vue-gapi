@@ -64,3 +64,5 @@ typings/
 
 # JSDoc
 docs/
+!docs/.vuepress/partials/
+!docs/.vuepress/config.js
