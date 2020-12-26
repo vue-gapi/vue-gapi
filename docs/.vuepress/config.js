@@ -9,6 +9,7 @@ function fullPathFromName(fileName) {
 }
 
 module.exports = {
+  base: '/vue-gapi/',
   title: 'VueGapi',
   description: 'Google API Client Library wrapper for Vue.js',
   themeConfig: {
