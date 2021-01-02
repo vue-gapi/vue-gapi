@@ -4,6 +4,10 @@
 
 [Google API Client Library](https://github.com/google/google-api-javascript-client) wrapper for [Vue.js](https://vuejs.org/)
 
+## Vue 3
+
+[Vue.js v3.x](https://v3.vuejs.org/) will be supported in v2.0 and can be installed today via `vue-gapi@next`.
+
 ## Installation
 
 ```bash
