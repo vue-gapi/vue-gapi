@@ -23,11 +23,11 @@ import SessionStorage from './SessionStorage'
 
 export default {
   /**
-   * @param {Vue} Vue Vue constructor
+   * @param {Vue} app Vue application instance
    * @param {module:vue-gapi.Options} clientConfig VueGapi plugin options
-   * @see [Using a Plugin]{@link https://vuejs.org/v2/guide/plugins.html#Using-a-Plugin}
+   * @see [Using a Plugin]{@link https://v3.vuejs.org/guide/plugins.html#using-a-plugin}
    */
-  install: (Vue, clientConfig) => {
+  install: (app, clientConfig) => {
     const clientProvider = new GapiClientProvider(clientConfig)
     const sessionStorage = new SessionStorage()
 
@@ -51,7 +51,10 @@ export default {
      *   }
      * </script>
      */
-    Vue.prototype.$gapi = new GoogleAuthService(clientProvider, sessionStorage)
+    app.config.globalProperties.$gapi = new GoogleAuthService(
+      clientProvider,
+      sessionStorage
+    )
   },
 }
 

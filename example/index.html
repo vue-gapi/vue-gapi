@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>VueGapi</title>
-    <script src="//cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="//unpkg.com/vue@next"></script>
     <script src="../dist/vue-gapi.js"></script>
   </head>
   <body>
@@ -22,16 +22,11 @@
     </div>
 
     <script>
-      Vue.use(VueGapi.default, {
-        clientId:
-          '831498217804-n5f6uvt30h9q0lsdql4tq6qek8i6cggf.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/photoslibrary.readonly',
-      })
-
-      const app = new Vue({
-        el: '#app',
-        data: {
-          isSignedIn: null,
+      const app = Vue.createApp({
+        data() {
+          return {
+            isSignedIn: null,
+          }
         },
         computed: {
           userName() {
@@ -52,6 +47,14 @@
           })
         },
       })
+
+      app.use(VueGapi.default, {
+        clientId:
+          '831498217804-n5f6uvt30h9q0lsdql4tq6qek8i6cggf.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/photoslibrary.readonly',
+      })
+
+      app.mount('#app')
     </script>
   </body>
 </html>

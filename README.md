@@ -1,19 +1,19 @@
-[![npm](https://img.shields.io/npm/v/vue-gapi.svg)](https://www.npmjs.com/package/vue-gapi) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
+[![npm](https://img.shields.io/npm/v/vue-gapi.svg)](https://www.npmjs.com/package/vue-gapi) [![vuejs3](https://img.shields.io/badge/vue.js-3.x-brightgreen.svg?logo=vue.js)](https://v3.vuejs.org/)
 
 # VueGapi
 
-[Google API Client Library](https://github.com/google/google-api-javascript-client) wrapper for [Vue.js](https://vuejs.org/)
+[Google API Client Library](https://github.com/google/google-api-javascript-client) wrapper for [Vue.js](https://v3.vuejs.org/)
 
 ## Installation
 
 ```bash
-npm install --save vue-gapi
+npm install --save vue-gapi@next
 ```
 
 or
 
 ```
-yarn add vue-gapi
+yarn add vue-gapi@next
 ```
 
 ## Usage

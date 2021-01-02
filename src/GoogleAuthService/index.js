@@ -1,7 +1,7 @@
 import { sessionFromAuthResponse, sessionFromCurrentUser } from './utils'
 
 /**
- * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
+ * Exposed as a <code>$gapi</code> [global property]{@link https://v3.vuejs.org/api/application-config.html#globalproperties} accessible inside the application.
  *
  * @package
  * @class GoogleAuthService
