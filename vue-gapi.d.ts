@@ -58,7 +58,7 @@ declare module 'vue-gapi' {
     isSignedIn: () => Promise<boolean>
 
     /** Accept the callback to be notified when the authentication status changes. */
-    listenUserSignIn: (callback: (isSignedIn: boolean) => any) => Promise<void>
+    listenUserSignIn: (callback: (isSignedIn: boolean) => void) => Promise<void>
 
     /** Gets the user data from local storage */
     getUserData: () => UserData | null
