@@ -16,7 +16,7 @@ npm install --save vue-gapi
 
 or
 
-```
+```bash
 yarn add vue-gapi
 ```
 
@@ -52,7 +52,3 @@ exposes a `$gapi` member on the Vue instance:
   }
 </script>
 ```
-
-## Reference
-
-See the [generated `GoogleAuthService` documentation](https://vue-gapi.github.io/vue-gapi/GoogleAuthService.html) for a complete reference of the `Vue.$gapi` methods.
