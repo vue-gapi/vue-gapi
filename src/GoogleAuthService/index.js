@@ -188,7 +188,7 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#refreshToken
    * @see [GoogleUser.reloadAuthResponse]{@link https://developers.google.com/identity/sign-in/web/reference#googleuserreloadauthresponse}
    *
-   * @return {Promise}
+   * @return {Promise<AuthResponse>}
    *
    * @example
    * <script>
@@ -320,7 +320,6 @@ export default class GoogleAuthService {
 
   /**
    * Accept the callback to be notified when the authentication status changes.
-   * Will also determine if the login token is valid using google methods and return UserData or false
    *
    * @method GoogleAuthService#listenUserSignIn
    * @see [GoogleAuth.isSignedIn.listen]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthissignedinlistenlistener}
@@ -350,9 +349,10 @@ export default class GoogleAuthService {
    * @property {string} fullName full name
    * @property {string} email
    * @property {string} imageUrl
-   * @property {string} expiresAt
+   * @property {number} expiresAt
    * @property {string} accessToken granted access token
    * @property {string} idToken granted ID token
+   * @property {string} [offlineAccessCode]
    */
 
   /**
