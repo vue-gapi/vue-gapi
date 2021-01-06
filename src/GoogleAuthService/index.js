@@ -1,9 +1,32 @@
 import { sessionFromAuthResponse, sessionFromCurrentUser } from './utils'
 
 /**
+ * Google API Client.
+ *
+ * @typedef GoogleAuthService#gapi
+ * @see {@link https://github.com/google/google-api-javascript-client}
+ */
+
+/**
+ * Singleton class that provides methods to allow the user to sign in with a
+ * Google account, get the user's current sign-in status, get specific data
+ * from the user's Google profile, request additional scopes, and sign out
+ * from the current account.
+ *
+ * @typedef GoogleAuthService#GoogleAuth
+ * @see {@link https://developers.google.com/identity/sign-in/web/reference#authentication}
+ */
+
+/**
+ * Object that represents the current user.
+ *
+ * @typedef GoogleAuthService#GoogleUser
+ * @see {@link https://developers.google.com/identity/sign-in/web/reference#googleusergetid}
+ */
+
+/**
  * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
  *
- * @package
  * @class GoogleAuthService
  */
 export default class GoogleAuthService {
@@ -13,25 +36,25 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Returns an initialized {@link gapi} client.
+   * Returns an initialized {@link GoogleAuthService#gapi} client.
    *
    * @method GoogleAuthService#getGapiClient
-   * @see https://github.com/google/google-api-javascript-client/blob/master/docs/start.md
+   * @see {@link https://github.com/google/google-api-javascript-client/blob/master/docs/start.md}
    *
-   * @return {Promise<gapi>}
+   * @return {Promise<GoogleAuthService#gapi>}
    */
   getGapiClient() {
     return this.clientProvider.getClient().then(({ gapi }) => gapi)
   }
 
   /**
-   * Returns the {@link GoogleAuth} object.
+   * Returns the {@link GoogleAuthService#GoogleAuth} object.
    *
    * @method GoogleAuthService#getAuthInstance
    * @see [gapi.auth2.getAuthInstance]{@link https://developers.google.com/identity/sign-in/web/reference#gapiauth2getauthinstance}
    * @since 1.0.0
    *
-   * @return {Promise<GoogleAuth>}
+   * @return {Promise<GoogleAuthService#GoogleAuth>}
    */
   getAuthInstance() {
     return this.clientProvider
@@ -40,13 +63,13 @@ export default class GoogleAuthService {
   }
 
   /**
-   * Returns a {@link GoogleUser} object that represents the current user.
+   * Returns a {@link GoogleAuthService#GoogleUser} object that represents the current user.
    *
    * @method GoogleAuthService#getCurrentUser
    * @see [GoogleAuth.currentUser.get]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthcurrentuserget}
    * @since 1.0.0
    *
-   * @return {Promise<GoogleUser>}
+   * @return {Promise<GoogleAuthService#GoogleUser>}
    */
   getCurrentUser() {
     return this.getAuthInstance().then((authInstance) => {
@@ -88,7 +111,7 @@ export default class GoogleAuthService {
    *
    * @private
    * @method GoogleAuthService#hasGrantedRequestedScopes
-   * @param {GoogleUser} currentUser
+   * @param {GoogleAuthService#GoogleUser} currentUser
    *
    * @return {boolean}
    */
@@ -106,7 +129,7 @@ export default class GoogleAuthService {
   /**
    * @typedef GoogleAuthService#LoginResponse
    * @property {boolean} hasGrantedScopes True if the requested scopes were granted.
-   * @property {GoogleUser} currentUser Current user
+   * @property {GoogleAuthService#GoogleUser} currentUser Current user
    * @property {string} [code] Authorization code if <code>grantOfflineAccess: true</code>
    */
 
@@ -202,7 +225,7 @@ export default class GoogleAuthService {
    * @see [GoogleUser.grant]{@link https://developers.google.com/identity/sign-in/web/reference#googleusergrantoptions}
    * @since 0.4.0
    *
-   * @return {Promise<GoogleUser>}
+   * @return {Promise<GoogleAuthService#GoogleUser>}
    *
    * @example
    * <script>
