@@ -136,12 +136,11 @@ export default class GoogleUserMock {
 
   getAuthResponse(includeAuthorizationData) {
     const res = {
-      expires_in: 123456,
       access_token: 'ACCESS_TOKEN',
       id_token: 'ID_TOKEN',
       scope: 'SCOPE',
       first_issued_at: 1,
-      expires_at: 1,
+      expires_at: Date.now() + 123456000,
     }
 
     if (!includeAuthorizationData) {
