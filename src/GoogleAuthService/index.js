@@ -142,19 +142,6 @@ export default class GoogleAuthService {
    * @param {GoogleAuthService#LoginOptions} [options]
    *
    * @return {Promise<GoogleAuthService#LoginResponse>}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'login-shortcut',
-   *
-   *     methods: {
-   *       login() {
-   *         this.$gapi.login({ grantOfflineAccess: true })
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   login({ grantOfflineAccess = false } = {}) {
     return this.getAuthInstance()
@@ -226,19 +213,6 @@ export default class GoogleAuthService {
    * @since 0.4.0
    *
    * @return {Promise<GoogleAuthService#GoogleUser>}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'grant-scope',
-   *
-   *     methods: {
-   *       grant() {
-   *         return this.$gapi.grant()
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   grant() {
     return this.getCurrentUser().then((currentUser) => {
@@ -259,19 +233,6 @@ export default class GoogleAuthService {
    * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
    *
    * @return {Promise}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'logout-shortcut',
-   *
-   *     methods: {
-   *       login() {
-   *         this.$gapi.logout()
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   logout() {
     return this.getAuthInstance()
@@ -285,21 +246,6 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#isAuthenticated
    * @since 0.0.10
    * @return {boolean}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'login-shortcut-check',
-   *
-   *     methods: {
-   *       login() {
-   *         if (this.$gapi.isAuthenticated() !== true) {
-   *           this.$gapi.login()
-   *         }
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   isAuthenticated() {
     return new Date().getTime() < this.sessionStorage.getItem('expiresAt')

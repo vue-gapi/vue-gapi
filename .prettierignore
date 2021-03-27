@@ -1,4 +1,3 @@
 .vscode
 dist
-docs/*
-!docs/.vuepress
+docs/reference

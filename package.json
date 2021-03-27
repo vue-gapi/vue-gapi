@@ -21,7 +21,7 @@
     "lint:staged": "lint-staged",
     "test": "jest",
     "prepublish": "npm run build",
-    "docs": "vuepress-jsdoc --source ./src --dist ./docs --folder . --readme ./README.md --rmPattern=./docs/README.md --partials ./docs/.vuepress/partials/*.hbs && vuepress build ./docs"
+    "docs": "vuepress-jsdoc --source ./src --dist ./docs --folder ./reference --partials ./docs/.vuepress/partials/*.hbs && cp README.md ./docs && vuepress build ./docs"
   },
   "lint-staged": {
     "*.js": [
