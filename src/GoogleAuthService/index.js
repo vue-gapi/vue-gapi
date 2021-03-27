@@ -157,30 +157,18 @@ export default class GoogleAuthService {
    *   }
    * </script>
    */
-  login({ grantOfflineAccess = false } = {}) {
-    return this.clientProvider
-      .getClient()
-      .then(({ gapi, authInstance }) => {
-        return authInstance.signIn().then((currentUser) => {
-          this.sessionStorage.set(sessionFromCurrentUser(currentUser))
+  login() {
+    return this.clientProvider.getClient().then(({ gapi, authInstance }) => {
+      return authInstance.signIn().then((currentUser) => {
+        this.sessionStorage.set(sessionFromCurrentUser(currentUser))
 
-          return {
-            currentUser,
-            gapi,
-            hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
-          }
-        })
-      })
-      .then((response) => {
-        if (grantOfflineAccess) {
-          return this.grantOfflineAccess().then((code) => ({
-            ...response,
-            code,
-          }))
+        return {
+          currentUser,
+          gapi,
+          hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
         }
-
-        return response
       })
+    })
   }
 
   /**

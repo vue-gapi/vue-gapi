@@ -38,14 +38,16 @@
         },
         computed: {
           userName() {
-            return this.$gapi.getUserData().firstName
+            const user = this.$gapi.getUserData()
+
+            if (user) {
+              return user.firstName
+            }
           },
         },
         methods: {
           login() {
-            this.$gapi.login().then((response) => {
-              console.log('login', response)
-            })
+            this.$gapi.login()
           },
           grantOfflineAccess() {
             this.$gapi.grantOfflineAccess()
