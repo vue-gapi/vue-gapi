@@ -1,14 +1,16 @@
 {
   "name": "vue-gapi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Google API Client Library wrapper for Vue.js",
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
   "main": "dist/vue-gapi.common.js",
   "module": "dist/vue-gapi.esm.js",
   "browser": "dist/vue-gapi.common.js",
   "unpkg": "dist/vue-gapi.js",
+  "types": "./vue-gapi.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "vue-gapi.d.ts"
   ],
   "scripts": {
     "clean": "rimraf dist",
@@ -19,7 +21,7 @@
     "lint:staged": "lint-staged",
     "test": "jest",
     "prepublish": "npm run build",
-    "jsdoc": "jsdoc --recurse --destination docs src README.md"
+    "docs": "vuepress-jsdoc --source ./src --dist ./docs --folder . --readme ./README.md --rmPattern=./docs/README.md --partials ./docs/.vuepress/partials/*.hbs && vuepress build ./docs"
   },
   "lint-staged": {
     "*.js": [
@@ -40,10 +42,9 @@
     "@rollup/plugin-replace": "^2.3.3",
     "babel-jest": "^26.1.0",
     "eslint": "^7.14.0",
-    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.1.0",
     "jest": "^26.1.0",
-    "jsdoc": "^3.6.5",
     "lint-staged": "^10.2.11",
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
@@ -51,7 +52,9 @@
     "rollup": "^2.23.0",
     "uglify-js": "^3.10.1",
     "uppercamelcase": "^3.0.0",
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vuepress": "^1.8.0",
+    "vuepress-jsdoc": "^3.2.0"
   },
   "peerDependencies": {
     "vue": "^2.3.0"
@@ -65,5 +68,8 @@
     "url": "git+https://github.com/vue-gapi/vue-gapi.git"
   },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@types/gapi": "0.0.39",
+    "@types/gapi.auth2": "0.0.53"
+  }
 }

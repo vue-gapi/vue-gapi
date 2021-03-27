@@ -4,6 +4,10 @@
 
 [Google API Client Library](https://github.com/google/google-api-javascript-client) wrapper for [Vue.js](https://vuejs.org/)
 
+## Vue 3
+
+[Vue.js v3.x](https://v3.vuejs.org/) will be supported in v2.0 and can be installed today via `vue-gapi@next`.
+
 ## Installation
 
 ```bash
@@ -12,7 +16,7 @@ npm install --save vue-gapi
 
 or
 
-```
+```bash
 yarn add vue-gapi
 ```
 
@@ -48,7 +52,3 @@ exposes a `$gapi` member on the Vue instance:
   }
 </script>
 ```
-
-## Reference
-
-See the [generated `GoogleAuthService` documentation](https://vue-gapi.github.io/vue-gapi/GoogleAuthService.html) for a complete reference of the `Vue.$gapi` methods.
