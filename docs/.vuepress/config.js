@@ -29,7 +29,10 @@ module.exports = {
       {
         title: 'Examples',
         collapsable: false,
-        children: [['/examples/authentication.md', 'Authentication']],
+        children: [
+          ['/examples/authentication.md', 'Authentication'],
+          ['/examples/vue-router.md', 'Vue Router'],
+        ],
       },
       {
         title: 'Reference',
