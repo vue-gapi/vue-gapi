@@ -45,7 +45,7 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.1.0",
     "jest": "^27.0.6",
-    "lint-staged": "^10.2.11",
+    "lint-staged": "^11.0.0",
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
