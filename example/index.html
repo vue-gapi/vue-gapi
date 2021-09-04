@@ -7,22 +7,25 @@
   </head>
   <body>
     <div id="app">
-      <div v-if="isSignedIn">
-        <button @click="logout()" type="button">Logout</button>
-        <button @click="grantOfflineAccess()" type="button">
-          Grant Offline Access
-        </button>
-        {{ userName }}
-      </div>
-      <button
-        :disabled="isSignedIn === null"
-        @click="login()"
-        type="button"
-        v-if="!isSignedIn"
-      >
-        Login
-      </button>
+      <login />
     </div>
+
+    <script type="text/x-template" id="login-template">
+      <div>
+        <div v-if="isSignedIn">
+          <button @click="logout()" type="button">Logout</button>
+          {{ userName }}
+        </div>
+        <button
+          :disabled="isSignedIn === null"
+          @click="login()"
+          type="button"
+          v-if="!isSignedIn"
+        >
+          Login
+        </button>
+      </div>
+    </script>
 
     <script>
       Vue.use(VueGapi.default, {
@@ -31,10 +34,12 @@
         scope: 'https://www.googleapis.com/auth/photoslibrary.readonly',
       })
 
-      const app = new Vue({
-        el: '#app',
-        data: {
-          isSignedIn: null,
+      Vue.component('login', {
+        template: '#login-template',
+        data() {
+          return {
+            isSignedIn: null,
+          }
         },
         computed: {
           userName() {
@@ -47,10 +52,9 @@
         },
         methods: {
           login() {
-            this.$gapi.login()
-          },
-          grantOfflineAccess() {
-            this.$gapi.grantOfflineAccess()
+            this.$gapi.login().then(({ currentUser, hasGrantedScopes }) => {
+              console.log({ currentUser, hasGrantedScopes })
+            })
           },
           logout() {
             this.$gapi.logout()
@@ -62,6 +66,8 @@
           })
         },
       })
+
+      new Vue({ el: '#app' })
     </script>
   </body>
 </html>

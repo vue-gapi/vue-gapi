@@ -21,7 +21,7 @@
     "lint:staged": "lint-staged",
     "test": "jest",
     "prepublish": "npm run build",
-    "docs": "vuepress-jsdoc --source ./src --dist ./docs --folder . --readme ./README.md --rmPattern=./docs/README.md --partials ./docs/.vuepress/partials/*.hbs && vuepress build ./docs"
+    "docs": "vuepress-jsdoc --source ./src --dist ./docs --folder ./reference --partials ./docs/.vuepress/partials/*.hbs && cp README.md ./docs && vuepress build ./docs"
   },
   "lint-staged": {
     "*.js": [
@@ -37,15 +37,15 @@
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.10.4",
     "@rollup/plugin-buble": "^0.21.3",
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.0",
-    "@rollup/plugin-replace": "^2.3.3",
-    "babel-jest": "^26.1.0",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-replace": "^3.0.0",
+    "babel-jest": "^27.0.6",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.1.0",
-    "jest": "^26.1.0",
-    "lint-staged": "^10.2.11",
+    "jest": "^27.0.6",
+    "lint-staged": "^11.1.2",
     "pre-commit": "^1.2.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
@@ -69,7 +69,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/gapi": "0.0.39",
-    "@types/gapi.auth2": "0.0.53"
+    "@types/gapi": "0.0.41",
+    "@types/gapi.auth2": "0.0.55"
   }
 }

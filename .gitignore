@@ -63,6 +63,6 @@ typings/
 .env
 
 # JSDoc
-docs/
-!docs/.vuepress/partials/
-!docs/.vuepress/config.js
+docs/.vuepress/dist/
+docs/reference/
+docs/README.md

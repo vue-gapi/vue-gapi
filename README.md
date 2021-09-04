@@ -43,12 +43,13 @@ exposes a `$gapi` member on the Vue instance:
   export default {
     methods: {
       login() {
-        this.$gapi.login().then(({ gapi }) => {
-          // gapi.sheets.spreadsheet.get(...)
-          // ...
+        this.$gapi.login().then(({ currentUser, hasGrantedScopes }) => {
+          console.log({ currentUser, hasGrantedScopes })
         })
       },
     },
   }
 </script>
 ```
+
+See [Examples](https://vue-gapi.github.io/vue-gapi/examples/authentication.html) for a comprehensive example.
