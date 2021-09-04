@@ -70,6 +70,6 @@
   "license": "MIT",
   "dependencies": {
     "@types/gapi": "0.0.41",
-    "@types/gapi.auth2": "0.0.54"
+    "@types/gapi.auth2": "0.0.55"
   }
 }
