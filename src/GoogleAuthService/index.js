@@ -97,13 +97,13 @@ export default class GoogleAuthService {
    * @return {Promise<string>} authorization code
    */
   grantOfflineAccess() {
-    return this.getAuthInstance()
-      .grantOfflineAccess()
-      .then(({ code }) => {
+    return this.getAuthInstance().then((authInstance) => {
+      return authInstance.grantOfflineAccess().then(({ code }) => {
         this.sessionStorage.setItem('offlineAccessCode', code)
 
         return code
       })
+    })
   }
 
   /**
@@ -128,8 +128,9 @@ export default class GoogleAuthService {
 
   /**
    * @typedef GoogleAuthService#LoginResponse
-   * @property {boolean} hasGrantedScopes True if the requested scopes were granted.
-   * @property {GoogleAuthService#GoogleUser} currentUser Current user
+   * @property {GoogleUser} currentUser Current user
+   * @property {gapi} gapi Initialized {@link gapi} client
+   * @property {boolean} hasGrantedScopes <code>true</code> if the requested scopes were granted.
    * @property {string} [code] Authorization code if <code>grantOfflineAccess: true</code>
    */
 
@@ -142,42 +143,19 @@ export default class GoogleAuthService {
    * @param {GoogleAuthService#LoginOptions} [options]
    *
    * @return {Promise<GoogleAuthService#LoginResponse>}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'login-shortcut',
-   *
-   *     methods: {
-   *       login() {
-   *         this.$gapi.login({ grantOfflineAccess: true })
-   *       },
-   *     },
-   *   }
-   * </script>
    */
-  login({ grantOfflineAccess = false } = {}) {
-    return this.getAuthInstance()
-      .then((authInstance) => {
-        return authInstance.signIn().then((currentUser) => {
-          this.sessionStorage.set(sessionFromCurrentUser(currentUser))
+  login() {
+    return this.clientProvider.getClient().then(({ gapi, authInstance }) => {
+      return authInstance.signIn().then((currentUser) => {
+        this.sessionStorage.set(sessionFromCurrentUser(currentUser))
 
-          return {
-            currentUser,
-            hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
-          }
-        })
-      })
-      .then((response) => {
-        if (grantOfflineAccess) {
-          return this.grantOfflineAccess().then((code) => ({
-            ...response,
-            code,
-          }))
+        return {
+          currentUser,
+          gapi,
+          hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
         }
-
-        return response
       })
+    })
   }
 
   /**
@@ -226,19 +204,6 @@ export default class GoogleAuthService {
    * @since 0.4.0
    *
    * @return {Promise<GoogleAuthService#GoogleUser>}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'grant-scope',
-   *
-   *     methods: {
-   *       grant() {
-   *         return this.$gapi.grant()
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   grant() {
     return this.getCurrentUser().then((currentUser) => {
@@ -259,19 +224,6 @@ export default class GoogleAuthService {
    * @see [GoogleAuth.signOut]{@link https://developers.google.com/identity/sign-in/web/reference#googleauthsignout}
    *
    * @return {Promise}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'logout-shortcut',
-   *
-   *     methods: {
-   *       login() {
-   *         this.$gapi.logout()
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   logout() {
     return this.getAuthInstance()
@@ -285,21 +237,6 @@ export default class GoogleAuthService {
    * @method GoogleAuthService#isAuthenticated
    * @since 0.0.10
    * @return {boolean}
-   *
-   * @example
-   * <script>
-   *   export default {
-   *     name: 'login-shortcut-check',
-   *
-   *     methods: {
-   *       login() {
-   *         if (this.$gapi.isAuthenticated() !== true) {
-   *           this.$gapi.login()
-   *         }
-   *       },
-   *     },
-   *   }
-   * </script>
    */
   isAuthenticated() {
     return new Date().getTime() < this.sessionStorage.getItem('expiresAt')

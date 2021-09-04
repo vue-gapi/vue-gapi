@@ -34,22 +34,6 @@ export default {
     /**
      * @memberof Vue
      * @member {GoogleAuthService}
-     *
-     * @example
-     * <script>
-     *   export default {
-     *     name: 'my-component',
-     *
-     *     methods: {
-     *       login() {
-     *         this.$gapi.getGapiClient().then((gapi) => {
-     *           // gapi.sheets.spreadsheet.get(...)
-     *           // ...
-     *         })
-     *       },
-     *     },
-     *   }
-     * </script>
      */
     app.config.globalProperties.$gapi = new GoogleAuthService(
       clientProvider,

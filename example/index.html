@@ -7,19 +7,25 @@
   </head>
   <body>
     <div id="app">
-      <div v-if="isSignedIn">
-        <button @click="logout()" type="button">Logout</button>
-        {{ userName }}
-      </div>
-      <button
-        :disabled="isSignedIn === null"
-        @click="login()"
-        type="button"
-        v-if="!isSignedIn"
-      >
-        Login
-      </button>
+      <login />
     </div>
+
+    <script type="text/x-template" id="login-template">
+      <div>
+        <div v-if="isSignedIn">
+          <button @click="logout()" type="button">Logout</button>
+          {{ userName }}
+        </div>
+        <button
+          :disabled="isSignedIn === null"
+          @click="login()"
+          type="button"
+          v-if="!isSignedIn"
+        >
+          Login
+        </button>
+      </div>
+    </script>
 
     <script>
       const app = Vue.createApp({
@@ -30,12 +36,18 @@
         },
         computed: {
           userName() {
-            return this.$gapi.getUserData().firstName
+            const user = this.$gapi.getUserData()
+
+            if (user) {
+              return user.firstName
+            }
           },
         },
         methods: {
           login() {
-            this.$gapi.login()
+            this.$gapi.login().then(({ currentUser, hasGrantedScopes }) => {
+              console.log({ currentUser, hasGrantedScopes })
+            })
           },
           logout() {
             this.$gapi.logout()

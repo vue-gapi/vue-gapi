@@ -1,4 +1,4 @@
-const { fileTree } = require('../config')
+const { fileTree } = require('../reference/config')
 
 function fullPathFromName(fileName) {
   for (const file of fileTree) {
@@ -27,11 +27,19 @@ module.exports = {
         path: '/',
       },
       {
+        title: 'Examples',
+        collapsable: false,
+        children: [
+          ['/examples/authentication.md', 'Authentication'],
+          ['/examples/vue-router.md', 'Vue Router'],
+        ],
+      },
+      {
         title: 'Reference',
         collapsable: false,
         children: [
-          ['_index', 'install'],
-          [fullPathFromName('GoogleAuthService'), '$gapi'],
+          ['/reference/_index', 'install'],
+          [`/reference/${fullPathFromName('GoogleAuthService')}`, '$gapi'],
         ],
       },
     ],
