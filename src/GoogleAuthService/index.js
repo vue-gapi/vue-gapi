@@ -97,13 +97,13 @@ export default class GoogleAuthService {
    * @return {Promise<string>} authorization code
    */
   grantOfflineAccess() {
-    return this.getAuthInstance()
-      .grantOfflineAccess()
-      .then(({ code }) => {
+    return this.getAuthInstance().then((authInstance) => {
+      return authInstance.grantOfflineAccess().then(({ code }) => {
         this.sessionStorage.setItem('offlineAccessCode', code)
 
         return code
       })
+    })
   }
 
   /**
@@ -128,8 +128,9 @@ export default class GoogleAuthService {
 
   /**
    * @typedef GoogleAuthService#LoginResponse
-   * @property {boolean} hasGrantedScopes True if the requested scopes were granted.
-   * @property {GoogleAuthService#GoogleUser} currentUser Current user
+   * @property {GoogleUser} currentUser Current user
+   * @property {gapi} gapi Initialized {@link gapi} client
+   * @property {boolean} hasGrantedScopes <code>true</code> if the requested scopes were granted.
    * @property {string} [code] Authorization code if <code>grantOfflineAccess: true</code>
    */
 
@@ -143,28 +144,18 @@ export default class GoogleAuthService {
    *
    * @return {Promise<GoogleAuthService#LoginResponse>}
    */
-  login({ grantOfflineAccess = false } = {}) {
-    return this.getAuthInstance()
-      .then((authInstance) => {
-        return authInstance.signIn().then((currentUser) => {
-          this.sessionStorage.set(sessionFromCurrentUser(currentUser))
+  login() {
+    return this.clientProvider.getClient().then(({ gapi, authInstance }) => {
+      return authInstance.signIn().then((currentUser) => {
+        this.sessionStorage.set(sessionFromCurrentUser(currentUser))
 
-          return {
-            currentUser,
-            hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
-          }
-        })
-      })
-      .then((response) => {
-        if (grantOfflineAccess) {
-          return this.grantOfflineAccess().then((code) => ({
-            ...response,
-            code,
-          }))
+        return {
+          currentUser,
+          gapi,
+          hasGrantedScopes: this.hasGrantedRequestedScopes(currentUser),
         }
-
-        return response
       })
+    })
   }
 
   /**
