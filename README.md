@@ -40,7 +40,7 @@ app.use(VueGapi, {
 })
 ```
 
-exposes a `$gapi` [global property]{@link https://v3.vuejs.org/api/application-config.html#globalproperties} accessible inside the application:
+exposes a `$gapi` [global property](https://v3.vuejs.org/api/application-config.html#globalproperties) accessible inside the application:
 
 ```html
 <script>
