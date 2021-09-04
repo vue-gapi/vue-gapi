@@ -169,19 +169,8 @@ export default class GoogleAuthService {
    * @return {Promise<AuthResponse>}
    *
    * @example
-   * <script>
-   *     name: 'App'
-   *
-   *     created () {
-   *     try {
-   *       // NOTE: 45min refresh policy is what google recommends
-   *       window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
-   *     } catch (e) {
-   *       console.error(e)
-   *     }
-   *
-   *   }
-   * </script>
+   * // NOTE: 45min refresh policy is what google recommends
+   * window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
    */
   refreshToken() {
     return this.getCurrentUser()

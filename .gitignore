@@ -66,3 +66,7 @@ typings/
 docs/.vuepress/dist/
 docs/reference/
 docs/README.md
+
+# VuePress
+.temp
+.cache
