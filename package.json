@@ -39,7 +39,7 @@
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "@rollup/plugin-replace": "^2.3.3",
+    "@rollup/plugin-replace": "^3.0.0",
     "babel-jest": "^27.0.6",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
