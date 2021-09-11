@@ -1,6 +1,6 @@
 {
   "name": "vue-gapi",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Google API Client Library wrapper for Vue.js",
   "author": "CedricPoilly <cedricpoilly@outlook.com>",
   "main": "dist/vue-gapi.common.js",
@@ -40,6 +40,7 @@
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^3.0.0",
+    "@vuepress/plugin-search": "^2.0.0-beta.25",
     "babel-jest": "^27.0.6",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
@@ -52,12 +53,11 @@
     "rollup": "^2.23.0",
     "uglify-js": "^3.10.1",
     "uppercamelcase": "^3.0.0",
-    "vue": "^2.5.17",
-    "vuepress": "^1.8.0",
-    "vuepress-jsdoc": "^3.2.0"
+    "vuepress": "^2.0.0-beta.25",
+    "vuepress-jsdoc": "^4.0.4"
   },
   "peerDependencies": {
-    "vue": "^2.3.0"
+    "vue": "^3.0.0"
   },
   "homepage": "https://github.com/vue-gapi/vue-gapi#readme",
   "bugs": {

@@ -1,6 +1,6 @@
 # Authentication
 
-Once you have [installed](/#usage) the plugin, here is a conventional Vue.js v2.x [component](https://vuejs.org/v2/guide/components.html) that displays a login or logout button based on a detected authenticated state.
+Once you have [installed](/#usage) the plugin, here is a conventional Vue.js v3.x [component](https://v3.vuejs.org/guide/component-basics.html) that displays a login or logout button based on a detected authenticated state.
 
 ### Template
 
@@ -26,7 +26,7 @@ Once you have [installed](/#usage) the plugin, here is a conventional Vue.js v2.
 ### Component
 
 ```js
-Vue.component('login', {
+app.component('login', {
   template: '#login-template',
   data() {
     return {
@@ -61,14 +61,14 @@ Vue.component('login', {
 })
 ```
 
-1. Track authenticated state via an `isSignedIn` [data object](https://vuejs.org/v2/guide/instance.html#Data-and-Methods) property.
+1. Track authenticated state via an `isSignedIn` [data option](https://v3.vuejs.org/guide/data-methods.html#data-properties) property.
 
-1. Subscribe to authentication status changes via [`listenUserSignIn`](/reference/GoogleAuthService/_index.html#listenusersignin-callback-⇒-promise-void).
+1. Subscribe to authentication status changes via [`listenUserSignIn`](/reference/GoogleAuthService/__index__.html#listenusersignin-callback-⇒-promise-void).
 
-1. Expose [`login`](/reference/GoogleAuthService/_index.html#login-options-⇒-promise-loginresponse) and [`logout`](/reference/GoogleAuthService/_index.html#logout-⇒-promise) methods.
+1. Expose [`login`](/reference/GoogleAuthService/__index__.html#login-options-⇒-promise-loginresponse) and [`logout`](/reference/GoogleAuthService/__index__.html#logout-⇒-promise) methods.
 
-   _Most `$gapi` methods return a promise. See the [`GoogleAuthService` reference documentation](/reference/GoogleAuthService/_index.html#googleauthservice) for more details._
+   _Most `$gapi` methods return a promise. See the [`GoogleAuthService` reference documentation](/reference/GoogleAuthService/__index__.html#googleauthservice) for more details._
 
-1. Display the authenticated user's name via [`getUserData`](/reference/GoogleAuthService/_index.html#getuserdata-%E2%87%92-userdata-null).
+1. Display the authenticated user's name via [`getUserData`](/reference/GoogleAuthService/__index__.html#getuserdata-%E2%87%92-userdata-null).
 
-   _See the [`UserData` reference documentation](/reference/GoogleAuthService/_index.html#userdata-object) for a full list of user object properties which are persisted in local storage in practice._
+   _See the [`UserData` reference documentation](/reference/GoogleAuthService/__index__.html#userdata-object) for a full list of user object properties which are persisted in local storage in practice._

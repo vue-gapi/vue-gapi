@@ -3,7 +3,7 @@ const { fileTree } = require('../reference/config')
 function fullPathFromName(fileName) {
   for (const file of fileTree) {
     if (file.name === fileName) {
-      return file.children[0].fullPath
+      return `${fileName}${file.children[0].path}`
     }
   }
 }
@@ -12,9 +12,9 @@ module.exports = {
   base: '/vue-gapi/',
   title: 'VueGapi',
   description: 'Google API Client Library wrapper for Vue.js',
+  plugins: ['@vuepress/plugin-search'],
   themeConfig: {
-    sidebarDepth: 4,
-    nav: [
+    navbar: [
       {
         text: 'GitHub',
         link: 'https://github.com/vue-gapi/vue-gapi',
@@ -22,24 +22,33 @@ module.exports = {
     ],
     sidebar: [
       {
-        title: 'Overview',
-        collapsable: false,
-        path: '/',
+        text: 'Overview',
+        link: '/',
       },
       {
-        title: 'Examples',
-        collapsable: false,
+        text: 'Examples',
         children: [
-          ['/examples/authentication.md', 'Authentication'],
-          ['/examples/vue-router.md', 'Vue Router'],
+          {
+            text: 'Authentication',
+            link: '/examples/authentication.md',
+          },
+          {
+            text: 'Vue Router',
+            link: '/examples/vue-router.md',
+          },
         ],
       },
       {
-        title: 'Reference',
-        collapsable: false,
+        text: 'Reference',
         children: [
-          ['/reference/_index', 'install'],
-          [`/reference/${fullPathFromName('GoogleAuthService')}`, '$gapi'],
+          {
+            text: 'install',
+            link: '/reference/__index__',
+          },
+          {
+            text: '$gapi',
+            link: `/reference/${fullPathFromName('GoogleAuthService')}`,
+          },
         ],
       },
     ],

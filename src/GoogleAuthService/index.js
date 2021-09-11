@@ -25,7 +25,7 @@ import { sessionFromAuthResponse, sessionFromCurrentUser } from './utils'
  */
 
 /**
- * Exposed as a <code>$gapi</code> member of the {@link Vue} instance.
+ * Exposed as a <code>$gapi</code> [global property]{@link https://v3.vuejs.org/api/application-config.html#globalproperties} accessible inside the application.
  *
  * @class GoogleAuthService
  */
@@ -169,19 +169,8 @@ export default class GoogleAuthService {
    * @return {Promise<AuthResponse>}
    *
    * @example
-   * <script>
-   *     name: 'App'
-   *
-   *     created () {
-   *     try {
-   *       // NOTE: 45min refresh policy is what google recommends
-   *       window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
-   *     } catch (e) {
-   *       console.error(e)
-   *     }
-   *
-   *   }
-   * </script>
+   * // NOTE: 45min refresh policy is what google recommends
+   * window.setInterval(this.$gapi.refreshToken(), 2.7e+6)
    */
   refreshToken() {
     return this.getCurrentUser()
