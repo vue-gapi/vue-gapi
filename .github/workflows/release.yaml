@@ -15,7 +15,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: npm
       - run: npm ci
-      - name: set npm tag
+      - name: Set npm tag
         id: npm
         run: |
           if [ ${{ github.event_name }} == 'release' ]; then
