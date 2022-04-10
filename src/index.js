@@ -1,3 +1,5 @@
+import { inject } from 'vue'
+import { injectKey } from './consts'
 import GapiClientProvider from './GapiClientProvider'
 import GoogleAuthService from './GoogleAuthService'
 import SessionStorage from './SessionStorage'
@@ -27,21 +29,22 @@ export default {
    * @param {module:vue-gapi.Options} clientConfig VueGapi plugin options
    * @see [Using a Plugin]{@link https://v3.vuejs.org/guide/plugins.html#using-a-plugin}
    */
-  install: (app, clientConfig) => {
+  install(app, clientConfig) {
     const clientProvider = new GapiClientProvider(clientConfig)
     const sessionStorage = new SessionStorage()
+    const gapi = new GoogleAuthService(clientProvider, sessionStorage)
 
     /**
      * @memberof Vue
      * @member {GoogleAuthService}
      */
-    app.config.globalProperties.$gapi = new GoogleAuthService(
-      clientProvider,
-      sessionStorage
-    )
+    app.config.globalProperties.$gapi = gapi
+    app.provide(injectKey, gapi)
   },
 }
 
-const version = '__VERSION__'
+export function useGapi() {
+  return inject(injectKey)
+}
 
-export { version }
+export const version = '__VERSION__'

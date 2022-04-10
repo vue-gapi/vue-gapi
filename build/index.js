@@ -13,14 +13,23 @@ if (!fs.existsSync('dist')) {
 
 function rollupBundle() {
   return rollup({
+    external: 'vue',
     input: 'src/index.js',
     plugins: [
       nodeResolve(),
       commonjs(),
       replace({
-        __VERSION__: version,
+        preventAssignment: true,
+        values: {
+          __VERSION__: version,
+        },
       }),
-      buble({ objectAssign: 'Object.assign' }),
+      buble({
+        objectAssign: 'Object.assign',
+        transforms: {
+          forOf: false,
+        },
+      }),
     ],
   })
 }
@@ -30,6 +39,9 @@ const bundleOptions = {
   exports: 'named',
   format: 'umd',
   name: moduleName,
+  globals: {
+    vue: 'Vue',
+  },
 }
 
 /**
@@ -66,16 +78,26 @@ async function createBundle(name, format) {
   return write(`dist/${name}.js`, code)
 }
 
-// Browser bundle (can be used with script)
-createBundle(name)
+function main() {
+  return Promise.all([
+    // Browser bundle (can be used with script)
+    createBundle(name),
 
-// Commonjs bundle (preserves process.env.NODE_ENV) so
-// the user can replace it in dev and prod mode
-createBundle(`${name}.common`, 'cjs')
+    // Commonjs bundle (preserves process.env.NODE_ENV) so
+    // the user can replace it in dev and prod mode
+    createBundle(`${name}.common`, 'cjs'),
 
-// uses export and import syntax. Should be used with modern bundlers
-// like rollup and webpack 2
-createBundle(`${name}.esm`, 'es')
+    // uses export and import syntax. Should be used with modern bundlers
+    // like rollup and webpack 2
+    createBundle(`${name}.esm`, 'es'),
 
-// Minified version for browser
-createBundle(`${name}.min`)
+    // Minified version for browser
+    createBundle(`${name}.min`),
+  ])
+}
+
+main().catch((error) => {
+  console.error(error.message)
+
+  process.exit(1)
+})

@@ -80,6 +80,7 @@ declare module 'vue-gapi' {
   }
 
   export default VueGapiPlugin
+  export function useGapi(): VueGapi
   export const version: string
 
   module '@vue/runtime-core' {
