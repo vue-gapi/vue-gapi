@@ -2,121 +2,37 @@
 <html>
   <head>
     <title>VueGapi</title>
-    <script src="//unpkg.com/vue@3"></script>
-    <script src="//unpkg.com/vue-router@4"></script>
-    <script src="../dist/vue-gapi.js"></script>
   </head>
   <body>
+    <script type="importmap">
+      {
+        "imports": {
+          "@vue/devtools-api": "https://unpkg.com/@vue/devtools-api@6/lib/esm/index.js",
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+          "vue-gapi": "http://localhost:8080/dist/vue-gapi.esm.js",
+          "vue-router": "https://unpkg.com/vue-router@4/dist/vue-router.esm-browser.js"
+        }
+      }
+    </script>
+
     <div id="app">
       <header>
-        <login />
+        <Login />
       </header>
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/profile">Profile</router-link>
       </nav>
       <main>
-        <router-view></router-view>
+        <router-view />
       </main>
     </div>
 
-    <script>
-      const app = Vue.createApp({})
+    <script type="module">
+      import app from './app.js'
+      import Login from './Login.js'
 
-      const router = VueRouter.createRouter({
-        history: VueRouter.createWebHashHistory(),
-        routes: [
-          {
-            path: '/:pathMatch(.*)*',
-            redirect: '/login',
-          },
-          {
-            path: '/login',
-            name: 'Login',
-            component: { template: '<div>Login</div>' },
-          },
-          {
-            path: '/profile',
-            name: 'Profile',
-            component: { template: '<div>Profile</div>' },
-            meta: { authRequired: true },
-          },
-        ],
-      })
-
-      router.beforeEach((to, from, next) => {
-        if (to.matched.some((record) => record.meta.authRequired)) {
-          app.config.globalProperties.$gapi.isSignedIn().then((isSignedIn) => {
-            if (isSignedIn) {
-              next()
-            } else {
-              alert('You must be logged in to see this page')
-              next({ path: '/login' })
-            }
-          })
-        } else {
-          next()
-        }
-      })
-
-      app.component('login', {
-        data() {
-          return {
-            isSignedIn: null,
-          }
-        },
-        computed: {
-          userName() {
-            const user = this.$gapi.getUserData()
-
-            if (user) {
-              return user.firstName
-            }
-          },
-        },
-        methods: {
-          login() {
-            this.$gapi
-              .login()
-              .then(({ currentUser, gapi, hasGrantedScopes }) => {
-                console.log({ currentUser, gapi, hasGrantedScopes })
-              })
-          },
-          logout() {
-            this.$gapi.logout()
-          },
-        },
-        created() {
-          this.$gapi.listenUserSignIn((isSignedIn) => {
-            this.isSignedIn = isSignedIn
-          })
-        },
-        template: `
-          <div>
-            <div v-if="isSignedIn">
-              <button @click="logout()" type="button">Logout</button>
-              {{ userName }}
-            </div>
-            <button
-              :disabled="isSignedIn === null"
-              @click="login()"
-              type="button"
-              v-if="!isSignedIn"
-            >
-              Login
-            </button>
-          </div>`,
-      })
-
-      app.use(router)
-
-      app.use(VueGapi.default, {
-        clientId:
-          '831498217804-n5f6uvt30h9q0lsdql4tq6qek8i6cggf.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/photoslibrary.readonly',
-      })
-
-      app.mount('#app')
+      app.component('Login', Login).mount('#app')
     </script>
   </body>
 </html>

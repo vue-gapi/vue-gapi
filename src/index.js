@@ -27,7 +27,7 @@ export default {
   /**
    * @param {Vue} app Vue application instance
    * @param {module:vue-gapi.Options} clientConfig VueGapi plugin options
-   * @see [Using a Plugin]{@link https://v3.vuejs.org/guide/plugins.html#using-a-plugin}
+   * @see [Plugins]{@link https://vuejs.org/guide/reusability/plugins.html}
    */
   install(app, clientConfig) {
     const clientProvider = new GapiClientProvider(clientConfig)
@@ -43,6 +43,11 @@ export default {
   },
 }
 
+/**
+ * Inject the `GoogleAuthService` instance via Composition API dependency injection.
+ *
+ * @return {GoogleAuthService}
+ */
 export function useGapi() {
   return inject(injectKey)
 }

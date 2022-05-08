@@ -2,8 +2,6 @@ name: release
 on:
   release:
     types: [created]
-  push:
-    branches: [next]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,14 +13,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: npm
       - run: npm ci
-      - name: Set npm tag
-        id: npm
-        run: |
-          if [ ${{ github.event_name }} == 'release' ]; then
-            echo "::set-output name=tag::latest"
-          else
-            echo "::set-output name=tag::next"
-          fi
-      - run: npm publish --tag ${{ steps.npm.outputs.tag }}
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
