@@ -41,7 +41,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@vuepress/plugin-search": "^2.0.0-beta.38",
-    "babel-jest": "^27.0.6",
+    "babel-jest": "^28.1.0",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^8.7.1",
