@@ -1,0 +1,1 @@
+import{_ as e,o as s,c as o,a as t,d as a}from"./app.c488069a.js";const r={},n={id:"sessionstorage",tabindex:"-1"},c=t("a",{class:"header-anchor",href:"#sessionstorage","aria-hidden":"true"},"#",-1),_=a(" SessionStorage"),i=[c,_];function d(h,f){return s(),o("h1",n,i)}var m=e(r,[["render",d],["__file","SessionStorage.html.vue"]]);export{m as default};
