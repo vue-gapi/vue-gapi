@@ -1,1 +1,0 @@
-const e={key:"v-8daa1a0e",path:"/",title:"VueGapi",lang:"en-US",frontmatter:{},excerpt:"",headers:[{level:2,title:"Requirements",slug:"requirements",children:[]},{level:2,title:"Installation",slug:"installation",children:[]},{level:2,title:"Usage",slug:"usage",children:[]}],git:{updatedTime:null,contributors:[]},filePathRelative:"README.md"};export{e as data};
