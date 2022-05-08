@@ -1,1 +1,0 @@
-const e={key:"v-3b6e8f9c",path:"/examples/vue-router.html",title:"Vue Router",lang:"en-US",frontmatter:{},excerpt:"",headers:[{level:3,title:"router/index.js",slug:"router-index-js",children:[]}],git:{updatedTime:1652049198e3,contributors:[{name:"Nick Amoscato",email:"nick@amoscato.com",commits:1}]},filePathRelative:"examples/vue-router.md"};export{e as data};
