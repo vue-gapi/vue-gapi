@@ -1,6 +1,51 @@
 # Authentication
 
-Once you have [installed](/#usage) the plugin, here is a conventional Vue.js v3.x [component](https://v3.vuejs.org/guide/component-basics.html) that displays a login or logout button based on a detected authenticated state.
+Once you have [installed](/vue-gapi/#usage) the plugin, here is a conventional Vue.js v3.x [component](https://vuejs.org/guide/essentials/component-basics.html) that displays a login or logout button based on a detected authenticated state.
+
+### Component
+
+```js
+import { computed, ref } from 'vue'
+import { useGapi } from 'vue-gapi'
+
+export default {
+  setup() {
+    const gapi = useGapi()
+
+    // (1) Subscribe to authentication status changes
+    const isSignedIn = ref(null)
+    gapi.listenUserSignIn((value) => {
+      isSignedIn.value = value
+    })
+
+    // (2) Display authenticated user name
+    const userName = computed(() => {
+      const user = gapi.getUserData()
+
+      return user ? user.firstName : undefined
+    })
+
+    // (3) Expose $gapi methods
+    function login() {
+      gapi.login().then(({ currentUser, gapi, hasGrantedScopes }) => {
+        console.log({ currentUser, gapi, hasGrantedScopes })
+      })
+    }
+
+    function logout() {
+      gapi.logout()
+    }
+
+    return {
+      isSignedIn,
+      userName,
+      login,
+      logout,
+    }
+  },
+  template: '#login-template',
+}
+```
 
 ### Template
 
@@ -23,52 +68,12 @@ Once you have [installed](/#usage) the plugin, here is a conventional Vue.js v3.
 </script>
 ```
 
-### Component
+1. Subscribe to authentication status changes via [`listenUserSignIn`](/vue-gapi/reference/GoogleAuthService/__index__.html#listenusersignin-callback-⇒-promise-void).
 
-```js
-app.component('login', {
-  template: '#login-template',
-  data() {
-    return {
-      isSignedIn: null, // (1) Track authenticated state
-    }
-  },
-  created() {
-    // (2) Subscribe to authentication status changes
-    this.$gapi.listenUserSignIn((isSignedIn) => {
-      this.isSignedIn = isSignedIn
-    })
-  },
-  methods: {
-    // (3) Expose $gapi methods
-    login() {
-      this.$gapi.login()
-    },
-    logout() {
-      this.$gapi.logout()
-    },
-  },
-  computed: {
-    userName() {
-      // (4) Display authenticated user name
-      const user = this.$gapi.getUserData()
+1. Expose [`login`](/vue-gapi/reference/GoogleAuthService/__index__.html#login-options-⇒-promise-loginresponse) and [`logout`](/vue-gapi/reference/GoogleAuthService/__index__.html#logout-⇒-promise) methods.
 
-      if (user) {
-        return user.firstName
-      }
-    },
-  },
-})
-```
+   _Most `$gapi` methods return a promise. See the [`GoogleAuthService` reference documentation](/vue-gapi/reference/GoogleAuthService/__index__.html#googleauthservice) for more details._
 
-1. Track authenticated state via an `isSignedIn` [data option](https://v3.vuejs.org/guide/data-methods.html#data-properties) property.
+1. Display the authenticated user's name via [`getUserData`](/vue-gapi/reference/GoogleAuthService/__index__.html#getuserdata-⇒-userdata-null).
 
-1. Subscribe to authentication status changes via [`listenUserSignIn`](/reference/GoogleAuthService/__index__.html#listenusersignin-callback-⇒-promise-void).
-
-1. Expose [`login`](/reference/GoogleAuthService/__index__.html#login-options-⇒-promise-loginresponse) and [`logout`](/reference/GoogleAuthService/__index__.html#logout-⇒-promise) methods.
-
-   _Most `$gapi` methods return a promise. See the [`GoogleAuthService` reference documentation](/reference/GoogleAuthService/__index__.html#googleauthservice) for more details._
-
-1. Display the authenticated user's name via [`getUserData`](/reference/GoogleAuthService/__index__.html#getuserdata-%E2%87%92-userdata-null).
-
-   _See the [`UserData` reference documentation](/reference/GoogleAuthService/__index__.html#userdata-object) for a full list of user object properties which are persisted in local storage in practice._
+   _See the [`UserData` reference documentation](/vue-gapi/reference/GoogleAuthService/__index__.html#userdata-object) for a full list of user object properties which are persisted in local storage in practice._
