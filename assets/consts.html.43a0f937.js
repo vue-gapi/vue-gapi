@@ -1,1 +1,0 @@
-import{_ as e,o as s,c as t,a as o,d as c}from"./app.b2ea723d.js";const a={},n={id:"consts",tabindex:"-1"},_=o("a",{class:"header-anchor",href:"#consts","aria-hidden":"true"},"#",-1),r=c(" consts"),d=[_,r];function h(i,f){return s(),t("h1",n,d)}var m=e(a,[["render",h],["__file","consts.html.vue"]]);export{m as default};
