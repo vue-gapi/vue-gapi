@@ -1,1 +1,0 @@
-const e={key:"v-a67c5d6c",path:"/reference/GapiClientProvider/__index__.html",title:"__index__",lang:"en-US",frontmatter:{title:"__index__"},excerpt:"",headers:[],git:{updatedTime:null,contributors:[]},filePathRelative:"reference/GapiClientProvider/__index__.md"};export{e as data};

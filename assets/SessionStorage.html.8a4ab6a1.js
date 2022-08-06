@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-2b8bf892","path":"/reference/SessionStorage.html","title":"SessionStorage","lang":"en-US","frontmatter":{"title":"SessionStorage"},"excerpt":"","headers":[],"git":{"updatedTime":null,"contributors":[]},"filePathRelative":"reference/SessionStorage.md"}');export{e as data};
