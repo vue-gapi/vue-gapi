@@ -16,3 +16,8 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: |
+          npm deprecate vue-gapi
+          "This plugin is deprecated. We encourage you to migrate to Vue3 Google Sign-in: https://vue3-google-signin.syetalabs.io"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

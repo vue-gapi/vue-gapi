@@ -4,11 +4,17 @@
 
 [Google API Client Library](https://github.com/google/google-api-javascript-client) wrapper for [Vue.js](https://vuejs.org/)
 
+## ⚠️ Deprecation
+
+The Google Sign-In JavaScript Platform Library is [deprecated](https://developers.googleblog.com/2022/03/gis-jsweb-authz-migration.html) and will be fully retired on March 31, 2023. This plugin will not be receiving new features.
+
+We would encourage you to migrate your application to **[Vue3 Google Sign-in](https://vue3-google-signin.syetalabs.io/)** which exposes a number of Vue 3 composables built on the new [Google Identity Services](https://developers.google.com/identity/gsi/web) library.
+
 ## Requirements
 
-Version 2 requires [Vue.js v3.x](https://vuejs.org/).
+Version 2 requires [Vue 3](https://vuejs.org/).
 
-If you are looking for a Vue.js v2.x compatible version, use [Version 1](https://github.com/vue-gapi/vue-gapi/tree/releases/v1).
+If you are looking for a [Vue 2](https://v2.vuejs.org/) compatible version, use [Version 1](https://github.com/vue-gapi/vue-gapi/tree/releases/v1).
 
 ## Installation
 
